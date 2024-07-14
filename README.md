@@ -1,2 +1,1 @@
-# DelMoro
-A repository for validated bioinformatics tools used in clinical genomics
+# FHG_clinical_bioinformatics
