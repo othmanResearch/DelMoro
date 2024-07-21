@@ -37,7 +37,7 @@ workflow {
   wild_card = refgenome_basename+".*"
   ref_gen_channel = Channel.fromPath(params.refGenome)
  
-  INDEXING_REF_GENOME(ref_gen_channel, wild_card)
+  INDEXING_REF_GENOME(ref_gen_channel, wild_card, refgenome_basename)
   }
 
 
