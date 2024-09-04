@@ -1,0 +1,16 @@
+name: DelMoro
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+ - mamba=1.5.6
+ - nextflow
+ - fastqc=0.12.1
+ - multiqc=1.17
+ - samtools=1.19
+ - bcftools=1.19
+ - gatk4=4.4.0.0
+ - picard=3.1.1
+ - bwa-mem2=2.2.1 
+ - trimmomatic=0.39 
