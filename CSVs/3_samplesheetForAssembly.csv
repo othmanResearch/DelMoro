@@ -1,0 +1,4 @@
+patient_id,R1,R2
+001,./outdir/TrimmedREADS/father_1.fastq,./outdir/TrimmedREADS/father_2.fastq
+002,./outdir/TrimmedREADS/mother_1.fastq,./outdir/TrimmedREADS/mother_2.fastq
+003,./outdir/TrimmedREADS/son_1.fastq,./outdir/TrimmedREADS/son_2.fastq
