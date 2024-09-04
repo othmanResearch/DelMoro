@@ -1,0 +1,4 @@
+patient_id,R1,R2
+001,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz
+002,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz
+003,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz
