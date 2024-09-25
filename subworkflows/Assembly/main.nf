@@ -10,9 +10,9 @@ take:
   
         alignReadsToRef	(ref_gen_channel, indexes.collect(),READS )	
 			   	
-	assignReadGroup	(alignReadsToRef.out.collectFile( sort: true), READS )
+	assignReadGroup	(alignReadsToRef.out.collectFile(sort: true))
                       
-	markDuplicates	(assignReadGroup.out.collectFile( sort: true), READS	)
+	markDuplicates	(assignReadGroup.out.collectFile( sort: true))
          		
      	IndexBam	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)   	
          	     	
@@ -26,4 +26,5 @@ take:
 }
 
 
+	
 	
