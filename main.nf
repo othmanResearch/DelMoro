@@ -149,7 +149,7 @@ workflow {
   
       	  INDEXING_REF_GENOME(ref_gen_channel)  // generate index for reference genome
 	
-   	  } else if (params.exec == 'indexingknwonSites') { 
+   	  } else if (params.exec == 'KnSIndexing') { 
   
       	    INDEXING_known_sites(knwonSite1,knwonSite2)  // generate index for known sites files
 	
