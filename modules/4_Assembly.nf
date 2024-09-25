@@ -34,21 +34,21 @@ process assignReadGroup {
     
     	input:
         	path aligned_bam
-        	tuple val(patient_id), path(R1), path(R2)
+        	//tuple val(patient_id), path(R1), path(R2)
          
     	output:
-        	path "${patient_id}_sor@RG.bam" 	, emit : sorted_labeled_bam // Sorted_labeled bam file with RG
+        	path "*@RG.bam" 	, emit : sorted_labeled_bam // Sorted_labeled bam file with RG
 
     	script: 
     	"""
 	picard AddOrReplaceReadGroups \\
         		-I ${aligned_bam} \\
-                        -O ${patient_id}_sor@RG.bam \\
-                        -RGID ${patient_id} \\
+                        -O ${aligned_bam.baseName}@RG.bam \\
+                        -RGID ${aligned_bam.baseName.takeWhile{ it != '_' }} \\
                         -RGLB unspec \\
                         -RGPL ILLUMINA \\
                         -RGPU unspec \\
-                        -RGSM ${patient_id} \\
+                        -RGSM ${aligned_bam.baseName.takeWhile{ it != '_' }} \\
                         -RGPM unspec \\
                         -RGCN unspec
      	"""   
@@ -63,17 +63,17 @@ process markDuplicates {
     
     	input: 
     	    path sorted_bam
-    	    tuple val(patient_id), path(R1), path(R2)
+    	//    tuple val(patient_id), path(R1), path(R2)
     
     	output:
-    	    path "${patient_id}_sor@RG@MD.bam" 	, emit : sorted_markduplicates_bam
-    	    path "${patient_id}.metrict"
+    	    path "*@MD.bam" 	, emit : sorted_markduplicates_bam
+    	    path "*.metrict"
 
     	script:
     	"""
-    	picard MarkDuplicates --INPUT $sorted_bam \\
-        		--OUTPUT ${patient_id}_sor@RG@MD.bam \\
-                        --METRICS_FILE ${patient_id}.metrict \\
+    	picard MarkDuplicates --INPUT ${sorted_bam} \\
+        		--OUTPUT ${sorted_bam.baseName}@MD.bam \\
+                        --METRICS_FILE ${sorted_bam.baseName}@MD.metrict \\
                         --TMP_DIR . 
     	"""       
 }
