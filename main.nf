@@ -1,12 +1,49 @@
 #!/usr/bin/env nextflow
 
 nextflow.enable.dsl = 2
-log.info """
-    =====
-    DelMoro workflow
-    =====
+def prinLoGO()	{   
 
-    """
+log.info"""                                                                                                                                                                                                                                                         
+
+\033[37m  DDDDDDDDDDDDD                           \033[37mLLLLLLLLLLL             \033[31mMMMMMMMM               MMMMMMMM                                                      
+\033[37m  D::::::::::::DDD                        \033[37mL:::::::::L             \033[31mM:::::::M             M:::::::M                                                      
+\033[37m  D:::::::::::::::DD                      \033[37mL:::::::::L             \033[31mM::::::::M           M::::::::M                                                      
+\033[37m  DDD:::::DDDDD:::::D                     \033[37mLL:::::::LL             \033[31mM:::::::::M         M:::::::::M                                                      
+\033[37m   D:::::D    D:::::D    eeeeeeeeeeee     \033[37mL:::::L                 \033[31mM::::::::::M       M::::::::::M\033[37m   ooooooooooo   rrrrr   rrrrrrrrr      ooooooooooo   
+\033[37m   D:::::D     D:::::D  ee::::::::::::ee  \033[37mL:::::L                 \033[31mM:::::::::::M     M:::::::::::M\033[37m oo:::::::::::oo r::::rrr:::::::::r   oo:::::::::::oo 
+\033[37m   D:::::D     D:::::D e::::::eeeee:::::ee\033[37mL:::::L                 \033[31mM:::::::M::::M   M::::M:::::::M\033[37mo:::::::::::::::or:::::::::::::::::r o:::::::::::::::o
+\033[37m   D:::::D     D:::::De::::::e     e:::::e\033[37mL:::::L                 \033[31mM::::::M M::::M M::::M M::::::M\033[37mo:::::ooooo:::::orr::::::rrrrr::::::ro:::::ooooo:::::o
+\033[37m   D:::::D     D:::::De:::::::eeeee::::::e\033[37mL:::::L                 \033[31mM::::::M  M::::M::::M  M::::::M\033[37mo::::o     o::::o r:::::r     r:::::ro::::o     o::::o
+\033[37m   D:::::D     D:::::De:::::::::::::::::e \033[37mL:::::L                 \033[31mM::::::M   M:::::::M   M::::::M\033[37mo::::o     o::::o r:::::r     rrrrrrro::::o     o::::o
+\033[37m   D:::::D     D:::::De::::::eeeeeeeeeee  \033[37mL:::::L                 \033[31mM::::::M    M:::::M    M::::::M\033[37mo::::o     o::::o r:::::r            o::::o     o::::o
+\033[37m   D:::::D    D:::::D e:::::::e           \033[37mL:::::L         LLLLLLLL\033[31mM::::::M     MMMMM     M::::::M\033[37mo::::o     o::::o r:::::r            o::::o     o::::o
+\033[37m DDD:::::DDDDD:::::D  e::::::::e          \033[37mLL:::::::LLLLLLLLL:::::L\033[31mM::::::M               M::::::M\033[37mo:::::ooooo:::::o r:::::r            o:::::ooooo:::::o
+\033[37m D:::::::::::::::DD    e::::::::eeeeeeee  \033[37mL::::::::::::::::::::::L\033[31mM::::::M               M::::::M\033[37mo:::::::::::::::o r:::::r            o:::::::::::::::o
+\033[37m D::::::::::::DDD       ee:::::::::::::e  \033[37mL::::::::::::::::::::::L\033[31mM::::::M               M::::::M\033[37m oo:::::::::::oo  r:::::r             oo:::::::::::oo 
+\033[37m DDDDDDDDDDDDD            eeeeeeeeeeeeee  \033[37mLLLLLLLLLLLLLLLLLLLLLLLL\033[31mMMMMMMMM               MMMMMMMM\033[37m   ooooooooooo    rrrrrrr               ooooooooooo   
+
+                                                                    
+\033[37m                                                                        \033[31m X
+\033[37m         o O        o O       o O       o o       o O        o O o       o                    o O       o       o O       o O      o O       o O    
+\033[37m       o | | O    o | | O   o | | O   o | |O     o| | O    o | | | O      o                 o | | O   o | O   o | | O    o| | O  o | | O   o | | O
+\033[37m O | | | | | | | O  | | | | O | | | | O | | o | O | | | | O  | | | | o O O O O O O O O O O O || | | | O | | | O | | | | O | | | |  | | | | | | | | | | O 
+\033[37m       o | | o    O | | o   O | | o   O | o      O| | o    O | | | o          o             O | | o   O | o   O | | o   O | | o  O | | o   O | | o 
+\033[37m         o o        O o       O o       O         O o        O o o             o              O o       O       O o       O o      O o       O o     
+                                                                                \033[31m o o X\033[37m
+
+\033[32m
+Usage  :\033[37m  nextflow main.nf --exec [params..]
+\033[32m
+Params :\033[37m  - ControlRawQuality : Checks quality of raw reads. 
+	  - Trimm : Removes low-quality bases and adapters and checks it quality.
+	  - IndexRef : Indexes the reference genome for alignment.
+	  - KnSIndex : Indexes knowns sites vcf for base recalibration.
+	  - Align : Aligns reads to the reference genome.
+	  - CallSNP : Detects SNPs from aligned reads.
+	  - Version  
+	   
+"""		}
+
 
 // params 
 
@@ -34,11 +71,9 @@ params.KnSite2Idx 	= "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.id
 params.cpus 		= 2
 params.outdir		= "./outdir"
 
- 
-
-
 
 // channels 
+
    // Raw Reads to quality check 
 	
 	Channel.fromPath(params.RawReads, checkIfExists: true)       	
@@ -117,7 +152,8 @@ params.outdir		= "./outdir"
     	Channel.fromPath(params.KnSite2Idx, checkIfExists: false)  
     		.first()
        		.set{IDXknS2}	
-  
+
+
 // subworkflows 
 include {QC_RAW_READS} 		from './subworkflows/RawQualCtrl'
 include {TRIM_READS} 		from './subworkflows/Trimming'
@@ -128,40 +164,47 @@ include {Call_SNPs_with_GATK} 	from './subworkflows/variantcalling'
 
 
 workflow {
-  params.exec = params.exec ?: 'none'  // Default to 'none' if not provided
+  params.exec = ''  // Default to 'none' if not provided
+  
+if (params.exec =='' ){
+	
+   prinLoGO()   
+  
+  } else if (params.exec == 'ControlRawQuality') {	// check quality of raw reads
+ 
+      QC_RAW_READS(RawREADS)  
+	
+      } else if (params.exec == 'Trimm') {		// trim reads
 
+        TRIM_READS(ReadsToBeTrimmed)  
+	
+   	} else if (params.exec == 'IndexRef') { 	// generate index for reference genome	
 
-  if ( params.exec == 'none')
-  {
-    log.info """
-    Please enter --exec indexing
+      	  INDEXING_REF_GENOME(ref_gen_channel) 
+	
+   	  } else if (params.exec == 'KnSIndex') { 	// generate index for known sites files
 
-    """
-    } else if (params.exec == 'ControlRawQuality') { 
-  
-      QC_RAW_READS(RawREADS)  // check quality of raw reads
+      	    INDEXING_known_sites(knwonSite1,knwonSite2)  
 	
-      } else if (params.exec == 'Trimming') { 
-  
-        TRIM_READS(ReadsToBeTrimmed)  // trim reads
-	
-   	} else if (params.exec == 'indexingRef') { 
-  
-      	  INDEXING_REF_GENOME(ref_gen_channel)  // generate index for reference genome
-	
-   	  } else if (params.exec == 'KnSIndexing') { 
-  
-      	    INDEXING_known_sites(knwonSite1,knwonSite2)  // generate index for known sites files
-	
-   	    } else if (params.exec == 'align') {
+   	    } else if (params.exec == 'Align') {	// align reads to reference
+
+  	      ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,TrimmedREADS) 
   	
-  	      ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,TrimmedREADS) // align reads to reference
-  	
-  	      } else if (params.exec == 'CallSNP') {
-  	
-  	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads, IDXBAM,knwonSite1, IDXknS1,knwonSite2, IDXknS2 ) // Call snp
-  	      }
-  }
+  	      } else if (params.exec == 'CallSNP') {	// Call snp
+
+  	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads, IDXBAM,knwonSite1, IDXknS1,knwonSite2, IDXknS2 ) 
+  	      } else if ( params.exec == 'Version' ) {
+	      prinLoGO()
+log.info """
+\033[31m DelMoro version :\033[37m v1.00 
+"""   
+  	   } else {
+  	     prinLoGO()
+log.info """
+\033[31m ⚠︎  Please Verify The Typed Params \033[37m 
+"""   }
+  	      
+ }
 
 
 
