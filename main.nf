@@ -32,20 +32,49 @@ log.info"""
                                                                                 \033[31m o o X\033[37m
 
 \033[32m
-Usage  :\033[37m  nextflow main.nf --exec [params..]
+Usage  :\033[37m nextflow main.nf --exec [Step..] [Params..]
 \033[32m
-Params :\033[37m  - ControlRawQuality : Checks quality of raw reads. 
+Steps :\033[37m   - ControlRawQuality : Checks quality of raw reads. 
 	  - Trimm : Removes low-quality bases and adapters and checks it quality.
 	  - IndexRef : Indexes the reference genome for alignment.
 	  - KnSIndex : Indexes knowns sites vcf for base recalibration.
 	  - Align : Aligns reads to the reference genome.
 	  - CallSNP : Detects SNPs from aligned reads.
+	  - ShowParams : See Default params.
 	  - Version  
 	   
 """		}
 
 
-// params 
+//  params To be printed 
+def printparmas() {
+log.info"""
+\033[32m params.refGenome 	=\033[37m ./Reference_Genome/reference.fa	       // Reference file path
+
+\033[32m params.RawReads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 		 // Raw reads paths 
+\033[32m params.ToBeTrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv		   // Raw reads paths + trimmomatic parameters
+\033[32m params.TrimmedReads 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv		     // Trimmed read paths 
+\033[32m params.BamFiles	=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  	               // Bam files paths 
+
+\033[32m params.knwonSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 	// knownsites should be .vcf  
+\033[32m params.knwonSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
+
+\033[32m params.BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai				     // Bam Files Indexes
+
+\033[32m params.ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}  // Bwa-mem2 		Reference Indexes
+\033[32m params.Dictionary	=\033[37m ./outdir/Indexes/Reference/reference.dict				    // GATK Dictionary 	Reference Index
+\033[32m params.SamtoolsIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.fai  			              // Samtools fai 		Reference Index
+
+\033[32m params.KnSite1Idx 	=\033[37m ./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx    // Known site 1 Index
+\033[32m params.KnSite2Idx 	=\033[37m ./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx		   //  Known site 2 Index
+
+\033[32m params.cpus 		=\033[37m 2
+\033[32m params.outdir		=\033[37m ./outdir  \033[32m
+"""}
+
+
+
+// Params 
 
 params.refGenome 	= "./Reference_Genome/reference.fa"		// Reference file path
 
@@ -70,7 +99,6 @@ params.KnSite2Idx 	= "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.id
 
 params.cpus 		= 2
 params.outdir		= "./outdir"
-
 
 // channels 
 
@@ -193,8 +221,13 @@ if (params.exec =='' ){
   	      } else if (params.exec == 'CallSNP') {	// Call snp
 
   	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads, IDXBAM,knwonSite1, IDXknS1,knwonSite2, IDXknS2 ) 
-  	      } else if ( params.exec == 'Version' ) {
-	      prinLoGO()
+  	     
+  	      } else if ( params.exec == 'ShowParams'){
+  	        
+  	         printparmas()
+  	       
+  	        } else if ( params.exec == 'Version' ) {
+	          prinLoGO()
 log.info """
 \033[31m DelMoro version :\033[37m v1.00 
 """   
