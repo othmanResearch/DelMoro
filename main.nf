@@ -1,77 +1,13 @@
 #!/usr/bin/env nextflow
 
 nextflow.enable.dsl = 2
-def prinLoGO()	{   
 
-log.info"""                                                                                                                                                                                                                                                         
+// Interactive Design while Running DelMoro
 
-\033[37m  DDDDDDDDDDDDD                           \033[37mLLLLLLLLLLL             \033[31mMMMMMMMM               MMMMMMMM                                                      
-\033[37m  D::::::::::::DDD                        \033[37mL:::::::::L             \033[31mM:::::::M             M:::::::M                                                      
-\033[37m  D:::::::::::::::DD                      \033[37mL:::::::::L             \033[31mM::::::::M           M::::::::M                                                      
-\033[37m  DDD:::::DDDDD:::::D                     \033[37mLL:::::::LL             \033[31mM:::::::::M         M:::::::::M                                                      
-\033[37m   D:::::D    D:::::D    eeeeeeeeeeee     \033[37mL:::::L                 \033[31mM::::::::::M       M::::::::::M\033[37m   ooooooooooo   rrrrr   rrrrrrrrr      ooooooooooo   
-\033[37m   D:::::D     D:::::D  ee::::::::::::ee  \033[37mL:::::L                 \033[31mM:::::::::::M     M:::::::::::M\033[37m oo:::::::::::oo r::::rrr:::::::::r   oo:::::::::::oo 
-\033[37m   D:::::D     D:::::D e::::::eeeee:::::ee\033[37mL:::::L                 \033[31mM:::::::M::::M   M::::M:::::::M\033[37mo:::::::::::::::or:::::::::::::::::r o:::::::::::::::o
-\033[37m   D:::::D     D:::::De::::::e     e:::::e\033[37mL:::::L                 \033[31mM::::::M M::::M M::::M M::::::M\033[37mo:::::ooooo:::::orr::::::rrrrr::::::ro:::::ooooo:::::o
-\033[37m   D:::::D     D:::::De:::::::eeeee::::::e\033[37mL:::::L                 \033[31mM::::::M  M::::M::::M  M::::::M\033[37mo::::o     o::::o r:::::r     r:::::ro::::o     o::::o
-\033[37m   D:::::D     D:::::De:::::::::::::::::e \033[37mL:::::L                 \033[31mM::::::M   M:::::::M   M::::::M\033[37mo::::o     o::::o r:::::r     rrrrrrro::::o     o::::o
-\033[37m   D:::::D     D:::::De::::::eeeeeeeeeee  \033[37mL:::::L                 \033[31mM::::::M    M:::::M    M::::::M\033[37mo::::o     o::::o r:::::r            o::::o     o::::o
-\033[37m   D:::::D    D:::::D e:::::::e           \033[37mL:::::L         LLLLLLLL\033[31mM::::::M     MMMMM     M::::::M\033[37mo::::o     o::::o r:::::r            o::::o     o::::o
-\033[37m DDD:::::DDDDD:::::D  e::::::::e          \033[37mLL:::::::LLLLLLLLL:::::L\033[31mM::::::M               M::::::M\033[37mo:::::ooooo:::::o r:::::r            o:::::ooooo:::::o
-\033[37m D:::::::::::::::DD    e::::::::eeeeeeee  \033[37mL::::::::::::::::::::::L\033[31mM::::::M               M::::::M\033[37mo:::::::::::::::o r:::::r            o:::::::::::::::o
-\033[37m D::::::::::::DDD       ee:::::::::::::e  \033[37mL::::::::::::::::::::::L\033[31mM::::::M               M::::::M\033[37m oo:::::::::::oo  r:::::r             oo:::::::::::oo 
-\033[37m DDDDDDDDDDDDD            eeeeeeeeeeeeee  \033[37mLLLLLLLLLLLLLLLLLLLLLLLL\033[31mMMMMMMMM               MMMMMMMM\033[37m   ooooooooooo    rrrrrrr               ooooooooooo   
-
-                                                                    
-\033[37m                                                                        \033[31m X
-\033[37m         o O        o O       o O       o o       o O        o O o       o                    o O       o       o O       o O      o O       o O    
-\033[37m       o | | O    o | | O   o | | O   o | |O     o| | O    o | | | O      o                 o | | O   o | O   o | | O    o| | O  o | | O   o | | O
-\033[37m O | | | | | | | O  | | | | O | | | | O | | o | O | | | | O  | | | | o O O O O O O O O O O O || | | | O | | | O | | | | O | | | |  | | | | | | | | | | O 
-\033[37m       o | | o    O | | o   O | | o   O | o      O| | o    O | | | o          o             O | | o   O | o   O | | o   O | | o  O | | o   O | | o 
-\033[37m         o o        O o       O o       O         O o        O o o             o              O o       O       O o       O o      O o       O o     
-                                                                                \033[31m o o X\033[37m
-
-\033[32m
-Usage  :\033[37m nextflow main.nf --exec [Step..] [Params..]
-\033[32m
-Steps :\033[37m   - ControlRawQuality : Checks quality of raw reads. 
-	  - Trimm : Removes low-quality bases and adapters and checks it quality.
-	  - IndexRef : Indexes the reference genome for alignment.
-	  - KnSIndex : Indexes knowns sites vcf for base recalibration.
-	  - Align : Aligns reads to the reference genome.
-	  - CallSNP : Detects SNPs from aligned reads.
-	  - ShowParams : See Default params.
-	  - Version  
-	   
-"""		}
-
-
-//  params To be printed 
-def printparmas() {
-log.info"""
-\033[32m params.refGenome 	=\033[37m ./Reference_Genome/reference.fa	       // Reference file path
-
-\033[32m params.RawReads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 		 // Raw reads paths 
-\033[32m params.ToBeTrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv		   // Raw reads paths + trimmomatic parameters
-\033[32m params.TrimmedReads 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv		     // Trimmed read paths 
-\033[32m params.BamFiles	=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  	               // Bam files paths 
-
-\033[32m params.knwonSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 	// knownsites should be .vcf  
-\033[32m params.knwonSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
-
-\033[32m params.BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai				     // Bam Files Indexes
-
-\033[32m params.ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}  // Bwa-mem2 		Reference Indexes
-\033[32m params.Dictionary	=\033[37m ./outdir/Indexes/Reference/reference.dict				    // GATK Dictionary 	Reference Index
-\033[32m params.SamtoolsIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.fai  			              // Samtools fai 		Reference Index
-
-\033[32m params.KnSite1Idx 	=\033[37m ./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx    // Known site 1 Index
-\033[32m params.KnSite2Idx 	=\033[37m ./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx		   //  Known site 2 Index
-
-\033[32m params.cpus 		=\033[37m 2
-\033[32m params.outdir		=\033[37m ./outdir  \033[32m
-"""}
-
+include {DelMoroWelcome	}	from './logos' 
+include {DelMoroParams	}	from './logos' 
+include {DelMoroVersion	} 	from './logos' 
+include {DelMoroError	} 	from './logos' 
 
 
 // Params 
@@ -196,7 +132,7 @@ workflow {
   
 if (params.exec =='' ){
 	
-   prinLoGO()   
+  DelMoroWelcome()   
   
   } else if (params.exec == 'ControlRawQuality') {	// check quality of raw reads
  
@@ -224,18 +160,13 @@ if (params.exec =='' ){
   	     
   	      } else if ( params.exec == 'ShowParams'){
   	        
-  	         printparmas()
+  	         DelMoroParams()
   	       
   	        } else if ( params.exec == 'Version' ) {
-	          prinLoGO()
-log.info """
-\033[31m DelMoro version :\033[37m v1.00 
-"""   
-  	   } else {
-  	     prinLoGO()
-log.info """
-\033[31m ⚠︎  Please Verify The Typed Params \033[37m 
-"""   }
+	          
+	          DelMoroVersion()
+
+  	  	   } else { DelMoroError() }
   	      
  }
 
