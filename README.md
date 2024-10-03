@@ -27,4 +27,17 @@ nextflow main.nf --exec ShowParams
 ~~~
 nextflow main.nf --exec Trimm --cpus 10
 ~~~
+6- CAll SNP : the pipeline generates by default vcf files, select SNP for all inputs . 
+~~~
+nextflow main.nf --cpus 8 --exec CallSNP 
+~~~
+  * In case you wanna only generate vcf for all input add the parameter --generate
+~~~
+nextflow main.nf --cpus 8 --exec CallSNP --generate onlyVCF
+~~~
+  * In case you wanna generate a cohorte GVCF 
+~~~
+nextflow main.nf --cpus 8 --exec CallSNP --generate cohorteGVCF
+~~~
+
 
