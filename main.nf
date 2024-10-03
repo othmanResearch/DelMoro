@@ -38,7 +38,7 @@ params.KnSite2Idx 	= "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.id
 params.cpus 		= 2
 params.outdir		= "./outdir"
 
-params.generate		= ""  // The default parameter generates vcf for all inputs ${onlyVCF} or A cohorte Gvcf ${cohorteGVCF}    
+params.generate		= null  // The default parameter generates vcf for all inputs ${onlyVCF} or A cohorte Gvcf ${cohorteGVCF}    
 
 
 
