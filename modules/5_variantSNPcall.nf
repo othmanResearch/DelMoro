@@ -1,31 +1,6 @@
 // Module files for DelMoro pipeline
 
-// GATK variant calling for raw mapped reads
 
-process RawHaploCall {
-	conda "bioconda::gatk4=4.4"
-	tag "Raw Var Call with Gatk HaplotypeCaller"
-    	publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
-
-    	input:
-       		path ref  
-       		path dic
-       		path fai
-       		//path BamFile
-       		tuple val(patient_id), path(BamFile)
-       		path BamBai
-     
-    	output:
-        	path "*raw.HC.vcf" , emit: "vcf_HaplotypeCaller_Raw" // HC : HaplotypeCaller
-    	script:
-        """
-  	gatk HaplotypeCaller \\
-  	  		--native-pair-hmm-threads ${params.cpus} \\
-			--reference ${ref} \\
-			--input ${BamFile} \\
-			--output ${BamFile.baseName}.raw.HC.vcf 
-       	"""
-}
  
 // BaseRecalibration 
 
@@ -137,18 +112,12 @@ process VarToTable {
 	publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 	
 	input:
-		path Rawvcf	// vcf files from RawHaploCall 
 		path Recalvcf	// vcf files from RecalHaploCAll
 		
 	output:
-		path "${Rawvcf}.table"
 		path "${Recalvcf}.table"	
 	script:
 	"""
-	gatk VariantsToTable \\
-			--fields CHROM -F POS -F TYPE -GF GT \\
-			--variant ${Rawvcf} \\
-			--output ${Rawvcf}.table
 	gatk VariantsToTable \\
 			--fields CHROM -F POS -F TYPE -GF GT \\
 			--variant ${Recalvcf} \\
@@ -160,7 +129,7 @@ process VarToTable {
 
 process SnpFilter {
 conda "bioconda::gatk4=4.4"
-	tag "Collect Variant in a Table using GATK4"
+	tag "Collect SNP in a Table using GATK4"
 	publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 	
 	input:
@@ -244,7 +213,7 @@ process  CombineGvcfs{
        		path GvcfFiles
      		path IDXofGvcf
     	output:
-        	path "Cohort.g.vcf" , emit: "Combinedvcf"
+        	path "Cohort.g.vcf" , emit: "CohorteVcf"
     	script:
         """
       	gatk CombineGVCFs \\
