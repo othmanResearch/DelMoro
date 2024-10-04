@@ -14,32 +14,6 @@ include {DelMoroError	} 	from './logos'
 
 // Params 
 
-params.refGenome 	= "./Reference_Genome/reference.fa"		// Reference file path
-
-params.RawReads 	= "./CSVs/1_samplesheetForRawQC.csv" 		// Raw reads paths 
-params.ToBeTrimmed 	= "./CSVs/2_SamplesheetForTrimming.csv"		// Raw reads paths + trimmomatic parameters
-params.TrimmedReads 	= "./CSVs/3_samplesheetForAssembly.csv"		// Trimmed read paths 
-params.BamFiles		= "./CSVs/4_samplesheetForBamFiles.csv"  			// Bam files paths 
-
-params.knwonSite1	= "./knownsites/1000g_gold_standard.indels.filtered.vcf" 	// knownsites should be .vcf  
-params.knwonSite2 	= "./knownsites/GCF.38.filtered.renamed.vcf"			
-
-// Indexes params 
-
-params.BamIndex		= "./outdir/Indexes/BamFiles/*.bai"					   	  // Bam Files Indexes
-
-params.ALIGNERIndex	= "./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}"         // Bwa-mem2 		Reference Indexes
-params.Dictionary	= "./outdir/Indexes/Reference/reference.dict"				       // GATK Dictionary 	Reference Index
-params.SamtoolsIndex	= "./outdir/Indexes/Reference/reference.fa.fai"  			              // Samtools fai 		Reference Index
-
-params.KnSite1Idx 	= "./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx"    // Known site 1 Index
-params.KnSite2Idx 	= "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx"		   //  Known site 2 Index
-
-params.cpus 		= 2
-params.outdir		= "./outdir"
-
-params.generate		= null  // The default parameter generates vcf for all inputs ${onlyVCF} or A cohorte Gvcf ${cohorteGVCF}    
-
 
 
 // channels 
@@ -53,7 +27,7 @@ params.generate		= null  // The default parameter generates vcf for all inputs $
        	       
   // Raw Reads to be trimmed based on required features  : MINLEN , LEADING, TRAILING, SLIDINGWINDOW
        	
-       	Channel.fromPath(params.ToBeTrimmed, checkIfExists: true)       	
+       	Channel.fromPath(params.ToBeTrimmed, checkIfExists: false)       	
 	       .splitCsv(header: true)  
 	       .map { row -> tuple(row.patient_id,
        		      file(row.R1), 
@@ -102,7 +76,7 @@ params.generate		= null  // The default parameter generates vcf for all inputs $
        		.set{ALignidxREF}
        	
        	//  Dictionary Indexs Bwa mem2 
-	Channel.fromPath(params.Dictionary, checkIfExists: false)  
+	Channel.fromPath(params.DictGATK, checkIfExists: false)  
        		.set{DictidxREF}
        	
        	// SamtoolsIndex
