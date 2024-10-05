@@ -23,10 +23,48 @@ nextflow main.nf
 ~~~
 nextflow main.nf --exec ShowParams
 ~~~
+
+DelMoro offers for users the possibility of generating automatically required CSVs files for its processes. As an initial step, the USER prepares an input csv to write downstream CSVS.
+~~~
+nextflow main.nf --generate CSV --basedon CSVs/1_samplesheetForRawQC.csv 
+~~~
+The **1_samplesheetForRawQC.csv**  must be as the bellow template 
+~~~
+patient_id,R1,R2
+AO22K1,./Data/DEL_1.fastq.gz,./Data/DEL_2.fastq.gz
+TOK2W0,./Data/MORO_1.fastq.gz,./Data/MORO_2.fastq.gz
+3OL51K,./Data/TUN_1.fastq.gz,./Data/TUN_2.fastq.gz
+~~~
+outputs of generated CSVs are as bellow : 
+
+- *2_SamplesheetForTrimming.csv*
+~~~
+patient_id,R1,R2,MINLEN,LEADING,TRAILING,SLIDINGWINDOW
+AO22K1,./Data/DEL_1.fastq.gz,./Data/DEL_2.fastq.gz,36,30,30,'4:20'
+TOK2W0,./Data/MORO_1.fastq.gz,./Data/MORO_2.fastq.gz,36,30,30,'4:20'
+3OL51K,./Data/TUN_1.fastq.gz,./Data/TUN_2.fastq.gz,36,30,30,'4:20'
+~~~
+ 
+- *3_samplesheetForAssembly.csv*
+
+~~~
+patient_id,R1,R2
+AO22K1,./outdir/TrimmedREADS/DEL_1.fastq,./outdir/TrimmedREADS/DEL_2.fastq
+TOK2W0,./outdir/TrimmedREADS/MORO_1.fastq,./outdir/TrimmedREADS/MORO_2.fastq
+3OL51K,./outdir/TrimmedREADS/TUN_1.fastq,./outdir/TrimmedREADS/TUN_2.fastq
+~~~
+- *4_samplesheetForBamFiles.csv*
+~~~
+patient_id,BamFile
+AO22K1,./outdir/Mapping/AO22K1_sor@RG@MD.bam
+TOK2W0,./outdir/Mapping/TOK2W0_sor@RG@MD.bam
+3OL51K,./outdir/Mapping/3OL51K_sor@RG@MD.bam
+~~~
 5- To Modify any params e.g. Threads which refers to cpus, type 
 ~~~
-nextflow main.nf --exec Trimm --cpus 10
+nextflow main.nf --exec Trim --cpus 10
 ~~~
+
 6- CAll SNP : the pipeline generates by default vcf files, select SNP for all inputs and a cohorte GVCF  . 
 ~~~
 nextflow main.nf --cpus 8 --exec CallSNP 
@@ -39,5 +77,40 @@ nextflow main.nf --cpus 8 --exec CallSNP --generate onlyVCF
 ~~~
 nextflow main.nf --cpus 8 --exec CallSNP --generate cohorteGVCF
 ~~~
+---
+The user have the ability to run each step by specifying parameter ( inputs and outputs ) or to prepare a ParamsConfigfile as bellow : 
+~~~
+params {
+	basedon 	= "./CSVs/1_samplesheetForRawQC.csv"  		// First input csv to prepare CSVs based on it
+	refGenome 	= "./Reference_Genome/reference.fa"		// Reference file path
 
+	RawReads 	= "./CSVs/1_samplesheetForRawQC.csv" 		// Raw reads paths 
+	ToBeTrimmed 	= "./CSVs/2_SamplesheetForTrimming.csv"		// Raw reads paths + trimmomatic parameters
+	ToBeAligned 	= "./CSVs/3_samplesheetForAssembly.csv"		// Trimmed read paths 
+	BamFiles	= "./CSVs/4_samplesheetForBamFiles.csv"  			// Bam files paths 
 
+	knwonSite1	= "./knownsites/1000g_gold_standard.indels.filtered.vcf" 	// knownsites should be .vcf  
+	knwonSite2 	= "./knownsites/GCF.38.filtered.renamed.vcf"			
+
+	// Indexes 
+
+	BamIndex	= "./outdir/Indexes/BamFiles/*.bai"					   	  // Bam Files Indexes
+
+	ALIGNERIndex	= "./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}"         // Bwa-mem2 		Reference Indexes
+	DictGATK	= "./outdir/Indexes/Reference/reference.dict"				       // GATK Dictionary 	Reference Index
+	SamtoolsIndex	= "./outdir/Indexes/Reference/reference.fa.fai"  			              // Samtools fai 		Reference Index
+
+	KnSite1Idx 	= "./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx"    // Known site 1 Index
+	KnSite2Idx 	= "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx"		   //  Known site 2 Index
+
+	cpus 		= 2
+	outdir		= "./outdir"
+
+	generate	= null  // The default parameter generates vcf for all inputs ${onlyVCF} or A cohorte Gvcf ${cohorteGVCF}    
+
+	}
+~~~
+then run it : 
+~~~
+nextflow main.nf --exec ControlRawQuality -c ParamsConfigfile 
+~~~
