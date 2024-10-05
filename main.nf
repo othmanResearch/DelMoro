@@ -34,11 +34,11 @@ include {DelMoroError	} 	from './logos'
        		      				              row.MINLEN, 	
        		         				       row.LEADING,
        		         			 	        row.TRAILING, 
-       		           				         row.SLIDINGWINDOW ) } 						: channel.empty()
+       		           				         row.SLIDINGWINDOW ) } 						: Channel.empty()
   // Trimmed reads      	       
   ReadsToBeAligned		= params.ToBeAligned  	? Channel.fromPath(params.ToBeAligned, checkIfExists: false)       	
 	       					 	  .splitCsv(header: true)  
-       	      				          	   .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) }		: Channel.empty() 
+       	      				          	   .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) }	: Channel.empty() 
 
        	       
   // reference
