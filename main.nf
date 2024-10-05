@@ -13,61 +13,51 @@ include {DelMoroError	} 	from './logos'
 
 
 // Params 
-
-
-
+  // 
+  preparecsv 		= params.basedon	? Channel.fromPath(params.basedon, checkIfExists: true)   			: Channel.empty()   	
+	       			             	 	  
+       	       
 // channels 
 
-   // Raw Reads to quality check 
-	
-	Channel.fromPath(params.RawReads, checkIfExists: true)       	
-	       .splitCsv(header: true)  
-       	       .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) } 
-       	       .set{ RawREADS }
+  // Raw Reads to quality check 
+  RawREADS 		= params.RawReads 	? Channel.fromPath(params.RawReads, checkIfExists: true)       	
+	       			             	 	  .splitCsv(header: true)  
+       	       	                     		           .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) }	: Channel.empty() 
        	       
   // Raw Reads to be trimmed based on required features  : MINLEN , LEADING, TRAILING, SLIDINGWINDOW
        	
-       	Channel.fromPath(params.ToBeTrimmed, checkIfExists: false)       	
-	       .splitCsv(header: true)  
-	       .map { row -> tuple(row.patient_id,
-       		      file(row.R1), 
-       		       file(row.R2), 
-       		        row.MINLEN, 
-       		         row.LEADING,
-       		          row.TRAILING, 
-       		           row.SLIDINGWINDOW ) 	}.set{ ReadsToBeTrimmed }
+  ReadsToBeTrimmed	= params.ToBeTrimmed 	? Channel.fromPath(params.ToBeTrimmed, checkIfExists: false)       	
+	       						  .splitCsv(header: true)  
+	       						   .map { row -> tuple(row.patient_id,
+       		      					    file(row.R1), 
+       		      				   	     file(row.R2), 
+       		      				              row.MINLEN, 	
+       		         				       row.LEADING,
+       		         			 	        row.TRAILING, 
+       		           				         row.SLIDINGWINDOW ) } 						: channel.empty()
   // Trimmed reads      	       
-       	 Channel.fromPath(params.TrimmedReads, checkIfExists: false)       	
-	       .splitCsv(header: true)  
-       	       .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) } 
-       	       .set{ TrimmedREADS }	
-  
+  ReadsToBeAligned		= params.ToBeAligned  	? Channel.fromPath(params.ToBeAligned, checkIfExists: false)       	
+	       					 	  .splitCsv(header: true)  
+       	      				          	   .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) }		: Channel.empty() 
 
        	       
   // reference
 
-	Channel.fromPath(params.refGenome)
-	       .first()
-	       .set{ ref_gen_channel }
+  ref_gen_channel	= params.refGenome	? Channel.fromPath(params.refGenome).first()					: Channel.empty()
        
   // BamFiles channel
 
-	Channel.fromPath(params.BamFiles, checkIfExists: false)  
-       	       .splitCsv(header: true)  
-               .map{ row -> tuple(row.patient_id, file(row.BamFile))}
-               .set { MappedReads }
-
+  MappedReads 		= params.BamFiles	? Channel.fromPath(params.BamFiles, checkIfExists: false)  
+       	       						 .splitCsv(header: true)  
+            						 .map{ row -> tuple(row.patient_id, file(row.BamFile))}			: Channel.empty() 
+	
   // knwon file 1 channel for BQSR    
 
-	Channel.fromPath(params.knwonSite1, checkIfExists: false)  
-               .first()
-               .set{knwonSite1}    
+  knwonSite1		= params.knwonSite1	? Channel.fromPath(params.knwonSite1, checkIfExists: false).first()   		: Channel.empty() 
        
   // knwon file 2 channel for BQSR       
          
-	Channel.fromPath(params.knwonSite2, checkIfExists: false)  
-               .first()
-               .set{knwonSite2}    
+  knwonSite2		= params.knwonSite2	? Channel.fromPath(params.knwonSite2, checkIfExists: false).first()  		: Channel.empty() 
        
   // Indexes Channels 
 
@@ -98,7 +88,8 @@ include {DelMoroError	} 	from './logos'
        		.set{IDXknS2}	
 
 
-// subworkflows 
+// subworkflows *
+include {GenerateCSVs} 		from './subworkflows/GenerateCSV'
 include {QC_RAW_READS} 		from './subworkflows/RawQualCtrl'
 include {TRIM_READS} 		from './subworkflows/Trimming'
 include {INDEXING_REF_GENOME} 	from './subworkflows/indexingRefGenome'
@@ -113,6 +104,7 @@ workflow {
 if (params.exec == null ){
 	
   DelMoroWelcome()   
+  GenerateCSVs(preparecsv)
   
   } else if (params.exec == 'ControlRawQuality') {	// check quality of raw reads
  
@@ -132,7 +124,7 @@ if (params.exec == null ){
 	
    	    } else if (params.exec == 'Align') {	// align reads to reference
 
-  	      ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,TrimmedREADS) 
+  	      ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,ReadsToBeAligned) 
   	
   	      } else if (params.exec == 'CallSNP') {	// Call snp
 
