@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////
 
 process createIndex {
-	conda "bioconda::gatk4=4.4 bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.19"
+	conda "bioconda::gatk4=4.4.0.0 bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.19"
 	tag "CREATING INDEX FOR REF GENOME FOR ALIGNER"
         publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
 
@@ -41,7 +41,7 @@ process createDictionary {
 //	CREATING INDEX BY SAMTOOLS
 
 process createIndexSamtools {
-	conda "bioconda::gatk4=4.4 bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.19"
+	conda "bioconda::gatk4=4.4.0.0 bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.21"
 	tag "GENERATE INDEX BY SAMTOOLS"
         publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
 
