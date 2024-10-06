@@ -24,7 +24,7 @@ process FastqQc {
 // Gathering Qc Reports ;
 
 process ReadsMultiqc {
-	conda 'bioconda::multiqc=1.17'
+	conda 'bioconda::multiqc=1.25.1'
 
     	tag "Gathering Multiqc FOR RAW READS"
         publishDir "${params.outdir}/QualityControl/RAW/multiqc/" ,  mode:'copy'
