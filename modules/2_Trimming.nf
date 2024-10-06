@@ -53,7 +53,7 @@ process TrimmedQC {
 // GATHER TRIMMED QC REPORTS 
 
 process MultiqcTrimmed {
-	conda "bioconda::multiqc=1.17"
+	conda "bioconda::multiqc=1.25.1"
     	tag "GATHER TRIMMED QC REPORTS"
         publishDir "${params.outdir}/QualityControl/TRIMMED/multiqc/" ,  mode:'copy'
 
