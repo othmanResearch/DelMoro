@@ -3,7 +3,7 @@
 // indexing known sites files 
 
 process IndexKNownSites {
-    	conda "bioconda::gatk4=4.4"
+    	conda "bioconda::gatk4=4.4=4.4.0.0"
     	tag "CREATING INDEX for known sites vcf"
     	publishDir "${params.outdir}/Indexes/knownSites", mode: 'copy'
 
