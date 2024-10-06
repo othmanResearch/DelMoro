@@ -4,7 +4,7 @@
 
 
 process alignReadsToRef {
-	conda "bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.19"
+	conda "bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.21"
     	tag "ALIGNING GENOMES TO REFERENCE"
     	publishDir "${params.outdir}/Mapping", mode: 'copy'
 
@@ -28,7 +28,7 @@ process alignReadsToRef {
 // Assigning ReadGroups
 
 process assignReadGroup {
-	conda "bioconda::picard=3.1.1"
+	conda "bioconda::picard=3.2.0"
     	tag "ASSIGNING READ GROUPS"
     	publishDir "${params.outdir}/Mapping", mode: 'copy'
     
@@ -57,7 +57,7 @@ process assignReadGroup {
 // Marking Duplicates
 
 process markDuplicates {
-	conda "bioconda::picard=3.1.1"
+	conda "bioconda::picard=3.2.0"
 	tag "MARKING DUPLICATES"
     	publishDir "${params.outdir}/Mapping", mode: 'copy'
     
@@ -80,7 +80,7 @@ process markDuplicates {
 // Generating Indexes of Bam files
 
 process IndexBam{
-    	conda "bioconda::samtools=1.19"
+    	conda "bioconda::samtools=1.21"
     	tag "CREATING INDEX FOR BAM FILES"
     	publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
 
@@ -100,7 +100,7 @@ process IndexBam{
 // Generate Statictics before & after Marking Duplicates
 
 process GenerateStat {
-    	conda "bioconda::samtools=1.19"
+    	conda "bioconda::samtools=1.21"
     	tag "Statistics for bam-sam files"
     	publishDir "${params.outdir}/Mapping/Metrics", mode: 'copy'
     	
