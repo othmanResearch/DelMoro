@@ -5,7 +5,7 @@
 // BaseRecalibration 
 
 process BaseRecalibrator {
-	conda "bioconda::gatk4=4.4"
+	conda "bioconda::gatk4=4.4.0.0"
     	tag "CREATING TABLE FOR BQSR"
     	publishDir "${params.outdir}/Mapping", mode: 'copy'
 
@@ -37,7 +37,7 @@ process BaseRecalibrator {
 // Apply base Recalibration 
 
 process ApplyBQSR {
-	conda "bioconda::gatk4=4.4"
+	conda "bioconda::gatk4=4.4.0.0"
 	tag "APPLYING BASE QUALITY SCORE RECALIBRATION"
     	publishDir "${params.outdir}/Mapping", mode: 'copy'
 
@@ -61,7 +61,7 @@ process ApplyBQSR {
 // Generating Indexes of Recalibrated Bam files
 
 process IndexRecalBam{
-    	conda "bioconda::samtools=1.19"
+    	conda "bioconda::samtools=1.21"
     	tag "CREATING INDEX FOR Recalibrated BAM FILES"
     	publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
 
@@ -80,7 +80,7 @@ process IndexRecalBam{
 // GATK variant calling for Recalibrated mapped reads  // SNP  // same processes will be replicated using include {NameProcess as NameProcess1} from './modules/NameProcess
 
 process RecalHaploCall {
-	conda "bioconda::gatk4=4.4"
+	conda "bioconda::gatk4=4.4.0.0"
 	tag "Recal Var Call with Gatk HaplotypeCaller"
     	publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 
@@ -107,7 +107,7 @@ process RecalHaploCall {
 // Variant to Table  // to be visiualized with R 
 
 process VarToTable {
-	conda "bioconda::gatk4=4.4"
+	conda "bioconda::gatk4=4.4.0.0"
 	tag "Collect Variant in a Table using GATK4"
 	publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 	
@@ -149,7 +149,7 @@ conda "bioconda::gatk4=4.4"
 // Create GVCF files
 
 process  CreateGVCF{
-	conda "bioconda::gatk4=4.4"
+	conda "bioconda::gatk4=4.4.0.0"
 	tag "CREATE GVCF with Gatk HaplotypeCaller"
     	publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 
@@ -180,7 +180,7 @@ process  CreateGVCF{
 // Generating Indexes of Gvcf Bam files
 
 process IndexGVCF {
-    	conda "bioconda::samtools=1.19"
+    	conda "bioconda::samtools=1.21"
     	tag "CREATING INDEX FOR Recalibrated BAM FILES"
     	publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
 
@@ -202,7 +202,7 @@ process IndexGVCF {
 // Combining GVCFs 
 
 process  CombineGvcfs{
-	conda "bioconda::gatk4=4.4"
+	conda "bioconda::gatk4=4.4.0.0"
 	tag "COMBINE GVCF files with Gatk HaplotypeCaller"
     	publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 
@@ -226,7 +226,7 @@ process  CombineGvcfs{
 // Generating Genotypes of GVCFs
 
 process GenotypeGvcfs{
-	conda "bioconda::gatk4=4.4"
+	conda "bioconda::gatk4=4.4.0.0"
 	tag "GENERATING GENOTYPES OF GVCF"
     	publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 
