@@ -114,3 +114,43 @@ then run it :
 ~~~
 nextflow main.nf --exec ControlRawQuality -c ParamsConfigfile 
 ~~~
+---
+
+To use nextflow.config with its profiles, It is recommended to use **params.json** with specifting the desired profile .
+~~~
+ nextflow main.nf --cpus 4  -params-file params.json --exec Align -profile mamba
+~~~ 
+
+ - params.json 
+ 
+~~~
+{
+	"basedon"	: "./CSVs/1_samplesheetForRawQC.csv",  		 
+	"refGenome"	: "./Reference_Genome/reference.fa",		 
+
+	"RawReads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
+	"ToBeTrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
+	"ToBeAligned"	: "./CSVs/3_samplesheetForAssembly.csv",		 
+	"BamFiles"	: "./CSVs/4_samplesheetForBamFiles.csv",  			 
+
+	"knownSite1"	: "./knownsites/1000g_gold_standard.indels.filtered.vcf", 	 
+	"knownSite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",			
+
+	"BamIndex"	: "./outdir/Indexes/BamFiles/*.bai",					   	  
+
+	"ALIGNERIndex"	: "./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}",          
+	"DictGATK"	: "./outdir/Indexes/Reference/reference.dict",				        
+	"SamtoolsIndex"	: "./outdir/Indexes/Reference/reference.fa.fai",  			              
+
+	"KnSite1Idx"	: "./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx",    
+	"KnSite2Idx"	: "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx",		   
+
+	"cpus"		: 4,
+	"outdir"	: "./outdir",
+
+	"generate"	: null
+}
+~~~
+
+
+
