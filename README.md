@@ -78,47 +78,9 @@ nextflow main.nf --cpus 8 --exec CallSNP --generate onlyVCF
 nextflow main.nf --cpus 8 --exec CallSNP --generate cohorteGVCF
 ~~~
 ---
-The user have the ability to run each step by specifying parameter ( inputs and outputs ) or to prepare a ParamsConfigfile as bellow : 
+The user have the ability to run each step by specifying parameter ( inputs and outputs ) or to prepare a params.json file as bellow : To use nextflow.config with its profiles, It is recommended to use **params.json** with specifting the desired profile .
 ~~~
-params {
-	basedon 	= "./CSVs/1_samplesheetForRawQC.csv"  		// First input csv to prepare CSVs based on it
-	refGenome 	= "./Reference_Genome/reference.fa"		// Reference file path
-
-	RawReads 	= "./CSVs/1_samplesheetForRawQC.csv" 		// Raw reads paths 
-	ToBeTrimmed 	= "./CSVs/2_SamplesheetForTrimming.csv"		// Raw reads paths + trimmomatic parameters
-	ToBeAligned 	= "./CSVs/3_samplesheetForAssembly.csv"		// Trimmed read paths 
-	BamFiles	= "./CSVs/4_samplesheetForBamFiles.csv"  			// Bam files paths 
-
-	knwonSite1	= "./knownsites/1000g_gold_standard.indels.filtered.vcf" 	// knownsites should be .vcf  
-	knwonSite2 	= "./knownsites/GCF.38.filtered.renamed.vcf"			
-
-	// Indexes 
-
-	BamIndex	= "./outdir/Indexes/BamFiles/*.bai"					   	  // Bam Files Indexes
-
-	ALIGNERIndex	= "./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}"         // Bwa-mem2 		Reference Indexes
-	DictGATK	= "./outdir/Indexes/Reference/reference.dict"				       // GATK Dictionary 	Reference Index
-	SamtoolsIndex	= "./outdir/Indexes/Reference/reference.fa.fai"  			              // Samtools fai 		Reference Index
-
-	KnSite1Idx 	= "./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx"    // Known site 1 Index
-	KnSite2Idx 	= "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx"		   //  Known site 2 Index
-
-	cpus 		= 2
-	outdir		= "./outdir"
-
-	generate	= null  // The default parameter generates vcf for all inputs ${onlyVCF} or A cohorte Gvcf ${cohorteGVCF}    
-
-	}
-~~~
-then run it : 
-~~~
-nextflow main.nf --exec ControlRawQuality -c ParamsConfigfile 
-~~~
----
-
-To use nextflow.config with its profiles, It is recommended to use **params.json** with specifting the desired profile .
-~~~
- nextflow main.nf --cpus 4  -params-file params.json --exec Align -profile mamba
+ nextflow main.nf -params-file params.json -c nextflow.config -profile mamba --cpus 6 --exec IndexRef 
 ~~~ 
 
  - params.json 
