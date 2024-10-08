@@ -1,6 +1,6 @@
 // Variant Calling subworkflow 
 
-include {DelMoroVarCallOutput} from '../../logos'	
+include {DelMoroWelcome; DelMoroVarCallOutput} from '../../logos'	
 include {BaseRecalibrator; ApplyBQSR; IndexRecalBam; RecalHaploCall; VarToTable; SnpFilter; CreateGVCF; IndexGVCF; CombineGvcfs; GenotypeGvcfs} from '../../modules/5_variantSNPcall.nf' 
 
 
@@ -18,8 +18,8 @@ take:
     IDXknS2
 
   main: 
-   
-   if  ( params.generate == null ) {
+
+   if  (params.exec != null && params.generate == null && params.refGenome != null && params.BamFiles != null ) {
    		
    	DelMoroVarCallOutput()
        			 
@@ -66,7 +66,7 @@ take:
 				samidxREF.collect(),
 				CombineGvcfs.out.CohorteVcf.collectFile(sort: true)			)  
 
-   		} else if ( params.generate == 'onlyVCF') {	// generate vcf for all inputs 
+   		} else if (params.exec != null && params.generate == 'onlyVCF' && params.refGenome != null && params.BamFiles != null) {	// generate vcf for all inputs 
   	 
   		DelMoroVarCallOutput()
      	
@@ -95,7 +95,7 @@ take:
    	
    		SnpFilter 	(	RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true)	)
    	
-   		} else if ( params.generate == 'cohorteGVCF') {	 // Generate one file : the cohorte vcf
+   		} else if (params.exec != null && params.generate == 'cohorteGVCF' && params.refGenome != null && params.BamFiles != null) {	 // Generate one file : the cohorte vcf
    			
    			DelMoroVarCallOutput()
      			BaseRecalibrator(	ref_gen_channel,
@@ -129,8 +129,10 @@ take:
 						samidxREF.collect(),
 						CombineGvcfs.out.CohorteVcf.collectFile(sort: true)			)  
 		 		
-	}
-
+	}  else { 
+	    DelMoroWelcome() 
+	    print("\033[31m please specify --refGenome option (--refGenome reference ) and --BamFiles option (--BamFiles CSVs/4.. )\n If needed please specify --generate option (--generate onlyVCF / cohorteGVCF/)\n For more details nextflow main.nf --exec ShowParams \033[37m")  }
+       
 }
 
 
