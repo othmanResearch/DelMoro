@@ -46,7 +46,7 @@ process TrimmedQC {
 
         script:
         """
-        fastqc ${reads} 
+        fastqc -t ${params.cpus} ${reads} 
         """
 }
 

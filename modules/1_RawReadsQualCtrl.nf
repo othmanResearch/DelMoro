@@ -15,7 +15,7 @@ process FastqQc {
 
         script:
         """
-        fastqc ${R1} ${R2} 
+        fastqc -t {params.cpus} ${R1} ${R2} 
         """
 }
 
