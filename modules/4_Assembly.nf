@@ -97,11 +97,28 @@ process IndexBam{
        	"""
 }
 
+process Extractregion { 
+	conda "bioconda::samtools=1.21"
+    	tag "EXTRACT REGION"
+    	publishDir "${params.outdir}/Mapping/", mode: 'copy'
+    
+    	input:
+        	path BamFile		// Bam file from sorted_markduplicates_bam 
+        	path BamIdx
+
+    	output:                        
+        	path "*.bam"
+
+    	script: 
+    	""" 
+    	samtools view -@ {params.cpus} -bh ${BamFile} ${params.region} > ${BamFile.baseName}_region_${params.region}.bam
+    	"""
+} 
 // Generate Statictics before & after Marking Duplicates
 
 process GenerateStat {
     	conda "bioconda::samtools=1.21"
-    	tag "Statistics for bam-sam files"
+    	tag "STATISCTICS FOR BAM-SAM FILES"
     	publishDir "${params.outdir}/Mapping/Metrics", mode: 'copy'
     	
     	input:
