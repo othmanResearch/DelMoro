@@ -136,8 +136,8 @@ log.info"""
 \033[32m --tobealigned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv					  => Trimmed read paths 
 \033[32m --bam		=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  					  => Bam files paths 
 
-\033[32m --knwonSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  => knownsites should be .vcf  
-\033[32m --knwonSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
+\033[32m --knownSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  => knownsites should be .vcf  
+\033[32m --knownSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
 
 \033[32m --BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  => Bam Files Indexes
 
