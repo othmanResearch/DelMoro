@@ -1,14 +1,14 @@
 {
 	"basedon"	: "./CSVs/1_samplesheetForRawQC.csv",  		 
-	"refGenome"	: "./Reference_Genome/reference.fa",		 
+	"reference"	: "./Reference_Genome/reference.fa",		 
 
-	"RawReads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
-	"ToBeTrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
-	"ToBeAligned"	: "./CSVs/3_samplesheetForAssembly.csv",		 
-	"BamFiles"	: "./CSVs/4_samplesheetForBamFiles.csv",  			 
+	"rawreads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
+	"tobetrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
+	"tobealigned"	: "./CSVs/3_samplesheetForAssembly.csv",		 
+	"bam"		: "./CSVs/4_samplesheetForBamFiles.csv",  			 
 
-	"knownSite1"	: "./knownsites/1000g_gold_standard.indels.filtered.vcf", 	 
-	"knownSite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",			
+	"knwonSite1"	: "./knownsites/1000g_gold_standard.indels.filtered.vcf", 	 
+	"knwonSite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",			
 
 	"BamIndex"	: "./outdir/Indexes/BamFiles/*.bai",					   	  
 
@@ -19,9 +19,10 @@
 	"KnSite1Idx"	: "./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx",    
 	"KnSite2Idx"	: "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx",		   
 
-	"cpus"		: 4,
+	"cpus"		: 8,
 	"outdir"	: "./outdir",
 
-	"generate"	: null
+	"generate"	: null,
+	"region"	: null    
 }
 
