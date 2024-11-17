@@ -1,7 +1,7 @@
 // Assembly subworkflow 
 
 include {DelMoroWelcome; DelMoroAssemblyOutput} from '../../logos'	
-include {alignReadsToRef; assignReadGroup; markDuplicates; IndexBam; GenerateStat} from '../../modules/4_Assembly.nf' 
+include {alignReadsToRef; assignReadGroup; markDuplicates; IndexBam; Extractregion; GenerateStat; IndexBam as IndexRegion} from '../../modules/4_Assembly.nf' 
 
 
 workflow ALIGN_TO_REF_GENOME {
@@ -10,7 +10,10 @@ take:
     indexes
     READS
   main: 
-    if (params.exec != null && params.refGenome != null && params.ToBeAligned != null ) {
+    
+    // Case: No region specified
+
+    if (params.exec != null && params.reference != null && params.tobealigned != null && params.region == null ) {
  	DelMoroAssemblyOutput()
         alignReadsToRef	(ref_gen_channel, indexes.collect(),READS )	
 			   	
@@ -21,9 +24,32 @@ take:
      	IndexBam	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)   	
          	     	
 	GenerateStat	(assignReadGroup.out.sorted_labeled_bam.collectFile(sort: true), markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)
-} else { 
-	    DelMoroWelcome() 
-	    print("\033[31m please specify --refGenome option (--refGenome reference ) and --ToBeAligned option (--ToBeAligned trimmedreads ) \n For more details nextflow main.nf --exec ShowParams \033[37m")  }
+	
+	// Case: Region specified 
+
+	}  else if (params.exec != null && params.reference != null && params.tobealigned != null && (params.region ==~ /^[a-zA-Z0-9]+:\d+-\d+$/) ) {
+		 
+		DelMoroAssemblyOutput()
+		alignReadsToRef	(ref_gen_channel, indexes.collect(),READS )	
+			   	
+		assignReadGroup	(alignReadsToRef.out.collectFile(sort: true))
+                      
+		markDuplicates	(assignReadGroup.out.collectFile( sort: true))
+         		
+     		IndexBam	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)   	
+                
+                Extractregion (markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), IndexBam.out.IDXBAM.collect())
+		IndexRegion	(Extractregion.out.collectFile(sort: true)	)
+		GenerateStat	(assignReadGroup.out.sorted_labeled_bam.collectFile(sort: true), markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)
+		 
+		 }else {  
+		 	DelMoroWelcome()
+    			print("\033[31m Please specify valid parameters:\n")
+    			print("  --reference option ( --reference <reference-path> )\n")
+   			print("  --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n")
+    			print("  --region ( formatted as 'chr:start-end' )\n")
+    			print("For details, run: nextflow main.nf --exec params\n\033[37m")
+			}
        
 
 
