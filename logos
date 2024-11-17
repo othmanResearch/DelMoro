@@ -33,16 +33,16 @@ log.info"""
                                                                                 \033[31m o o X\033[37m
 
 \033[32m
-Usage  :\033[37m nextflow main.nf --exec [Step..] [Params..]
-\033[32m
-Steps :\033[37m   - ControlRawQuality : Checks quality of raw reads. 
-	  - Trim : Removes low-quality bases and adapters and checks it quality.
-	  - IndexRef : Indexes the reference genome for alignment.
-	  - KnSIndex : Indexes knowns sites vcf for base recalibration.
-	  - Align : Aligns reads to the reference genome.
-	  - CallSNP : Detects SNPs from aligned reads.
-	  - ShowParams : See Default params.
-	  - Version  
+Usage   :\033[37m nextflow main.nf --exec <\033[32mcommand\033[37m> <Params>
+
+Command : - \033[32mrawqc\033[37m 	: Check           quality      of     raw           reads. 
+	  - \033[32mtrim\033[37m 	: Remove low-quality bp and adapters & checks its quality.
+	  - \033[32mrefidx\033[37m 	: Index   the    reference   genome    for      alignment.
+	  - \033[32mknsidx\033[37m 	: Index    knowns    sites   vcf   for base recalibration.
+	  - \033[32malign\033[37m 	: Align     reads      to     the     reference    genome.
+	  - \033[32mcallsnp\033[37m 	: Detect           SNPs      from      aligned      reads.
+	  - \033[32mhelp\033[37m 	
+	  - \033[32mversion\033[37m  
 	   
 """		
 }
@@ -62,42 +62,104 @@ log.info"""
 }
 
 
-// Printing Params 
+// Printing Help 
 
-def DelMoroParams(){
-DelMoroWelcome()
+def DelMoroHelp(){
+
 log.info"""
-\033[32m params.basedon		=\033[37m ./CSVs/1_samplesheetForRawQC.csv 	// First input csv to prepare CSVs based on it
-\033[32m params.refGenome 	=\033[37m ./Reference_Genome/reference.fa	// Reference file path
 
-\033[32m params.RawReads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 	// Raw reads paths 
-\033[32m params.ToBeTrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv	// Raw reads paths + trimmomatic parameters
-\033[32m params.ToBeAligned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv	// Trimmed read paths 
-\033[32m params.BamFiles	=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  	// Bam files paths 
+Program: DelMoro (Bioinformatics Tool Used In Clinical Genomics)
+Version: v1.00 
 
-\033[32m params.knwonSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 	// knownsites should be .vcf  
-\033[32m params.knwonSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
 
-\033[32m params.BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       // Bam Files Indexes
+Usage:   nextflow main.nf --exec <\033[32mcommand\033[37m> [Params] 
 
-\033[32m params.ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}  // Bwa-mem2 		Reference Indexes
-\033[32m params.Dictionary	=\033[37m ./outdir/Indexes/Reference/reference.dict				  // GATK Dictionary 	Reference Index
-\033[32m params.SamtoolsIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.fai  			          // Samtools fai 		Reference Index
+Commands:
+  -- Quality Control
+     \033[32mrawqc\033[37m 	   Check quality of raw reads. 
+                   require : --RawReads <path-to-csv>
+                   output  : .html reads 
+                   	   : .html multiqc 
 
-\033[32m params.KnSite1Idx 	=\033[37m ./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx // Known site 1 Index
-\033[32m params.KnSite2Idx 	=\033[37m ./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx		  //  Known site 2 Index
+  -- Trimming
+     \033[32mtrim\033[37m          Remove low-quality bp and adapters & checks its quality.
+     		   require : --ToBeTrimmed <path-to-csv>
+     		   output  : .fastq trimmed 
+                   	   : .html trimmed reads 
+                   	   : .html multiqc  
 
-\033[32m params.cpus 		=\033[37m 2									  // Default Cpus		
-\033[32m params.outdir		=\033[37m ./outdir  
-\033[32m params.generate	=\033[37m  The default parameter generates vcf for all inputs + A cohorte Gvcf   
-\033[32m			 \033[37m  <-> onlyVCF 	 	=> generate vcf for all inputs    
-\033[32m			 \033[37m  <-> cohorteGVCF 	=> generate one file : the cohorte Gvcf   
-\033[32m			 \033[37m  <-> CSV 		=> generate csv --basedOn "PATH to yout file" \033[37m 
+  -- Indexing
+     \033[32mrefidx\033[37m 	   Index reference genome for alignment.
+     		   require : --refGenome <path-to-ref>
+     		   output  : .dict 
+                   	   : .fai  
+                   	   : .{.0123,amb,ann,bwt.2bit.64,pac} 
+    
+     \033[32mknsidx\033[37m        Index knowns sites vcf for base recalibration.
+  		   require :  <path-to-vcf-file> , 2 atleast
+		   output  :  .idx
+  -- Mapping	   
+     \033[32malign\033[37m         Align reads to reference genome.
+  	           require : --refGenome   <path-to-ref>
+  	         	     --ToBeAligned <path-to-trimmed-csv>
+  	           output  : .bam
+  	           	   : .bai
+  	           	   : .flagstat
+  	           	   
+  -- Variant Calling	  
+     \033[32mcallsnp\033[37m       Detect SNPs from aligned reads.
+  	           require : --refGenome   <path-to-ref>
+  		   	     --BamFiles    <path-to-bam-csv)
+  		   output  : .vcf
+  		   	   : .table
+  		   		
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
+  To see Defauls params paths:  
+   > nextflow main.nf --exec \033[32mparams\033[37m
 
 """}
 
+// Printing Params 
 
-// Version Params 
+def DelMoroParams(){
+
+log.info"""
+
+\033[32m                                                               DEFAULT PARAMETERS
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\033[32m --outdir       =\033[37m ./outdir  								  => ouptuts directory
+
+\033[32m --reference 	=\033[37m ./Reference_Genome/reference.fa					  => Reference file path
+\033[32m --rawreads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 					  => Raw reads paths 
+\033[32m --tobetrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv					  => Raw reads paths + trimmomatic parameters
+\033[32m --tobealigned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv					  => Trimmed read paths 
+\033[32m --bam		=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  					  => Bam files paths 
+
+\033[32m --knwonSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  => knownsites should be .vcf  
+\033[32m --knwonSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
+
+\033[32m --BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  => Bam Files Indexes
+
+\033[32m --ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}  => Bwa-mem2 		Reference Indexes
+\033[32m --Dictionary	=\033[37m ./outdir/Indexes/Reference/reference.dict				  => GATK Dictionary 	Reference Index
+\033[32m --SamtoolsIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.fai  			  => Samtools fai 	Reference Index
+
+\033[32m --KnSite1Idx 	=\033[37m ./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx => Known site 1 Index
+\033[32m --KnSite2Idx 	=\033[37m ./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx		  => Known site 2 Index
+
+\033[32m --cpus         =\033[37m 2									  => Default Cpus		
+
+\033[32m --generate	=\033[37m The default parameter generates vcf for all inputs + A cohorte Gvcf   
+\033[32m			 \033[37m  <-> onlyVCF 	 						  => generate vcf for all inputs    
+\033[32m			 \033[37m  <-> cohorteGVCF 						  => generate one file : the cohorte Gvcf   
+\033[32m			 \033[37m  <-> CSV 							  => nextflow main.nf --generate CSV --basedon <path-to-csv>
+\033[32m --basedon    	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 				          => First input csv to prepare CSVs based on it
+\033[32m --region	=\033[37m To extract specific region from initial mapped .bam  
+                                           Default : null  
+                                           exp: "chr1:position1-position2" \033[37m 
+"""}
+// Version   
 
 def DelMoroVersion(){   
 DelMoroWelcome()
@@ -108,7 +170,7 @@ log.info"""
 
  
 
-// Version Params 
+// Version 
 
 def DelMoroError(){   
 
