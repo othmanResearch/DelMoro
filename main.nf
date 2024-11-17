@@ -9,8 +9,8 @@ nextflow.enable.dsl = 2
 include {DelMoroWelcome	}	from './logos' 
 include {DelMoroParams	}	from './logos' 
 include {DelMoroVersion	} 	from './logos' 
+include {DelMoroHelp	} 	from './logos' 
 include {DelMoroError	} 	from './logos' 
-
 
 // Params 
   // 
@@ -20,13 +20,13 @@ include {DelMoroError	} 	from './logos'
 // channels 
 
   // Raw Reads to quality check 
-  RawREADS 		= params.RawReads 	? Channel.fromPath(params.RawReads, checkIfExists: true)       	
+  RawREADS 		= params.rawreads 	? Channel.fromPath(params.rawreads, checkIfExists: true)       	
 	       			             	 	  .splitCsv(header: true)  
        	       	                     		           .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) }	: Channel.empty() 
        	       
   // Raw Reads to be trimmed based on required features  : MINLEN , LEADING, TRAILING, SLIDINGWINDOW
        	
-  ReadsToBeTrimmed	= params.ToBeTrimmed 	? Channel.fromPath(params.ToBeTrimmed, checkIfExists: false)       	
+  ReadsToBeTrimmed	= params.tobetrimmed 	? Channel.fromPath(params.tobetrimmed, checkIfExists: false)       	
 	       						  .splitCsv(header: true)  
 	       						   .map { row -> tuple(row.patient_id,
        		      					    file(row.R1), 
@@ -36,18 +36,18 @@ include {DelMoroError	} 	from './logos'
        		         			 	        row.TRAILING, 
        		           				         row.SLIDINGWINDOW ) } 						: Channel.empty()
   // Trimmed reads      	       
-  ReadsToBeAligned		= params.ToBeAligned  	? Channel.fromPath(params.ToBeAligned, checkIfExists: false)       	
+  ReadsToBeAligned	= params.tobealigned  	? Channel.fromPath(params.tobealigned, checkIfExists: false)       	
 	       					 	  .splitCsv(header: true)  
        	      				          	   .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) }	: Channel.empty() 
 
        	       
   // reference
 
-  ref_gen_channel	= params.refGenome	? Channel.fromPath(params.refGenome).first()					: Channel.empty()
+  ref_gen_channel	= params.reference	? Channel.fromPath(params.reference).first()					: Channel.empty()
        
   // BamFiles channel
 
-  MappedReads 		= params.BamFiles	? Channel.fromPath(params.BamFiles, checkIfExists: false)  
+  MappedReads 		= params.bam	? Channel.fromPath(params.bam, checkIfExists: false)  
        	       						 .splitCsv(header: true)  
             						 .map{ row -> tuple(row.patient_id, file(row.BamFile))}			: Channel.empty() 
 	
@@ -58,7 +58,7 @@ include {DelMoroError	} 	from './logos'
   // knwon file 2 channel for BQSR       
          
   knwonSite2		= params.knwonSite2	? Channel.fromPath(params.knwonSite2, checkIfExists: false).first()  		: Channel.empty() 
-       
+
   // Indexes Channels 
 
 	// Aligner Indexs Bwa mem2 
@@ -106,39 +106,43 @@ if (params.exec == null ){
   DelMoroWelcome()   
   GenerateCSVs(preparecsv)
   
-  } else if (params.exec == 'ControlRawQuality') {	// check quality of raw reads
+  } else if (params.exec == 'rawqc') {	// check quality of raw reads
  
       QC_RAW_READS(RawREADS)  
 	
-      } else if (params.exec == 'Trim') {		// trim reads
+      } else if (params.exec == 'trim') {		// trim reads
 
         TRIM_READS(ReadsToBeTrimmed)  
 	
-   	} else if (params.exec == 'IndexRef') { 	// generate index for reference genome	
+   	} else if (params.exec == 'refidx') { 	// generate index for reference genome	
 
       	  INDEXING_REF_GENOME(ref_gen_channel) 
 	
-   	  } else if (params.exec == 'KnSIndex') { 	// generate index for known sites files
+   	  } else if (params.exec == 'knsidx') { 	// generate index for known sites files
 
       	    INDEXING_known_sites(knwonSite1,knwonSite2)  
 	
-   	    } else if (params.exec == 'Align') {	// align reads to reference
+   	    } else if (params.exec == 'align') {	// align reads to reference
 
   	      ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,ReadsToBeAligned) 
   	
-  	      } else if (params.exec == 'CallSNP') {	// Call snp
+  	      } else if (params.exec == 'callsnp') {	// Call snp
 
   	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads, IDXBAM,knwonSite1, IDXknS1,knwonSite2, IDXknS2 ) 
   	     
-  	      } else if ( params.exec == 'ShowParams'){
+  	      } else if ( params.exec == 'help'){
   	        
-  	         DelMoroParams()
+  	         DelMoroHelp()
   	       
-  	        } else if ( params.exec == 'Version' ) {
+  	        } else if ( params.exec == 'params' ) {
 	          
-	          DelMoroVersion()
+	          DelMoroParams()
+	         
+	          } else if ( params.exec == 'version' ) {
+	          
+	            DelMoroVersion()
 
-  	  	   } else { DelMoroError() }
+  	  	    } else { DelMoroError() }
   	      
  }
 
