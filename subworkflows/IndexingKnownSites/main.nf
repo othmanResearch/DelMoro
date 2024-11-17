@@ -15,12 +15,14 @@ take:
       DelMoroIDXKNSITESOutput()
       IndexKNownSites (knwonSite1,knwonSite2)     
       } else { 
-	    DelMoroWelcome() 
-	    print("\033[31m please specify --knwonSite1 and --knwonSite2 options (for knwons sites to be indexed ) \n For more details nextflow main.nf --exec ShowParams \033[37m")  }
+	DelMoroWelcome() 
+    	print("\033[31m Please specify valid parameters:\n")
+  	print("\033[31m  --knwonSite1 option ( --knwonSite1 knownsites/file1.vcf ) \n")
+  	print("\033[31m  and \n")
+  	print("\033[31m  --knwonSite2 option ( --knwonSite2 knownsites/file2.vcf ) \n")
+    	print("For details, run: nextflow main.nf --exec params\n\033[37m")
+    	}
   /*emit:
   */
 
 }
-
-
-	
