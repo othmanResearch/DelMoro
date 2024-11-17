@@ -53,11 +53,11 @@ include {DelMoroError	} 	from './logos'
 	
   // knwon file 1 channel for BQSR    
 
-  knwonSite1		= params.knwonSite1	? Channel.fromPath(params.knwonSite1, checkIfExists: false).first()   		: Channel.empty() 
+  knownSite1		= params.knownSite1	? Channel.fromPath(params.knownSite1, checkIfExists: false).first()   		: Channel.empty() 
        
   // knwon file 2 channel for BQSR       
          
-  knwonSite2		= params.knwonSite2	? Channel.fromPath(params.knwonSite2, checkIfExists: false).first()  		: Channel.empty() 
+  knownSite2		= params.knownSite2	? Channel.fromPath(params.knownSite2, checkIfExists: false).first()  		: Channel.empty() 
 
   // Indexes Channels 
 
@@ -120,7 +120,7 @@ if (params.exec == null ){
 	
    	  } else if (params.exec == 'knsidx') { 	// generate index for known sites files
 
-      	    INDEXING_known_sites(knwonSite1,knwonSite2)  
+      	    INDEXING_known_sites(knownSite1,knownSite2)  
 	
    	    } else if (params.exec == 'align') {	// align reads to reference
 
@@ -128,7 +128,7 @@ if (params.exec == null ){
   	
   	      } else if (params.exec == 'callsnp') {	// Call snp
 
-  	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads, IDXBAM,knwonSite1, IDXknS1,knwonSite2, IDXknS2 ) 
+  	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads, IDXBAM,knownSite1, IDXknS1,knownSite2, IDXknS2 ) 
   	     
   	      } else if ( params.exec == 'help'){
   	        
