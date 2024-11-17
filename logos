@@ -176,7 +176,7 @@ def DelMoroError(){
 
 DelMoroWelcome()
 log.info"""
-\033[31m ⚠︎  Please Verify The Typed Params \033[37m 
+\033[31m ⚠︎  Please Verify The Typed command \033[37m 
 """		}
 
 
