@@ -10,14 +10,17 @@ workflow TRIM_READS {
     	rawReads
     
   main: 
-  	if (params.exec != null && params.ToBeTrimmed != null) {
+  	if (params.exec != null && params.tobetrimmed != null) {
   	   DelMoroTRimmOutput()
        	   Trimming		( rawReads )			   	
 	   TrimmedQC		( Trimming.out.paired  )              
 	   MultiqcTrimmed	( TrimmedQC.out.collect() )
 	   } else { 
 	    DelMoroWelcome() 
-	    print("\033[31m please specify --ToBeTrimmed option (--ToBeTrimmed CSV ) \n For more details nextflow main.nf --exec ShowParams \033[37m")  }
+	    print("\033[31m Please specify valid parameters:\n")
+	    print("\033[31m  --tobetrimmed option (--tobetrimmed CSVs/2_SamplesheetForTrimming.csv ) \n")  
+    	    print("For details, run: nextflow main.nf --exec params\n\033[37m")
+	    }
        
        
          		
