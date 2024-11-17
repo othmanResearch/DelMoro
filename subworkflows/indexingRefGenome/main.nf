@@ -8,7 +8,7 @@ take:
     ref_gen_channel
 
   main: 
-  if (params.exec != null && params.refGenome != null ) {
+  if (params.exec != null && params.reference != null ) {
      DelMoroINXRefenceOutput()
      createIndex(ref_gen_channel)
      createDictionary(ref_gen_channel)
@@ -20,7 +20,11 @@ take:
     createIndexSamtools.out.samtools_index
 	} else { 
 	    DelMoroWelcome() 
-	    print("\033[31m please specify --refGenome option (--refGenome reference ) \n For more details nextflow main.nf --exec ShowParams \033[37m")  }
+	    print("\033[31m Please specify valid parameters:\n")
+    	    print("  --reference option ( --reference <reference-path> ) \n")
+    	    print("For details, run: nextflow main.nf --exec params\n\033[37m")
+			 
+	    }
        
 
 
