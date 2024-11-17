@@ -15,12 +15,12 @@ workflow GenerateCSVs {
      	      PATHTOCSV()
      	      WriteCSV(input) 
      	      } else { 
-     	      DelMoroWelcome()
-     	      print("\033[31m please specify --basedon option (--basedon CSV FILE) \n For more details nextflow main.nf --exec ShowParams \033[37m")  }
+     	     	DelMoroWelcome()
+    		print("\033[31m Please specify valid parameters:\n")
+    		print("  --basedon option ( --basedon CSVs/1_samplesheetForRawQC.csv )\n")
+  		print("For details, run: nextflow main.nf --exec params\n\033[37m")
+		}
 	}
-	
   /*emit:
   */
-
 }
- 
