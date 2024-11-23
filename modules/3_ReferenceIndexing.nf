@@ -55,7 +55,3 @@ process createIndexSamtools {
         samtools faidx ${ref}  --output ${ref}.fai                         
         """
 }
-
-
-
-
