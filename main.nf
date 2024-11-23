@@ -12,13 +12,11 @@ include {DelMoroVersion	} 	from './logos'
 include {DelMoroHelp	} 	from './logos' 
 include {DelMoroError	} 	from './logos' 
 
-// Params 
-  // 
-  preparecsv 		= params.basedon	? Channel.fromPath(params.basedon, checkIfExists: true)   			: Channel.empty()   	
-	       			             	 	  
-       	       
+	       			             	 	
 // channels 
-
+  // prepare required csv from an intial csv
+  preparecsv 		= params.basedon	? Channel.fromPath(params.basedon, checkIfExists: true)   			: Channel.empty()   	
+ 
   // Raw Reads to quality check 
   RawREADS 		= params.rawreads 	? Channel.fromPath(params.rawreads, checkIfExists: true)       	
 	       			             	 	  .splitCsv(header: true)  
@@ -50,6 +48,9 @@ include {DelMoroError	} 	from './logos'
   MappedReads 		= params.bam	? Channel.fromPath(params.bam, checkIfExists: false)  
        	       						 .splitCsv(header: true)  
             						 .map{ row -> tuple(row.patient_id, file(row.BamFile))}			: Channel.empty() 
+            						
+  // target bed file to extract coverage 
+  Target		= params.bedtarget	? Channel.fromPath(params.bedtarget, checkIfExists: false).first()		: Channel.empty()      
 	
   // knwon file 1 channel for BQSR    
 
@@ -124,7 +125,7 @@ if (params.exec == null ){
 	
    	    } else if (params.exec == 'align') {	// align reads to reference
 
-  	      ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,ReadsToBeAligned) 
+  	      ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,ReadsToBeAligned,Target) 
   	
   	      } else if (params.exec == 'callsnp') {	// Call snp
 
