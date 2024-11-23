@@ -7,6 +7,7 @@ process alignReadsToRef {
 	conda "bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.21"
     	tag "ALIGNING GENOMES TO REFERENCE"
     	publishDir "${params.outdir}/Mapping", mode: 'copy'
+    	resourceLimits cpus: 8, memory: 15.GB, time: 24.h
 
     	input:
         	path refGenome
@@ -119,7 +120,7 @@ process Extractregion {
 process GenerateStat {
     	conda "bioconda::samtools=1.21"
     	tag "STATISCTICS FOR BAM-SAM FILES"
-    	publishDir "${params.outdir}/Mapping/Metrics", mode: 'copy'
+    	publishDir "${params.outdir}/Mapping/BamMetrics", mode: 'copy'
     	
     	input:
       		path sorted_labeled_bam
