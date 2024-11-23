@@ -13,3 +13,4 @@ dependencies:
  - picard=3.2.0
  - bwa-mem2=2.2.1 
  - trimmomatic=0.39 
+ - bamtocov=2.7.0
