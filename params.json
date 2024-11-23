@@ -23,6 +23,7 @@
 	"outdir"	: "./outdir",
 
 	"generate"	: null,
-	"region"	: null    
+	"region"	: null,
+	"bedtarget"	: null
 }
 
