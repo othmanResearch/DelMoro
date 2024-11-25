@@ -100,7 +100,7 @@ The user have the ability to run each step by specifying parameter ( inputs and 
 
 	"BamIndex"	: "./outdir/Indexes/BamFiles/*.bai",					   	  
 
-	"ALIGNERIndex"	: "./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}",          
+	"ALIGNERIndex"	: "./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}",       
 	"DictGATK"	: "./outdir/Indexes/Reference/reference.dict",				        
 	"SamtoolsIndex"	: "./outdir/Indexes/Reference/reference.fa.fai",  			              
 
@@ -112,7 +112,8 @@ The user have the ability to run each step by specifying parameter ( inputs and 
 
 	"generate"	: null,
 	"region"	: null,
-	"bedtarget"	: null
+	"bedtarget"	: null,
+	"aligner"	: null
 }
 
 ~~~
