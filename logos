@@ -129,37 +129,42 @@ log.info"""
 \033[32m                                                               DEFAULT PARAMETERS
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\033[32m --outdir       =\033[37m ./outdir  								  => ouptuts directory
+\033[32m --cpus         =\033[37m 2									  	=> Default Cpus		
 
-\033[32m --reference 	=\033[37m ./Reference_Genome/reference.fa					  => Reference file path
-\033[32m --rawreads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 					  => Raw reads paths 
-\033[32m --tobetrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv					  => Raw reads paths + trimmomatic parameters
-\033[32m --tobealigned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv					  => Trimmed read paths 
-\033[32m --bam		=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  					  => Bam files paths 
+\033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
 
-\033[32m --knownSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  => knownsites should be .vcf  
+\033[32m --reference 	=\033[37m ./Reference_Genome/reference.fa					  	=> Reference file path
+\033[32m --rawreads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 					  	=> Raw reads paths 
+\033[32m --tobetrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv					  	=> Raw reads paths + trimmomatic parameters
+\033[32m --tobealigned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv					  	=> Trimmed read paths 
+\033[32m --bam		=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  					  	=> Bam files paths 
+
+\033[32m --knownSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  	=> knownsites should be .vcf  
 \033[32m --knownSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
 
-\033[32m --BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  => Bam Files Indexes
+\033[32m --BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  	=> Bam Files Indexes
 
-\033[32m --ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac}  => Bwa-mem2 		Reference Indexes
-\033[32m --Dictionary	=\033[37m ./outdir/Indexes/Reference/reference.dict				  => GATK Dictionary 	Reference Index
-\033[32m --SamtoolsIndex=\033[37m ./outdir/Indexes/Reference/reference.fa.fai  			  	  => Samtools fai 	Reference Index
+\033[32m --ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}	=> Bwa			Reference Indexes
+\033[32m --Dictionary	=\033[37m ./outdir/Indexes/Reference/reference.dict				  	=> GATK Dictionary 	Reference Index
+\033[32m --SamtoolsIndex=\033[37m ./outdir/Indexes/Reference/reference.fa.fai  			  	  	=> Samtools fai 	Reference Index
+\033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
+\033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    
 
-\033[32m --KnSite1Idx 	=\033[37m ./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx => Known site 1 Index
-\033[32m --KnSite2Idx 	=\033[37m ./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx		  => Known site 2 Index
-
-\033[32m --cpus         =\033[37m 2									  => Default Cpus		
+\033[32m --KnSite1Idx 	=\033[37m ./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx 	=> Known site 1 Index
+\033[32m --KnSite2Idx 	=\033[37m ./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx		  	=> Known site 2 Index
 
 \033[32m --generate	=\033[37m The default parameter generates vcf for all inputs + A cohorte Gvcf   
-\033[32m			 \033[37m  <-> onlyVCF 	 						  => generate vcf for all inputs    
-\033[32m			 \033[37m  <-> cohorteGVCF 						  => generate one file : the cohorte Gvcf   
-\033[32m			 \033[37m  <-> CSV 							  => nextflow main.nf --generate CSV --basedon <path-to-csv>
-\033[32m                         \033[37m  <-> coverage							  => --generate coverage --bedtarget BEDFILE 
-\033[32m --basedon    	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 				          => First input csv to prepare CSVs based on it
+\033[32m			 \033[37m  <-> onlyVCF 	 						  	=> generate vcf for all inputs    
+\033[32m			 \033[37m  <-> cohorteGVCF 						 	=> generate one file : the cohorte Gvcf   
+\033[32m			 \033[37m  <-> CSV 							  	=> nextflow main.nf --generate CSV --basedon <path-to-csv>
+\033[32m                         \033[37m  <-> coverage							  	=> --generate coverage --bedtarget BEDFILE 
+
+\033[32m --basedon    	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 				          	=> First input csv to prepare CSVs based on it
+
 \033[32m --region	=\033[37m To extract specific region from initial mapped .bam  
                                            Default : null  
                                            exp: "chr1:position1-position2" 
+                                           
 \033[32m --bedtarget 	=\033[37m Target BEDFILE to extract coverage from bam file
                                            Default : null   \033[37m
                                            
