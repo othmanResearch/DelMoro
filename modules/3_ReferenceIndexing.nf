@@ -6,7 +6,24 @@
 
 process createIndex {
 	conda "bioconda::gatk4=4.4.0.0 bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.19"
-	tag "CREATING INDEX FOR REF GENOME FOR ALIGNER"
+	tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
+        publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
+
+     	input:
+     		path ref
+     		
+   	output:
+        	path "*.{amb,ann,bwt,pac,sa}" 	, emit: "bwa_index"
+    	script:
+        """
+        bwa index ${ref}               
+        """
+
+}
+
+process createIndexBWAMEM2 {
+	conda "bioconda::gatk4=4.4.0.0 bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.19"
+	tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
         publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
 
      	input:
@@ -19,6 +36,9 @@ process createIndex {
         bwa-mem2 index ${ref}               
         """
 }
+
+
+
 ////////////////////////////////////////////////////
 //	CREATING DICTIONARY FOR REF GENOME FOR ALIGNER
 
