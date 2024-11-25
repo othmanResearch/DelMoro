@@ -2,8 +2,28 @@
 
 // Alignment based-reference
 
-
 process alignReadsToRef {
+	conda "bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.21"
+    	tag "ALIGNING GENOMES TO REFERENCE"
+    	publishDir "${params.outdir}/Mapping", mode: 'copy'
+
+    	input:
+        	path refGenome
+        	path indexes
+        	tuple val(patient_id), path(R1), path(R2)
+
+   	output:
+        	path "${patient_id}_sor.bam" , emit : sorted_bam //  Sorted Bam file
+       
+    	script:
+        """
+       	bwa mem -t ${params.cpus} ${refGenome} ${R1} ${R2} \\
+        		| samtools view -Sb -@ ${params.cpus} \\
+                        | samtools sort -@ ${params.cpus}  -o ${patient_id}_sor.bam           
+        """
+}
+
+process alignReadsToRefBWAMEM2 {
 	conda "bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.21"
     	tag "ALIGNING GENOMES TO REFERENCE"
     	publishDir "${params.outdir}/Mapping", mode: 'copy'
@@ -23,7 +43,6 @@ process alignReadsToRef {
                         | samtools sort -@ ${params.cpus}  -o ${patient_id}_sor.bam           
         """
 }
-
  
 // Assigning ReadGroups
 
