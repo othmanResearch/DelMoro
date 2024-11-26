@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////
 
 process createIndex {
-	conda "bioconda::gatk4=4.4.0.0 bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.19"
+	conda "bioconda::gatk4=4.4.0.0 bioconda::bwa=0.7.18 bioconda::samtools=1.19"
 	tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
         publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
 
