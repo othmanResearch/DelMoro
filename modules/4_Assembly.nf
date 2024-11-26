@@ -3,7 +3,7 @@
 // Alignment based-reference
 
 process alignReadsToRef {
-	conda "bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.21"
+	conda "bioconda::bwa=0.7.18 bioconda::samtools=1.21"
     	tag "ALIGNING GENOMES TO REFERENCE"
     	publishDir "${params.outdir}/Mapping", mode: 'copy'
 
