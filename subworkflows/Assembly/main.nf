@@ -61,7 +61,16 @@ workflow ALIGN_TO_REF_GENOME {
                 			Extractregion 	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), IndexBam.out.IDXBAM.collect())
 					IndexRegion	(Extractregion.out.collectFile(sort: true)	) 
 					GenerateStat	(assignReadGroup.out.sorted_labeled_bam.collectFile(sort: true), markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)
-		 			}
+		 			} else {  
+	 					DelMoroWelcome()
+    						print("\033[31m Please specify valid parameters:\n")
+    						print("  --reference option ( --reference <reference-path> )\n")
+   						print("  --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n")
+    						print("  --region ( formatted as 'chr:start-end' )\n")
+    						print("  --generate coverage --bedtarget (bedfile)\n")
+    	    					print("  --aligner bwamem2 , Default bwa ( not to be mentionned ) \n")
+    						print("For details, run: nextflow main.nf --exec params\n\033[37m")
+						}
 	
   } else  if ( params.aligner == "bwamem2" ) {
  
@@ -110,7 +119,16 @@ workflow ALIGN_TO_REF_GENOME {
                 			Extractregion 	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), IndexBam.out.IDXBAM.collect())
 					IndexRegion	(Extractregion.out.collectFile(sort: true)	) 
 					GenerateStat	(assignReadGroup.out.sorted_labeled_bam.collectFile(sort: true), markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)
-		 			}
+		 			}  else {  
+	 					DelMoroWelcome()
+    						print("\033[31m Please specify valid parameters:\n")
+    						print("  --reference option ( --reference <reference-path> )\n")
+   						print("  --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n")
+    						print("  --region ( formatted as 'chr:start-end' )\n")
+    						print("  --generate coverage --bedtarget (bedfile)\n")
+    	    					print("  --aligner bwamem2 , Default bwa ( not to be mentionned ) \n")
+    						print("For details, run: nextflow main.nf --exec params\n\033[37m")
+					}
  	} else {  
 	 	DelMoroWelcome()
     		print("\033[31m Please specify valid parameters:\n")
