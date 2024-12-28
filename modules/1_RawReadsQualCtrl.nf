@@ -6,7 +6,8 @@ process FastqQc {
         conda 'bioconda::fastqc=0.12.1'
         tag "GENERATING QUALITY FOR RAW READS"
         publishDir "${params.outdir}/QualityControl/RAW/", mode: 'copy'
-	container "biocontainers/fastqc"
+	errorStrategy 'ignore'
+	
         input:
         	tuple val(patient_id), path(R1), path(R2)
 
@@ -15,11 +16,9 @@ process FastqQc {
 
         script:
         """
-        fastqc -t {params.cpus} ${R1} ${R2} 
+        fastqc -t ${params.cpus} ${R1} ${R2} 
         """
 }
-
-
 
 // Gathering Qc Reports ;
 
