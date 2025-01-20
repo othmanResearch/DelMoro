@@ -1,7 +1,18 @@
 // Variant Calling subworkflow 
 
-include {DelMoroWelcome; DelMoroVarCallOutput} from '../../logos'	
-include {BaseRecalibrator; ApplyBQSR; IndexRecalBam; RecalHaploCall; VarToTable; SnpFilter; CreateGVCF; IndexGVCF; CombineGvcfs; GenotypeGvcfs} from '../../modules/5_variantSNPcall.nf' 
+include { DelMoroWelcome	} from '../../logos'
+include { DelMoroVarCallOutput	} from '../../logos'
+	
+include { BaseRecalibrator	} from '../../modules/5_variantSNPcall.nf'  
+include { ApplyBQSR		} from '../../modules/5_variantSNPcall.nf'  
+include { IndexRecalBam		} from '../../modules/5_variantSNPcall.nf'  
+include { RecalHaploCall	} from '../../modules/5_variantSNPcall.nf'  
+include { VarToTable		} from '../../modules/5_variantSNPcall.nf'  
+include { SnpFilter		} from '../../modules/5_variantSNPcall.nf'  
+include { CreateGVCF		} from '../../modules/5_variantSNPcall.nf'  
+include { IndexGVCF		} from '../../modules/5_variantSNPcall.nf'  
+include { CombineGvcfs		} from '../../modules/5_variantSNPcall.nf'  
+include { GenotypeGvcfs		} from '../../modules/5_variantSNPcall.nf' 
 
 
 workflow Call_SNPs_with_GATK {

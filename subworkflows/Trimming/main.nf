@@ -1,8 +1,11 @@
 // Trimming subworkflow 
 
-include {DelMoroWelcome; DelMoroTRimmOutput} from '../../logos'	
-include {Trimming; TrimmedQC; MultiqcTrimmed} from '../../modules/2_Trimming.nf' 
+include { DelMoroWelcome	} from '../../logos'	
+include { DelMoroTRimmOutput	} from '../../logos'	
 
+include { Trimming		} from '../../modules/2_Trimming.nf' 
+include { TrimmedQC 		} from '../../modules/2_Trimming.nf' 
+include { MultiqcTrimmed	} from '../../modules/2_Trimming.nf' 
 
 workflow TRIM_READS {
    take:
