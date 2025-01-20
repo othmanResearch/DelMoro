@@ -1,6 +1,6 @@
 {
 	"basedon"	: "./CSVs/1_samplesheetForRawQC.csv",  		 
-	"reference"	: "./Reference_Genome/reference.fa",		 
+	"reference"	: "./Reference_Genome/*.fa",		 
 
 	"rawreads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
 	"tobetrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
@@ -12,9 +12,9 @@
 
 	"BamIndex"	: "./outdir/Indexes/BamFiles/*.bai",					   	  
 
-	"ALIGNERIndex"	: "./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}",       
-	"DictGATK"	: "./outdir/Indexes/Reference/reference.dict",				        
-	"SamtoolsIndex"	: "./outdir/Indexes/Reference/reference.fa.fai",  			              
+	"ALIGNERIndex"	: "./outdir/Indexes/Reference/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}",       
+	"DictGATK"	: "./outdir/Indexes/Reference/*.dict",				        
+	"SamtoolsIndex"	: "./outdir/Indexes/Reference/*.fa.fai",  			              
 
 	"KnSite1Idx"	: "./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx",    
 	"KnSite2Idx"	: "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx",		   

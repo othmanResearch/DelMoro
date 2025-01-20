@@ -133,7 +133,7 @@ log.info"""
 
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
 
-\033[32m --reference 	=\033[37m ./Reference_Genome/reference.fa					  	=> Reference file path
+\033[32m --reference 	=\033[37m ./Reference_Genome/*.fa						  	=> Reference file path
 \033[32m --rawreads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 					  	=> Raw reads paths 
 \033[32m --tobetrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv					  	=> Raw reads paths + trimmomatic parameters
 \033[32m --tobealigned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv					  	=> Trimmed read paths 
@@ -144,9 +144,9 @@ log.info"""
 
 \033[32m --BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  	=> Bam Files Indexes
 
-\033[32m --ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/reference.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}	=> Bwa			Reference Indexes
-\033[32m --Dictionary	=\033[37m ./outdir/Indexes/Reference/reference.dict				  	=> GATK Dictionary 	Reference Index
-\033[32m --SamtoolsIndex=\033[37m ./outdir/Indexes/Reference/reference.fa.fai  			  	  	=> Samtools fai 	Reference Index
+\033[32m --ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}		=> Bwa			Reference Indexes
+\033[32m --Dictionary	=\033[37m ./outdir/Indexes/Reference/*.dict				  		=> GATK Dictionary 	Reference Index
+\033[32m --SamtoolsIndex=\033[37m ./outdir/Indexes/Reference/*.fa.fai  			  	  		=> Samtools fai 	Reference Index
 \033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
 \033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    
 
