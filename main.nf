@@ -45,9 +45,11 @@ include {DelMoroError	} 	from './logos'
        
   // BamFiles channel
 
-  MappedReads 		= params.bam	? Channel.fromPath(params.bam, checkIfExists: false)  
-       	       						 .splitCsv(header: true)  
-            						 .map{ row -> tuple(row.patient_id, file(row.BamFile))}			: Channel.empty() 
+  MappedReads = params.bam ? Channel.fromPath(params.bam, checkIfExists: false)
+                                   .splitCsv(header: true)
+                                    .map { row -> tuple(row.patient_id, file(row.BamFile)) }
+                               	     .toSortedList { a, b -> a[0] <=> b[0] }   	 
+                                      .flatMap { it } 										: Channel.empty()
             						
   // target bed file to extract coverage 
   Target		= params.bedtarget	? Channel.fromPath(params.bedtarget, checkIfExists: false).first()		: Channel.empty()      
