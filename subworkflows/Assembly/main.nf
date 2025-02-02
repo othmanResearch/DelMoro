@@ -1,7 +1,7 @@
 // Assembly subworkflow 
 
-include { DelMoroWelcome  	 } from '../../logos'
-include { DelMoroAssemblyOutput	 } from '../../logos'
+include { DelMoroWelcome  	 } from '../../.logos'
+include { DelMoroAssemblyOutput	 } from '../../.logos'
 	
 include { alignReadsToRef	 } from '../../modules/4_Assembly.nf' 
 include { alignReadsToRefBWAMEM2 } from '../../modules/4_Assembly.nf' 

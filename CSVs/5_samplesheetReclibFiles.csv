@@ -1,0 +1,4 @@
+patient_id,BamFile
+001,./outdir/Mapping/001_sor@RG@MD.bam.recal.bam
+002,./outdir/Mapping/002_sor@RG@MD.bam.recal.bam
+003,./outdir/Mapping/003_sor@RG@MD.bam.recal.bam
