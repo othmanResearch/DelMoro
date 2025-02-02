@@ -6,11 +6,11 @@ nextflow.enable.dsl = 2
 
 // Interactive Design while Running DelMoro
 
-include {DelMoroWelcome	}	from './logos' 
-include {DelMoroParams	}	from './logos' 
-include {DelMoroVersion	} 	from './logos' 
-include {DelMoroHelp	} 	from './logos' 
-include {DelMoroError	} 	from './logos' 
+include {DelMoroWelcome	}	from './.logos' 
+include {DelMoroParams	}	from './.logos' 
+include {DelMoroVersion	} 	from './.logos' 
+include {DelMoroHelp	} 	from './.logos' 
+include {DelMoroError	} 	from './.logos' 
 
 	       			             	 	
 // channels 
@@ -42,15 +42,21 @@ include {DelMoroError	} 	from './logos'
   // reference
 
   ref_gen_channel	= params.reference	? Channel.fromPath(params.reference).first()					: Channel.empty()
-       
+  
   // BamFiles channel
-
-  MappedReads = params.bam ? Channel.fromPath(params.bam, checkIfExists: false)
-                                   .splitCsv(header: true)
-                                    .map { row -> tuple(row.patient_id, file(row.BamFile)) }
-                               	     .toSortedList { a, b -> a[0] <=> b[0] }   	 
-                                      .flatMap { it } 										: Channel.empty()
-            						
+    // used for base recalibration
+    MappedReads 	= params.bam 		? Channel.fromPath(params.bam, checkIfExists: false)
+                                   			  .splitCsv(header: true)
+                                    		  	   .map { row -> tuple(row.patient_id, file(row.BamFile)) }
+                               	     		  	    .toSortedList { a, b -> a[0] <=> b[0] }   	 
+                                      		   	     .flatMap { it } 							: Channel.empty()
+    // used for variant calling
+    ToVarCall		= params.tovarcall      ? Channel.fromPath(params.tovarcall, checkIfExists: false)
+                                   			  .splitCsv(header: true)
+                                    		  	   .map { row -> tuple(row.patient_id, file(row.BamFile)) }
+                               	     		  	    .toSortedList { a, b -> a[0] <=> b[0] }   	 
+                                      		   	     .flatMap { it } 							: Channel.empty()
+    						
   // target bed file to extract coverage 
   Target		= params.bedtarget	? Channel.fromPath(params.bedtarget, checkIfExists: false).first()		: Channel.empty()      
 	
@@ -64,42 +70,27 @@ include {DelMoroError	} 	from './logos'
 
   // Indexes Channels 
 
-	// Aligner Indexs Bwa mem2 
-	Channel.fromPath(params.ALIGNERIndex, checkIfExists: false)  
-       		.set{ALignidxREF}
+    // Aligner Indexs Bwa mem2 
+    ALignidxREF		= params.ALIGNERIndex 	? Channel.fromPath(params.ALIGNERIndex, checkIfExists: false)  			: Channel.empty()
        	
-       	//  Dictionary Indexs Bwa mem2 
-	Channel.fromPath(params.DictGATK, checkIfExists: false)  
-       		.set{DictidxREF}
+    //  Dictionary Indexs Bwa mem2 
+    DictidxREF		= params.DictGATK	? Channel.fromPath(params.DictGATK, checkIfExists: false)  			: Channel.empty()
        	
-       	// SamtoolsIndex
-       	Channel.fromPath(params.SamtoolsIndex, checkIfExists: false)  
-       		.set{SamtidxREF}
+    // SamtoolsIndex
+    SamtidxREF    	= params.SamtoolsIndex 	? Channel.fromPath(params.SamtoolsIndex, checkIfExists: false)  		: Channel.empty()
        		
-       	// Bam Files Index
-       	Channel.fromPath(params.BamIndex, checkIfExists: false)  
-       		.set{IDXBAM}
+    // Bam Files Index
+    IDXBAM     		= params.BamIndex	? Channel.fromPath(params.BamIndex, checkIfExists: false)  			: Channel.empty()
 
-       	// knwon Site1 index 
-    	Channel.fromPath(params.KnSite1Idx, checkIfExists: false)  
-    		.first()
-       		.set{IDXknS1}
-     	
-     	// knwon Site2 index 
-    	Channel.fromPath(params.KnSite2Idx, checkIfExists: false)  
-    		.first()
-       		.set{IDXknS2}	
-
-
-// subworkflows *
-include {GenerateCSVs} 		from './subworkflows/GenerateCSV'
-include {QC_RAW_READS} 		from './subworkflows/RawQualCtrl'
-include {TRIM_READS} 		from './subworkflows/Trimming'
-include {INDEXING_REF_GENOME} 	from './subworkflows/indexingRefGenome'
-include {INDEXING_known_sites} 	from './subworkflows/IndexingKnownSites'
-include {ALIGN_TO_REF_GENOME} 	from './subworkflows/Assembly'
-include {Call_SNPs_with_GATK} 	from './subworkflows/variantcalling'
-
+   
+// subworkflows 
+include { GenerateCSVs		} from './subworkflows/GenerateCSV'
+include { QC_RAW_READS		} from './subworkflows/RawQualCtrl'
+include { TRIM_READS		} from './subworkflows/Trimming'
+include { INDEXING_REF_GENOME	} from './subworkflows/indexingRefGenome'
+include { ALIGN_TO_REF_GENOME	} from './subworkflows/Assembly'
+include { BaseQuScoReac 	} from './subworkflows/BQSR'
+include { Call_SNPs_with_GATK	} from './subworkflows/variantcalling'
 
 workflow {
   params.exec = null  // Default to 'none' if not provided
@@ -120,37 +111,33 @@ if (params.exec == null ){
    	} else if (params.exec == 'refidx') { 	// generate index for reference genome	
 
       	  INDEXING_REF_GENOME(ref_gen_channel) 
-	
-   	  } else if (params.exec == 'knsidx') { 	// generate index for known sites files
+ 
+   	  } else if (params.exec == 'align') {	// align reads to reference
 
-      	    INDEXING_known_sites(knownSite1,knownSite2)  
-	
-   	    } else if (params.exec == 'align') {	// align reads to reference
-
-  	      ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,ReadsToBeAligned,Target) 
+  	    ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,ReadsToBeAligned,Target) 
   	
+  	    } else if (params.exec == 'bqsr') {
+  	      
+  	      BaseQuScoReac(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads,IDXBAM,knownSite1,knownSite2 )
+  	          
   	      } else if (params.exec == 'callsnp') {	// Call snp
-
-  	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads, IDXBAM,knownSite1, IDXknS1,knownSite2, IDXknS2 ) 
+ 
+     	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,ToVarCall,IDXBAM) 
   	     
-  	      } else if ( params.exec == 'help'){
+  	        } else if ( params.exec == 'help'){
   	        
-  	         DelMoroHelp()
+  	          DelMoroHelp()
   	       
-  	        } else if ( params.exec == 'params' ) {
+  	          } else if ( params.exec == 'params' ) {
 	          
-	          DelMoroParams()
+	            DelMoroParams()
 	         
-	          } else if ( params.exec == 'version' ) {
+	            } else if ( params.exec == 'version' ) {
 	          
-	            DelMoroVersion()
+	              DelMoroVersion()
 
   	  	    } else { DelMoroError() }
-  	      
+   
  }
-
-
-
-
-
-
+ 
+ 

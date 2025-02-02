@@ -1,30 +1,22 @@
-{
+{	
+	"cpus"		: 8,
+	"outdir"	: "outdirbasedonjson",
+	
 	"basedon"	: "./CSVs/1_samplesheetForRawQC.csv",  		 
-	"reference"	: "./Reference_Genome/*.fa",		 
+	"reference"	: "./Reference_Genome/reference.fa",		 
 
-	"rawreads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
+ 	"rawreads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
 	"tobetrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
 	"tobealigned"	: "./CSVs/3_samplesheetForAssembly.csv",		 
-	"bam"		: "./CSVs/4_samplesheetForBamFiles.csv",  			 
+	"bam"		: "./CSVs/4_samplesheetForBamFiles.csv",
+	"tovarcall"	: "./CSVs/5_samplesheetReclibFiles.csv",	  			 		
 
+	"_comment"	: "for base recalibration let either knownSite1 & knownSite2 or ivcf1 & ivcf2",
+	
 	"knownSite1"	: "./knownsites/1000g_gold_standard.indels.filtered.vcf", 	 
-	"knownSite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",			
-
-	"BamIndex"	: "./outdir/Indexes/BamFiles/*.bai",					   	  
-
-	"ALIGNERIndex"	: "./outdir/Indexes/Reference/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}",       
-	"DictGATK"	: "./outdir/Indexes/Reference/*.dict",				        
-	"SamtoolsIndex"	: "./outdir/Indexes/Reference/*.fa.fai",  			              
-
-	"KnSite1Idx"	: "./outdir/Indexes/knownSites/1000g_gold_standard.indels.filtered.vcf.idx",    
-	"KnSite2Idx"	: "./outdir/Indexes/knownSites/GCF.38.filtered.renamed.vcf.idx",		   
-
-	"cpus"		: 8,
-	"outdir"	: "./outdir",
-
-	"generate"	: null,
-	"region"	: null,
-	"bedtarget"	: null,
-	"aligner"	: null
+	"knownSite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",	
+	
+	"ivcf1"		: "GRCh38.mills1000", 	 
+	"ivcf2"		: "GRCh38.omni"		  
 }
 

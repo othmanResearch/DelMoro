@@ -3,40 +3,43 @@
 // Check Raw reads Quality ;
 
 process FastqQc {
-        conda 'bioconda::fastqc=0.12.1'
-        tag "GENERATING QUALITY FOR RAW READS"
-        publishDir "${params.outdir}/QualityControl/RAW/", mode: 'copy'
-	errorStrategy 'ignore'
+    tag "GENERATING QUALITY FOR RAW READS"
+    publishDir "${params.outdir}/QualityControl/RAW/", mode: 'copy'
+    errorStrategy 'ignore'
+
+    conda "bioconda::fastqc=0.12.1"
+    container "staphb/fastqc:0.12.1"
+
+    input:
+	tuple val(patient_id), path(R1), path(R2)
 	
-        input:
-        	tuple val(patient_id), path(R1), path(R2)
+    output:
+        path "*.{html,zip}"
 
-        output:
-        	path "*.{html,zip}"
-
-        script:
-        """
-        fastqc -t ${params.cpus} ${R1} ${R2} 
-        """
+    script:
+    """
+    fastqc -t ${params.cpus} ${R1} ${R2}
+    """
 }
 
 // Gathering Qc Reports ;
 
 process ReadsMultiqc {
-	conda 'bioconda::multiqc=1.25.1'
+    tag "Gathering Multiqc FOR RAW READS"
+    publishDir "${params.outdir}/QualityControl/RAW/multiqc/" ,  mode:'copy'
 
-    	tag "Gathering Multiqc FOR RAW READS"
-        publishDir "${params.outdir}/QualityControl/RAW/multiqc/" ,  mode:'copy'
-        
-        input:
-            path (fastqc)  
+    conda "bioconda::multiqc=1.27"
+    container "multiqc/multiqc:latest"
+
+    input:
+        path (fastqc)
             
-        output:
-            path "{multiqc_data,multiqc_report.html}" 
+    output:
+        path "{multiqc_data,multiqc_report.html}"
            
-        script:
-        """
-        multiqc .
-        """
+    script:
+    """
+    multiqc . --ai
+    """
 }
 

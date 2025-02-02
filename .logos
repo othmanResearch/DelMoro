@@ -1,0 +1,303 @@
+// DelMoro Graphics File 
+
+
+// Welcome Delmoro 
+
+def DelMoroWelcome(){   
+
+log.info"""                                                                                                                                                                                                                                                         
+\033[37m  DDDDDDDDDDDDD                           \033[37mLLLLLLLLLLL             \033[31mMMMMMMMM               MMMMMMMM                                                      
+\033[37m  D::::::::::::DDD                        \033[37mL:::::::::L             \033[31mM:::::::M             M:::::::M                                                      
+\033[37m  D:::::::::::::::DD                      \033[37mL:::::::::L             \033[31mM::::::::M           M::::::::M                                                      
+\033[37m  DDD:::::DDDDD:::::D                     \033[37mLL:::::::LL             \033[31mM:::::::::M         M:::::::::M                                                      
+\033[37m   D:::::D    D:::::D    eeeeeeeeeeee     \033[37mL:::::L                 \033[31mM::::::::::M       M::::::::::M\033[37m   ooooooooooo   rrrrr   rrrrrrrrr      ooooooooooo   
+\033[37m   D:::::D     D:::::D  ee::::::::::::ee  \033[37mL:::::L                 \033[31mM:::::::::::M     M:::::::::::M\033[37m oo:::::::::::oo r::::rrr:::::::::r   oo:::::::::::oo 
+\033[37m   D:::::D     D:::::D e::::::eeeee:::::ee\033[37mL:::::L                 \033[31mM:::::::M::::M   M::::M:::::::M\033[37mo:::::::::::::::or:::::::::::::::::r o:::::::::::::::o
+\033[37m   D:::::D     D:::::De::::::e     e:::::e\033[37mL:::::L                 \033[31mM::::::M M::::M M::::M M::::::M\033[37mo:::::ooooo:::::orr::::::rrrrr::::::ro:::::ooooo:::::o
+\033[37m   D:::::D     D:::::De:::::::eeeee::::::e\033[37mL:::::L                 \033[31mM::::::M  M::::M::::M  M::::::M\033[37mo::::o     o::::o r:::::r     r:::::ro::::o     o::::o
+\033[37m   D:::::D     D:::::De:::::::::::::::::e \033[37mL:::::L                 \033[31mM::::::M   M:::::::M   M::::::M\033[37mo::::o     o::::o r:::::r     rrrrrrro::::o     o::::o
+\033[37m   D:::::D     D:::::De::::::eeeeeeeeeee  \033[37mL:::::L                 \033[31mM::::::M    M:::::M    M::::::M\033[37mo::::o     o::::o r:::::r            o::::o     o::::o
+\033[37m   D:::::D    D:::::D e:::::::e           \033[37mL:::::L         LLLLLLLL\033[31mM::::::M     MMMMM     M::::::M\033[37mo::::o     o::::o r:::::r            o::::o     o::::o
+\033[37m DDD:::::DDDDD:::::D  e::::::::e          \033[37mLL:::::::LLLLLLLLL:::::L\033[31mM::::::M               M::::::M\033[37mo:::::ooooo:::::o r:::::r            o:::::ooooo:::::o
+\033[37m D:::::::::::::::DD    e::::::::eeeeeeee  \033[37mL::::::::::::::::::::::L\033[31mM::::::M               M::::::M\033[37mo:::::::::::::::o r:::::r            o:::::::::::::::o
+\033[37m D::::::::::::DDD       ee:::::::::::::e  \033[37mL::::::::::::::::::::::L\033[31mM::::::M               M::::::M\033[37m oo:::::::::::oo  r:::::r             oo:::::::::::oo 
+\033[37m DDDDDDDDDDDDD            eeeeeeeeeeeeee  \033[37mLLLLLLLLLLLLLLLLLLLLLLLL\033[31mMMMMMMMM               MMMMMMMM\033[37m   ooooooooooo    rrrrrrr               ooooooooooo   
+
+                                                                    
+\033[37m                                                                        \033[31m X
+\033[37m         o O        o O       o O       o o       o O        o O o       o                    o O       o       o O       o O      o O       o O    
+\033[37m       o | | O    o | | O   o | | O   o | |O     o| | O    o | | | O      o                 o | | O   o | O   o | | O    o| | O  o | | O   o | | O
+\033[37m O | | | | | | | O  | | | | O | | | | O | | o | O | | | | O  | | | | o O O O O O O O O O O O || | | | O | | | O | | | | O | | | |  | | | | | | | | | | O 
+\033[37m       o | | o    O | | o   O | | o   O | o      O| | o    O | | | o          o             O | | o   O | o   O | | o   O | | o  O | | o   O | | o 
+\033[37m         o o        O o       O o       O         O o        O o o             o              O o       O       O o       O o      O o       O o     
+                                                                                \033[31m o o X\033[37m
+
+\033[32m
+Usage   :\033[37m nextflow main.nf --exec <\033[32mcommand\033[37m> <Params>
+
+Command : - \033[32mrawqc\033[37m 	: Check           quality      of     raw           reads. 
+	  - \033[32mtrim\033[37m 	: Remove low-quality bp and adapters & checks its quality.
+	  - \033[32mrefidx\033[37m 	: Index   the    reference   genome    for      alignment.
+	  - \033[32malign\033[37m 	: Align     reads      to     the     reference    genome.
+	  - \033[32mbqsr\033[37m 	: Base 		Quality 	Score	    recalibration.
+	  - \033[32mcallsnp\033[37m 	: Detect           SNPs      from      aligned      reads.
+	  - \033[32mhelp\033[37m 	
+	  - \033[32mversion\033[37m  
+	   
+"""		
+}
+
+// Printing CSV while preparing CSV
+
+def PATHTOCSV(){
+log.info"""
+                                                                               
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ For Raw QC 		=\033[37m ./CSVs/1_samplesheetForRawQC.csv
+\033[32m ✔ For Timming		=\033[37m ./CSVs/2_SamplesheetForTrimming.csv
+\033[32m ✔ For Alignment	=\033[37m ./CSVs/3_samplesheetForAssembly.csv
+\033[32m ✔ For Variant Calling	=\033[37m ./CSVs/4_samplesheetForBamFiles.csv
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+}
+
+
+// Printing Help 
+
+def DelMoroHelp(){
+
+log.info"""
+
+Program: DelMoro (Bioinformatics Tool Used In Clinical Genomics)
+Version: v1.00 
+
+
+Usage:   nextflow main.nf --exec <\033[32mcommand\033[37m> [Params] 
+
+Commands:
+  -- Quality Control
+     \033[32mrawqc\033[37m 	   Check quality of raw reads. 
+                   require : --RawReads <path-to-csv>
+                   output  : .html reads 
+                   	   : .html multiqc 
+
+  -- Trimming
+     \033[32mtrim\033[37m          Remove low-quality bp and adapters & checks its quality.
+     		   require : --ToBeTrimmed <path-to-csv>
+     		   output  : .fastq trimmed 
+                   	   : .html trimmed reads 
+                   	   : .html multiqc  
+
+  -- Indexing
+     \033[32mrefidx\033[37m 	   Index reference genome for alignment.
+     		   require : --refGenome <path-to-ref>
+     		   	   : --igenome <value-from-IGENOMES> [ optional ]
+     		   output  : .dict 
+                   	   : .fai  
+                   	   : .{.0123,amb,ann,bwt.2bit.64,pac} 
+   
+  -- BQSR  
+     \033[32mbqsr\033[37m	   Base quality score recalibration.
+  		   require : --knownSite1, 2 <path-to-vcf-file> , 2 files 
+  		   	   : --ivcf1, 2      <value>  [ optional ]
+  		           : --bam	     <path-to-bam-csv)
+		   output  : .idx of knwons sites <vcf> 
+		   	   : .table
+		   	   : .bam
+		   	   : .bam
+  -- Mapping	   
+     \033[32malign\033[37m         Align reads to reference genome.
+  	           require : --refGenome   <path-to-ref>
+  	         	     --ToBeAligned <path-to-trimmed-csv>
+  	           output  : .bam
+  	           	   : .bai
+  	           	   : .flagstat
+  	           	   : .coverage.bed
+  	           	   
+  -- Variant Calling	  
+     \033[32mcallsnp\033[37m       Detect SNPs from aligned reads.
+  	           require : --refGenome   <path-to-ref>
+  		   	     --tovarcall   <path-to-bam-csv)
+  		   output  : .vcf
+  		   	   : .table
+  		   		
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
+  To see Defauls params paths:  
+   > nextflow main.nf --exec \033[32mparams\033[37m
+
+"""}
+
+// Printing Params 
+
+def DelMoroParams(){
+
+log.info"""
+
+\033[32m                                                               DEFAULT PARAMETERS
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\033[32m --cpus         =\033[37m 2									  	=> Default Cpus		
+
+\033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
+
+\033[32m --reference 	=\033[37m ./Reference_Genome/*.fa						  	=> Reference file path
+\033[32m --rawreads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 					  	=> Raw reads paths 
+\033[32m --tobetrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv					  	=> Raw reads paths + trimmomatic parameters
+\033[32m --tobealigned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv					  	=> Trimmed read paths 
+\033[32m --bam		=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  					  	=> Bam files paths 
+\033[32m --tovarcall	=\033[37m ./CSVs/5_samplesheetReclibFiles.csv 					  	=> Bam files paths 
+
+\033[32m --knownSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  	=> knownsites should be .vcf  
+\033[32m --knownSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
+
+\033[32m --BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  	=> Bam Files Indexes
+
+\033[32m --ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}		=> Bwa			Reference Indexes
+\033[32m --Dictionary	=\033[37m ./outdir/Indexes/Reference/*.dict				  		=> GATK Dictionary 	Reference Index
+\033[32m --SamtoolsIndex=\033[37m ./outdir/Indexes/Reference/*.fa.fai  			  	  		=> Samtools fai 	Reference Index
+\033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
+\033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    
+
+\033[32m --generate	=\033[37m The default parameter generates vcf for all inputs + A cohorte Gvcf   
+\033[32m			 \033[37m  <-> onlyVCF 	 						  	=> generate vcf for all inputs    
+\033[32m			 \033[37m  <-> cohorteGVCF 						 	=> generate one file : the cohorte Gvcf   
+\033[32m			 \033[37m  <-> CSV 							  	=> nextflow main.nf --generate CSV --basedon <path-to-csv>
+\033[32m                         \033[37m  <-> coverage							  	=> --generate coverage --bedtarget BEDFILE 
+
+\033[32m --basedon    	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 				          	=> First input csv to prepare CSVs based on it
+
+\033[32m --region	=\033[37m To extract specific region from initial mapped .bam  
+                                           Default : null  
+                                           exp: "chr1:position1-position2" 
+                                           
+\033[32m --bedtarget 	=\033[37m Target BEDFILE to extract coverage from bam file
+                                           Default : null   
+\033[32m --igenome     	=\033[37m null  									=> key Value from IGENOMES to download Reference 
+\033[32m --ivcf1 	=\033[37m null 										=> key Value from IVCF to Download vcf file for bqsr  
+\033[32m --ivcf2 	=\033[37m null 										=> key Value from IVCF to Download vcf file for bqsr
+                                           
+\033[37m
+                                           
+"""}
+// Version   
+
+def DelMoroVersion(){   
+DelMoroWelcome()
+log.info"""
+
+\033[31m DelMoro version :\033[37m v1.00 	   
+"""		}
+
+ 
+
+// Version 
+
+def DelMoroError(){   
+
+DelMoroWelcome()
+log.info"""
+\033[31m ⚠︎  Please Verify The Typed command \033[37m 
+"""		}
+
+
+// DelMoro Raw QC Output Paths 
+
+def DelMoroRAWQCOutput() { 
+DelMoroWelcome()
+log.info"""
+                                                                               
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Raw QC 	=\033[37m ./${params.outdir}/QualityControl/RAW/
+\033[32m ✔ Raw Multi QC	=\033[37m ./${params.outdir}/QualityControl/RAW/multiqc/
+\033[32m ✔ Threads 	=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+
+// DelMoro Raw QC Output Paths 
+
+def DelMoroTRimmOutput() { 
+DelMoroWelcome()
+log.info"""
+                                                                               
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Trimmed Reads 	=\033[37m ./${params.outdir}/TrimmedREADS/
+\033[32m ✔ Trimmed QC		=\033[37m ./${params.outdir}/QualityControl/TRIMMED/
+\033[32m ✔ Trimmed Multi QC	=\033[37m ./${params.outdir}/QualityControl/TRIMMED/multiqc/
+\033[32m ✔ Threads 		=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+
+
+// DelMoro Ref Indexing Output Paths 
+
+def DelMoroINXRefenceOutput() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ ALIGNER indexes 	=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Dictionary indexes 	=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Samtools indexes 	=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Threads 		=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+
+
+// DelMoro Assembly Output Paths 
+def DelMoroAssemblyOutput() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                               
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Mapped reads 		=\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics  	=\033[37m ./${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m ✔ Threads 		 	=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+
+
+// DelMoro Base Quality Score recalibration Output Paths 
+def DelMoroBQSROutput() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Known Sites (ivcf 1)  	=\033[37m ./knownsites/${params.ivcf1}
+\033[32m ✔ Known Sites (ivcf 2) 	=\033[37m ./knownsites/${params.ivcf2}
+\033[32m ✔ Known Sites (local vcf 1)  	=\033[37m ./knownsites/${params.knownSite1}
+\033[32m ✔ Known Sites (local vcf 2) 	=\033[37m ./knownsites/${params.knownSite2}
+\033[32m ✔ Known Sites vcf indexes 	=\033[37m ./${params.outdir}/Indexes/knownSites
+\033[32m ✔ Base Recalibration 		=\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Bam indexes 			=\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+
+
+// DelMoro Variant Calling Output Paths 
+def DelMoroVarCallOutput() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
+\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+
+
+
+
+
+

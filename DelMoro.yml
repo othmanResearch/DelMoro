@@ -6,7 +6,7 @@ channels:
 dependencies:
  - nextflow=24.04.4
  - fastqc=0.12.1
- - multiqc=1.25.1
+ - multiqc=1.27
  - samtools=1.21
  - bcftools=1.21
  - gatk4=4.4.0.0
@@ -15,3 +15,5 @@ dependencies:
  - bwa-mem2=2.2.1 
  - trimmomatic=0.39 
  - bamtocov=2.7.0
+ - awscli=2.23.6    
+
