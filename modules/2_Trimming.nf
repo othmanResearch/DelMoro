@@ -7,7 +7,10 @@ process Trimming {
     publishDir path: "${params.outdir}/TrimmedREADS/", mode: 'copy'
 
     conda "bioconda::trimmomatic=0.39 "
-    container "quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2"
+    container "${ workflow.containerEngine == 'singularity' ?
+		"docker://quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2" 	:
+		"quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2" 		}"
+
 
     input:
 	tuple val(patient_id), path(R1), path(R2), val(MINLEN), val(LEADING), val(TRAILING), val(SLIDINGWINDOW)
@@ -38,8 +41,10 @@ process TrimmedQC {
     tag "CHECK TRIMMED READS QUALITY"
     publishDir "${params.outdir}/QualityControl/TRIMMED/", mode: 'copy'
 
-    conda "bioconda::fastqc=0.12.1"
-    container "staphb/fastqc:0.12.1"
+    conda "bioconda::fastqc=0.12.1"    
+    container "${ workflow.containerEngine == 'singularity' ?
+		"docker://staphb/fastqc:0.12.1" :
+		"staphb/fastqc:0.12.1" 		}"
 
     input:
 	path(reads)
@@ -60,7 +65,10 @@ process MultiqcTrimmed {
     publishDir "${params.outdir}/QualityControl/TRIMMED/multiqc/" ,  mode:'copy'
 
     conda "bioconda::multiqc=1.27"
-    container "multiqc/multiqc:latest"
+    container "${ workflow.containerEngine == 'singularity' ?
+		"docker://multiqc/multiqc:latest" :
+		"multiqc/multiqc:latest" 	  }"
+
 
     input:
 	path (fastqc)

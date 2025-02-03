@@ -5,8 +5,10 @@ process DownloadKns1 {
     publishDir "./knownsites/${params.ivcf1}/", mode: 'copy'
     
     conda "conda-forge::awscli=2.23.6"
-    container "xueshanf/awscli:alpine-3.16"
-    
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://xueshanf/awscli:alpine-3.16" 		:
+		"xueshanf/awscli:alpine-3.16"		}"
+		
     output:
 	path "*", emit: igenome_ch
 
@@ -28,7 +30,9 @@ process DownloadKns2 {
     publishDir "./knownsites/${params.ivcf2}/", mode: 'copy'
  
     conda "conda-forge::awscli=2.23.6"   
-    container "xueshanf/awscli:alpine-3.16"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://xueshanf/awscli:alpine-3.16" 		:
+		"xueshanf/awscli:alpine-3.16"		}"
     
     output:
         path "*", emit: igenome_ch
@@ -53,7 +57,9 @@ process IndexKNownSites {
     publishDir "${params.outdir}/Indexes/knownSites", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "broadinstitute/gatk:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest"		:
+		"broadinstitute/gatk:latest" 	}"
 
     input:
 	path kn_site_File 	  // known Sites file n°1 related to params.knwonSite1
@@ -78,7 +84,9 @@ process BaseRecalibrator {
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "broadinstitute/gatk:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest"		:
+		"broadinstitute/gatk:latest" 	}"
     
     input:
 	path ref
@@ -112,7 +120,9 @@ process ApplyBQSR {
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "broadinstitute/gatk:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest"		:
+		"broadinstitute/gatk:latest" 	}"
     
     input:
 	//path sor_md_bam_file
@@ -138,7 +148,9 @@ process IndexRecalBam{
     publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
 
     conda "bioconda::samtools=1.21"
-    container "firaszemzem/bwa-samtools:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://firaszemzem/bwa-samtools:latest"	:
+		"firaszemzem/bwa-samtools:latest" 	}"
     
     input:
 	path RecalBamFile	// Bam file from recal_bam

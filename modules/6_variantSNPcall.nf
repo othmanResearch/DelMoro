@@ -7,7 +7,9 @@ process RecalHaploCall {
     publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "broadinstitute/gatk:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest" 		:
+		"broadinstitute/gatk:latest" 	}" 
     
     input:
 	path ref
@@ -36,7 +38,9 @@ process VarToTable {
     publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "broadinstitute/gatk:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest" 		:
+		"broadinstitute/gatk:latest" 	}" 
     
     input:
 	path Recalvcf	// vcf files from RecalHaploCAll
@@ -58,10 +62,12 @@ process VarToTable {
 process SnpFilter {
     tag "Collect SNP in a Table using GATK4"
     publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
-    container "broadinstitute/gatk:latest"
-    
+  
     conda "bioconda::gatk4=4.4"
-
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest" 		:
+		"broadinstitute/gatk:latest" 	}" 
+		
     input:
 	path variants
 		
@@ -82,10 +88,11 @@ process SnpFilter {
 process  CreateGVCF{
     tag "CREATE GVCF with Gatk HaplotypeCaller"
     publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
-    container "broadinstitute/gatk:latest"
-    
+  
     conda "bioconda::gatk4=4.4.0.0"
-
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest" 		:
+		"broadinstitute/gatk:latest" 	}" 
     input:
 	path ref
 	path dic
@@ -115,8 +122,10 @@ process IndexGVCF {
     tag "CREATING INDEX FOR Recalibrated BAM FILES"
     publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
 
-    conda "bioconda::samtools=1.21"
-    container "firaszemzem/bwa-samtools:latest"
+    conda "bioconda::gatk4=4.4.0.0"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest" 		:
+		"broadinstitute/gatk:latest" 	}" 
     
     input:
 	path GVCFtoINDEX	// Gvcf file from g_vcf_Recal
@@ -139,7 +148,9 @@ process  CombineGvcfs{
     publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "broadinstitute/gatk:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest" 		:
+		"broadinstitute/gatk:latest" 	}" 
     
     input:
 	path ref
@@ -167,7 +178,9 @@ process GenotypeGvcfs{
     publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "broadinstitute/gatk:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest" 		:
+		"broadinstitute/gatk:latest" 	}" 
     
     input:
 	path ref
@@ -186,5 +199,4 @@ process GenotypeGvcfs{
 	--output Cohort.g.Genotypes.vcf
     """
 }
-
 

@@ -7,8 +7,10 @@ process alignReadsToRef {
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
     conda "bioconda::bwa=0.7.18"
-    container "firaszemzem/bwa-samtools:latest"
-
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://firaszemzem/bwa-samtools:latest" 	:
+		"firaszemzem/bwa-samtools:latest" 		}"
+ 
     input:
 	path refGenome
 	path indexes
@@ -31,8 +33,10 @@ process alignReadsToRefBWAMEM2 {
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
     conda "bioconda::bwa-mem2=2.2.1"
-    container "firaszemzem/bwamem2-samtools:latest"
-    
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://firaszemzem/bwamem2-samtools:latest"  :
+		"firaszemzem/bwamem2-samtools:latest" 	}" 
+		
     input:
 	path refGenome
 	path indexes
@@ -57,8 +61,10 @@ process assignReadGroup {
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
     conda "bioconda::gatk4=4.4"
-    container "broadinstitute/gatk:latest"
- 
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest"		:
+		"broadinstitute/gatk:latest" 	}"
+  
     input:
 	path aligned_bam
 	//tuple val(patient_id), path(R1), path(R2)
@@ -88,8 +94,10 @@ process markDuplicates {
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
     conda "bioconda::gatk4=4.4"
-    container "broadinstitute/gatk:latest"
-
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://broadinstitute/gatk:latest" 		:
+		"broadinstitute/gatk:latest" 	}" 
+		
     input:
 	path sorted_bam
 	// tuple val(patient_id), path(R1), path(R2)
@@ -116,8 +124,10 @@ process IndexBam{
     publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
 
     conda "bioconda::samtools=1.21"
-    container "firaszemzem/bwa-samtools:latest"
-    
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://firaszemzem/bwa-samtools:latest"	:
+		"firaszemzem/bwa-samtools:latest" 	}"
+  
     input:
    	path BamFile 	  	// Bam file from sorted_markduplicates_bam
 
@@ -137,8 +147,10 @@ process Extractregion {
     publishDir "${params.outdir}/Mapping/", mode: 'copy'
 
     conda "bioconda::samtools=1.21"
-    container "firaszemzem/bwa-samtools:latest"
- 
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://firaszemzem/bwa-samtools:latest"	:
+		"firaszemzem/bwa-samtools:latest" 	}"
+		 
     input:
 	path BamFile		// Bam file from sorted_markduplicates_bam
     	path BamIdx
@@ -161,8 +173,10 @@ process GenerateStat {
     publishDir "${params.outdir}/Mapping/BamMetrics", mode: 'copy'
 
     conda "bioconda::samtools=1.21"
-    container "firaszemzem/bwa-samtools:latest"
-    
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://firaszemzem/bwa-samtools:latest"	:
+		"firaszemzem/bwa-samtools:latest" 	}"
+     
     input:
 	path sorted_labeled_bam
 	path sorted_markduplicates_bam

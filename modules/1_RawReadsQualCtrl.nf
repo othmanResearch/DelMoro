@@ -8,7 +8,9 @@ process FastqQc {
     errorStrategy 'ignore'
 
     conda "bioconda::fastqc=0.12.1"
-    container "staphb/fastqc:0.12.1"
+    container "${ workflow.containerEngine == 'singularity' ?
+		"docker://staphb/fastqc:0.12.1" :
+		"staphb/fastqc:0.12.1" 		}"
 
     input:
 	tuple val(patient_id), path(R1), path(R2)
@@ -29,7 +31,9 @@ process ReadsMultiqc {
     publishDir "${params.outdir}/QualityControl/RAW/multiqc/" ,  mode:'copy'
 
     conda "bioconda::multiqc=1.27"
-    container "multiqc/multiqc:latest"
+    container "${ workflow.containerEngine == 'singularity' ? 
+		"docker://multiqc/multiqc:latest" : 
+                "multiqc/multiqc:latest"    	  }"
 
     input:
         path (fastqc)

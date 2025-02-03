@@ -7,8 +7,10 @@ process BamCoverage {
     publishDir "${params.outdir}/Mapping/BamCoverage/", mode: 'copy'
 
     conda "bioconda::bamtocov=2.7.0"
-    container "quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2"
-
+    container "${ workflow.containerEngine == 'singularity' 		    ?
+		"docker://quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2" :
+		"quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2"	  }"
+  
     input:
 	path BamFile
 	path bamidx
@@ -30,7 +32,9 @@ process BamTargetCoverage{
     publishDir "${params.outdir}/Mapping/BamCoverage/", mode: 'copy'
 
     conda "bioconda::bamtocov=2.7.0"
-    container "quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2"
+    container "${ workflow.containerEngine == 'singularity' 		    ?
+		"docker://quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2" :
+		"quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2"	  }"
     
      input:
 	path BamFile

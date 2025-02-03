@@ -9,7 +9,9 @@ process DownloadIgenomes {
     publishDir "./Reference_Genome/", mode: 'copy'
  
     conda "conda-forge::awscli=2.23.6"
-    container "xueshanf/awscli:alpine-3.16"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://xueshanf/awscli:alpine-3.16" 		:
+		"xueshanf/awscli:alpine-3.16" 	}"
 
     output:
         path "./genome${params.igenome}.fa", emit: "igenome_ch"
@@ -31,7 +33,11 @@ process createIndex {
     publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
 
     conda "bioconda::bwa=0.7.18"
-    container "firaszemzem/bwa-samtools:latest"
+    container "${ workflow.containerEngine == 'singularity' 	?
+		"docker://firaszemzem/bwa-samtools:latest" 	:
+		"firaszemzem/bwa-samtools:latest" 		}"
+
+
     
     input:
 	path ref
@@ -50,7 +56,9 @@ process createIndexBWAMEM2 {
     publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
     
     conda "bioconda::bwa-mem2=2.2.1"
-    container "firaszemzem/bwamem2-samtools:latest"
+    container "${ workflow.containerEngine == 'singularity' ?
+		"docker://firaszemzem/bwamem2-samtools:latest" 	:
+		"firaszemzem/bwamem2-samtools:latest" 		}"
     
     input:
 	path ref
@@ -72,7 +80,9 @@ process createDictionary {
     publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
     
     conda "bioconda::gatk4=4.4"
-    container "broadinstitute/gatk:latest"
+    container "${ workflow.containerEngine == 'singularity' ?
+		"docker://broadinstitute/gatk:latest" 	:
+		"broadinstitute/gatk:latest" 		}"
     
     input:
 	    path ref
@@ -95,7 +105,9 @@ process createIndexSamtools {
     publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
     
     conda "bioconda::samtools=1.21"
-    container "firaszemzem/bwa-samtools:latest"
+    container "${ workflow.containerEngine == 'singularity' ?
+		"docker://firaszemzem/bwa-samtools:latest" 	:
+		"firaszemzem/bwa-samtools:latest" 		}"
 
     input:
         path ref
