@@ -21,9 +21,9 @@ process alignReadsToRef {
        
     script:
     """
-    bwa mem -t ${params.cpus} ${refGenome} ${R1} ${R2} \\
-	| samtools view -Sb -@ ${params.cpus} \\
-	| samtools sort -@ ${params.cpus}  -o ${patient_id}_sor.bam   
+    bwa mem -t ${task.cpus} ${refGenome} ${R1} ${R2} \\
+	| samtools view -Sb -@ ${task.cpus} \\
+	| samtools sort -@ ${task.cpus}  -o ${patient_id}_sor.bam   
     """ 
 }
 
@@ -47,9 +47,9 @@ process alignReadsToRefBWAMEM2 {
        
     script:
     """
-    bwa-mem2 mem -t ${params.cpus} -M ${refGenome} ${R1} ${R2} \\
-	| samtools view -Sb -@ ${params.cpus} \\
-	| samtools sort -@ ${params.cpus}  -o ${patient_id}_sor.bam           
+    bwa-mem2 mem -t ${task.cpus} -M ${refGenome} ${R1} ${R2} \\
+	| samtools view -Sb -@ ${task.cpus} \\
+	| samtools sort -@ ${task.cpus}  -o ${patient_id}_sor.bam           
                
     """
 }
@@ -137,7 +137,7 @@ process IndexBam{
     script:
     """
     samtools index \\
-    -@ ${params.cpus} \\
+    -@ ${task.cpus} \\
     ${BamFile}
     """
 }
@@ -161,7 +161,7 @@ process Extractregion {
     script:
     """
     samtools view \\
-    -@ ${params.cpus} \\
+    -@ ${task.cpus} \\
     -bh ${BamFile} ${params.region} > ${BamFile.baseName}_region_${params.region}.bam
     """
 } 
@@ -187,11 +187,11 @@ process GenerateStat {
     script:
     """
     samtools flagstat \\
-    -@ ${params.cpus} \\
+    -@ ${task.cpus} \\
     ${sorted_labeled_bam} > ${sorted_labeled_bam}.flagstat
     
     samtools flagstat \\
-    -@ ${params.cpus}  \\
+    -@ ${task.cpus}  \\
     ${sorted_markduplicates_bam} > ${sorted_markduplicates_bam}.flagstat
     """
 }

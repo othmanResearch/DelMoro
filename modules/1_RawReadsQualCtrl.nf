@@ -20,7 +20,7 @@ process FastqQc {
 
     script:
     """
-    fastqc -t ${params.cpus} ${R1} ${R2}
+    fastqc -t ${task.cpus} ${R1} ${R2}
     """
 }
 
@@ -30,6 +30,7 @@ process ReadsMultiqc {
     tag "Gathering Multiqc FOR RAW READS"
     publishDir "${params.outdir}/QualityControl/RAW/multiqc/" ,  mode:'copy'
 
+    
     conda "bioconda::multiqc=1.27"
     container "${ workflow.containerEngine == 'singularity' ? 
 		"docker://multiqc/multiqc:latest" : 

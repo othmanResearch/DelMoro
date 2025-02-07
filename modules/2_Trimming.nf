@@ -5,7 +5,7 @@
 process Trimming {
     tag "TRIMMIG READS"
     publishDir path: "${params.outdir}/TrimmedREADS/", mode: 'copy'
-
+    
     conda "bioconda::trimmomatic=0.39 "
     container "${ workflow.containerEngine == 'singularity' ?
 		"docker://quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2" 	:
@@ -22,7 +22,7 @@ process Trimming {
     script:
     """
     trimmomatic PE \\
-	-threads ${params.cpus} \\
+	-threads ${task.cpus} \\
 	${R1} ${R2} \\
 	${R1.baseName.takeWhile{ it != '.' }}.fastq \\
 	${R1.baseName.takeWhile{ it != '.' }}_unpaired.fastq \\
@@ -54,7 +54,7 @@ process TrimmedQC {
 
     script:
     """
-    fastqc -t ${params.cpus} ${reads}
+    fastqc -t ${task.cpus} ${reads}
     """
 }
 

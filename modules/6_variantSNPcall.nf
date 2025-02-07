@@ -24,7 +24,7 @@ process RecalHaploCall {
     script:
     """
     gatk HaplotypeCaller \\
-    	--native-pair-hmm-threads ${params.cpus} \\
+    	--native-pair-hmm-threads ${task.cpus} \\
   	--reference ${ref} \\
 	--input ${ReclBamFile} \\
 	--output ${ReclBamFile.baseName}.HC.vcf
@@ -107,7 +107,7 @@ process  CreateGVCF{
     script:
     """
     gatk HaplotypeCaller \\
-	--native-pair-hmm-threads ${params.cpus} \\
+	--native-pair-hmm-threads ${task.cpus} \\
 	--reference ${ref} \\
 	--input ${ReclBamFile} \\
 	--output ${ReclBamFile.baseName}.g.vcf \\

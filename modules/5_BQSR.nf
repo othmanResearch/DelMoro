@@ -160,7 +160,7 @@ process IndexRecalBam{
     
     script:
     """
-    samtools index -@ ${params.cpus}  ${RecalBamFile}
+    samtools index -@ ${task.cpus}  ${RecalBamFile}
     """
 }
  
