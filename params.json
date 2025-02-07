@@ -1,6 +1,6 @@
 {	
 	"cpus"		: 8,
-	"outdir"	: "outdirbasedonjson",
+	"outdir"	: "outdir",
 	
 	"basedon"	: "./CSVs/1_samplesheetForRawQC.csv",  		 
 	"reference"	: "./Reference_Genome/reference.fa",		 
