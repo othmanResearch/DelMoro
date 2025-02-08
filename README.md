@@ -107,11 +107,20 @@ nextflow main.nf --cpus 8 --exec bqsr --reference Reference_Genome/reference.fa 
 ~~~json
 {	
 	"cpus"		: 8,
-	"outdir"	: "outdirbasedonjson",
+	"outdir"	: "outdir",
 	
-	"basedon"	: "./CSVs/1_samplesheetForRawQC.csv",  		 
-	"reference"	: "./Reference_Genome/reference.fa",		 
+	"basedon"	: "./CSVs/1_samplesheetForRawQC.csv",  	
+	
+	"_comment"	: "for reference indexing use let either reference or igenome",	 
+	
+	"reference"	: "./Reference_Genome/reference.fa",
+	"igenome"	: "EB1",
+	
+	"_comment"	: "aligner eithr null or bwamem2",	 
+	
+	"aligner"	: "bwamem2",		 
 
+	
  	"rawreads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
 	"tobetrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
 	"tobealigned"	: "./CSVs/3_samplesheetForAssembly.csv",		 
@@ -126,4 +135,5 @@ nextflow main.nf --cpus 8 --exec bqsr --reference Reference_Genome/reference.fa 
 	"ivcf1"		: "GRCh38.mills1000", 	 
 	"ivcf2"		: "GRCh38.omni"		  
 }
+
 ~~~
