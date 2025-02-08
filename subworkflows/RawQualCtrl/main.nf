@@ -11,8 +11,8 @@ workflow QC_RAW_READS {
 	rawReads
     
     main: 
-    if ( params.exec 		!= null && 
-  	 params.rawreads 	!= null ){
+    if ( params.rawreads 	!= null ){
+    
 	 DelMoroRAWQCOutput() 
 	 FastqQc( rawReads )	
 	 ReadsMultiqc	( FastqQc.out.collect()  )

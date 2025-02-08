@@ -24,8 +24,7 @@ workflow Call_SNPs_with_GATK {
  
     main: 
 
-    if  (params.exec 		!= null && 
-    	 params.generate 	== null && 
+    if  (params.generate 	== null && 
    	 params.reference 	!= null && 
    	 params.tovarcall	!= null ){
    		
@@ -61,8 +60,7 @@ workflow Call_SNPs_with_GATK {
 			  samidxREF.collect(),
 			  CombineGvcfs.out.CohorteVcf.collectFile(sort: true)			)  
 
-   		} else if ( params.exec 	!= null &&  
-   			    params.reference 	!= null && 
+   		} else if ( params.reference 	!= null && 
    			    params.tovarcall	!= null &&
 			    params.generate 	== 'onlyVCF' ){	// generate vcf for all inputs 
   	 
@@ -78,8 +76,7 @@ workflow Call_SNPs_with_GATK {
 	   	
 	   		    SnpFilter 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true)	)
 	   	
-   			} else if ( params.exec 	!= null &&  
-   				    params.reference 	!= null && 
+   			} else if ( params.reference 	!= null && 
    				    params.tovarcall	!= null &&
    				    params.generate 	== 'cohorteGVCF' ){ // Generate one file : the cohorte vcf
    	

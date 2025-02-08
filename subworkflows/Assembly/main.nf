@@ -26,8 +26,7 @@ workflow ALIGN_TO_REF_GENOME {
     // Case: No region specified
   if ( params.aligner == null ) {
  
- 	if ( params.exec 	!= null && 
- 	     params.reference 	!= null && 
+ 	if ( params.reference 	!= null && 
  	     params.tobealigned != null && 
  	     params.generate 	== null && 
  	     params.region 	== null && 
@@ -45,8 +44,7 @@ workflow ALIGN_TO_REF_GENOME {
 		
 		// Case: CHECK COVERAGE IN TARGETD REGION FROM BED FILE 
 
-		} else if ( params.exec 	!= null && 
-			    params.reference 	!= null && 
+		} else if ( params.reference 	!= null && 
 			    params.tobealigned 	!= null && 
 			    params.region 	== null && 
 			    params.generate 	== 'coverage' && 
@@ -65,8 +63,7 @@ workflow ALIGN_TO_REF_GENOME {
 	
 			// Case: Region specified Extract BAM REGION FILE
 	
-			} else if ( params.exec 	!= null && 
-				    params.reference 	!= null && 
+			} else if ( params.reference 	!= null && 
 				    params.tobealigned 	!= null && 
 				    params.generate 	== null && 
 				    (params.region 	==~ /^[a-zA-Z0-9]+:\d+-\d+$/) ){  
@@ -95,8 +92,7 @@ workflow ALIGN_TO_REF_GENOME {
 	
   } else  if ( params.aligner == "bwamem2" ) {
  
- 	if ( params.exec 	!= null && 
- 	     params.reference 	!= null && 
+ 	if ( params.reference 	!= null && 
  	     params.tobealigned != null && 
  	     params.generate 	== null && 
  	     params.region 	== null && 
@@ -115,8 +111,7 @@ workflow ALIGN_TO_REF_GENOME {
 		
 		// Case: CHECK COVERAGE IN TARGETD REGION FROM BED FILE 
 
-		} else if ( params.exec 	!= null && 
-			    params.reference 	!= null && 
+		} else if ( params.reference 	!= null && 
 			    params.tobealigned 	!= null && 
 			    params.region	== null && 
 			    params.generate 	== 'coverage' && 
@@ -135,8 +130,7 @@ workflow ALIGN_TO_REF_GENOME {
 	
 			// Case: Region specified Extract BAM REGION FILE
 	
-			} else if ( params.exec 	!= null && 
-				    params.reference 	!= null && 
+			} else if ( params.reference 	!= null && 
 				    params.tobealigned 	!= null && 
 				    params.generate 	== null && 
 				    (params.region 	==~ /^[a-zA-Z0-9]+:\d+-\d+$/) ){  

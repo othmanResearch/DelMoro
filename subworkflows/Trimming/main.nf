@@ -12,8 +12,7 @@ workflow TRIM_READS {
 	rawReads
     
     main: 
-    if ( params.exec 		!= null && 
-	 params.tobetrimmed 	!= null ){
+    if ( params.tobetrimmed 	!= null ){
   	     
 	 DelMoroTRimmOutput()
        	   
