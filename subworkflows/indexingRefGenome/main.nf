@@ -29,7 +29,7 @@ if ( !params.igenome &&  params.reference ) {
 	  createIndex.out.bwa_index
 	  createDictionary.out.gatk_dic
 	  createIndexSamtools.out.samtools_index
-	      // case2 : Use Default BWA aligner with igenome as input 
+	 // case2 : Use Default BWA-MEM2 aligner with reference as input
 	 } else if ( params.aligner == "bwamem2" ){
 
 		     DelMoroINXRefenceOutput()
@@ -59,7 +59,7 @@ if ( !params.igenome &&  params.reference ) {
             DelMoroWelcome()
     	    exit 1, "The provided genome '${params.igenome}' is not available. Available genomes: ${params.IGENOMES.keySet().join(", ")}"
    	}
-   
+   	   // case3 : Use Default BWA  aligner with igenome as input 
 	    if ( !params.aligner ){
 		 		    
 		 DelMoroINXRefenceOutput()
@@ -74,7 +74,7 @@ if ( !params.igenome &&  params.reference ) {
 		 createDictionary.out.gatk_dic
 		 createIndexSamtools.out.samtools_index         
 		 
-		      // case4 : Use Default BWA-MEM2 aligner with igenome as input 
+		 // case4 : Use Default BWA-MEM2 aligner with igenome as input 
 	  	 } else if ( params.aligner == "bwamem2" ){
 		 		    
 		 	     DelMoroINXRefenceOutput()
