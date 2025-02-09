@@ -3,6 +3,7 @@
 process DownloadKns1 {
     tag "Downloading ${params.ivcf1}"
     publishDir "./knownsites/${params.ivcf1}/", mode: 'copy'
+    storeDir "./knownsites/${params.ivcf1}/" 
     
     conda "conda-forge::awscli=2.23.6"
     container "${ workflow.containerEngine == 'singularity' 	?
@@ -28,7 +29,8 @@ process DownloadKns1 {
 process DownloadKns2 {
     tag "Downloading ${params.ivcf2}"
     publishDir "./knownsites/${params.ivcf2}/", mode: 'copy'
- 
+    storeDir "./knownsites/${params.ivcf2}/" 
+    
     conda "conda-forge::awscli=2.23.6"   
     container "${ workflow.containerEngine == 'singularity' 	?
 		"docker://xueshanf/awscli:alpine-3.16" 		:

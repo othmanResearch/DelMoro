@@ -7,7 +7,8 @@
 process DownloadIgenomes {
     tag "Downloading ${params.igenome} from iGenomes reference ${params.IGENOMES[params.igenome]}"
     publishDir "./Reference_Genome/", mode: 'copy'
- 
+    storeDir "./Reference_Genome/" 
+    
     conda "conda-forge::awscli=2.23.6"
     container "${ workflow.containerEngine == 'singularity' 	?
 		"docker://xueshanf/awscli:alpine-3.16" 		:
@@ -120,3 +121,4 @@ process createIndexSamtools {
     samtools faidx ${ref}  --output ${ref}.fai                         
     """
 }
+
