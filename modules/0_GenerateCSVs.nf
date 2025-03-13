@@ -47,7 +47,7 @@ process WriteAssemblyCSV {
         path input_csv
 
     output:
-        path "3_samplesheetForAssembly.csv",    emit: assembly_sheet
+        path "3_samplesheetForAssembly.csv", emit: assembly_sheet
 
     script:
     """
@@ -60,7 +60,9 @@ process WriteAssemblyCSV {
     trimmed_path = "./${params.outdir}/TrimmedREADS/"
 
     def process_file_name(file_name):
-        file_name = file_name.replace('./Data/', '')
+        # Extract the base path dynamically
+        base_path = os.path.dirname(file_name)
+        file_name = file_name.replace(base_path, '').lstrip('/')
         if file_name.endswith('.gz'):
             file_name = os.path.splitext(file_name)[0]
         return file_name
