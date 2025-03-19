@@ -16,4 +16,5 @@ dependencies:
  - trimmomatic=0.39 
  - bamtocov=2.7.0
  - awscli=2.23.6    
-
+ - bbmap=39.18
+ - fastp=0.23.2
