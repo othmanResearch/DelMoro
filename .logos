@@ -84,6 +84,8 @@ Commands:
   -- Trimming
      \033[32mtrim\033[37m          Remove low-quality bp and adapters & checks its quality.
      		   require : --ToBeTrimmed <path-to-csv>
+     		   	   : --trimmomatic, --fastp, --bbduk 
+     		           : --adapters <path-to-adapter-file> [ optional ]
      		   output  : .fastq trimmed 
                    	   : .html trimmed reads 
                    	   : .html multiqc  
@@ -108,7 +110,7 @@ Commands:
   -- Mapping	   
      \033[32malign\033[37m         Align reads to reference genome.
   	           require : --refGenome   <path-to-ref>
-  	         	     --ToBeAligned <path-to-trimmed-csv>
+  	         	   : --ToBeAligned <path-to-trimmed-csv>
   	           output  : .bam
   	           	   : .bai
   	           	   : .flagstat
@@ -117,7 +119,7 @@ Commands:
   -- Variant Calling	  
      \033[32mcallsnp\033[37m       Detect SNPs from aligned reads.
   	           require : --refGenome   <path-to-ref>
-  		   	     --tovarcall   <path-to-bam-csv)
+  		   	   : --tovarcall   <path-to-bam-csv)
   		   output  : .vcf
   		   	   : .table
   		   		
@@ -136,9 +138,15 @@ log.info"""
 \033[32m                                                               DEFAULT PARAMETERS
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\033[32m --cpus         =\033[37m 2									  	=> Default Cpus		
+\033[32m --cpus         =\033[37m 4									  	=> Default Cpus		
 
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
+
+\033[32m --trimmomatic 	=\033[37m false 									=> Trimming with trimmomatic tool
+\033[32m --fastp	=\033[37m false 									=> Trimming with fastp tool
+\033[32m --bbduk	=\033[37m false 									=> Trimming with bbduk tool
+\033[32m --adapters	=\033[37m null										=> Path for adapter file
+	
 
 \033[32m --reference 	=\033[37m ./Reference_Genome/*.fa						  	=> Reference file path
 \033[32m --rawreads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 					  	=> Raw reads paths 
