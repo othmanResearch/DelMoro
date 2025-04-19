@@ -11,14 +11,14 @@ include {DelMoroParams	}	from './.logos'
 include {DelMoroVersion	} 	from './.logos' 
 include {DelMoroHelp	} 	from './.logos' 
 include {DelMoroError	} 	from './.logos' 
-
+include {DelMoroAnnotateHelp	} 	from './.logos' 
 	       			             	 	
 // channels 
   // prepare required csv from an intial csv
-  preparecsv 		= params.basedon	? Channel.fromPath(params.basedon, checkIfExists: true)   			: Channel.empty()   	
+  PrepareCsv 		= params.basedon	? Channel.fromPath(params.basedon, checkIfExists: true)   			: Channel.empty()   	
  
   // Raw Reads to quality check 
-  RawREADS 		= params.rawreads 	? Channel.fromPath(params.rawreads, checkIfExists: true)       	
+  RawReads 		= params.rawreads 	? Channel.fromPath(params.rawreads, checkIfExists: true)       	
 	       			             	 	  .splitCsv(header: true)  
        	       	                     		           .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) }	: Channel.empty() 
        	       
@@ -41,7 +41,7 @@ include {DelMoroError	} 	from './.logos'
        	       
   // reference
 
-  ref_gen_channel	= params.reference	? Channel.fromPath(params.reference).first()					: Channel.empty()
+  RefGenChannel		= params.reference	? Channel.fromPath(params.reference).first()					: Channel.empty()
   
   // BamFiles channel
     // used for base recalibration
@@ -62,35 +62,46 @@ include {DelMoroError	} 	from './.logos'
 	
   // knwon file 1 channel for BQSR    
 
-  knownSite1		= params.knownSite1	? Channel.fromPath(params.knownSite1, checkIfExists: false).first()   		: Channel.empty() 
-       
+  KnownSite1		= params.knownsite1	? Channel.fromPath(params.knownsite1, checkIfExists: false).first()   		: Channel.empty() 
+       			         
   // knwon file 2 channel for BQSR       
          
-  knownSite2		= params.knownSite2	? Channel.fromPath(params.knownSite2, checkIfExists: false).first()  		: Channel.empty() 
+  KnownSite2		= params.knownsite2	? Channel.fromPath(params.knownsite2, checkIfExists: false).first()  		: Channel.empty() 
 
   // Indexes Channels 
 
     // Aligner Indexs Bwa mem2 
-    ALignidxREF		= params.ALIGNERIndex 	? Channel.fromPath(params.ALIGNERIndex, checkIfExists: false)  			: Channel.empty()
+    AlignIdxRef		= params.alignerindex 	? Channel.fromPath(params.alignerindex, checkIfExists: false)  			: Channel.empty()
        	
     //  Dictionary Indexs Bwa mem2 
-    DictidxREF		= params.DictGATK	? Channel.fromPath(params.DictGATK, checkIfExists: false)  			: Channel.empty()
+    DictIdxRef		= params.dictgatk	? Channel.fromPath(params.dictgatk, checkIfExists: false)  			: Channel.empty()
        	
     // SamtoolsIndex
-    SamtidxREF    	= params.SamtoolsIndex 	? Channel.fromPath(params.SamtoolsIndex, checkIfExists: false)  		: Channel.empty()
+    SamtIdxRef    	= params.samtoolsindex 	? Channel.fromPath(params.samtoolsindex, checkIfExists: false)  		: Channel.empty()
        		
     // Bam Files Index
-    IDXBAM     		= params.BamIndex	? Channel.fromPath(params.BamIndex, checkIfExists: false)  			: Channel.empty()
+    IdxBam     		= params.bamindex	? Channel.fromPath(params.bamindex, checkIfExists: false)  			: Channel.empty()
+  
+  // Vep Annotations Params 
+    
+ 
+    VepSpecies		= params.species	?: ''     	 
+    Assembly		= params.assembly 	?: ''	 
+    CacheType 		= params.cachetype  	?: ''
 
-   
+    CacheDir 		= params.cachedir	?: './vep_cache'	 	 
+
+       
+
 // subworkflows 
-include { GenerateCSVs		} from './subworkflows/GenerateCSV'
+include { GENERATE_CSVS		} from './subworkflows/GenerateCSV'
 include { QC_RAW_READS		} from './subworkflows/RawQualCtrl'
 include { TRIM_READS		} from './subworkflows/Trimming'
 include { INDEXING_REF_GENOME	} from './subworkflows/indexingRefGenome'
 include { ALIGN_TO_REF_GENOME	} from './subworkflows/Assembly'
-include { BaseQuScoReac 	} from './subworkflows/BQSR'
-include { Call_SNPs_with_GATK	} from './subworkflows/variantcalling'
+include { BASE_QU_SCO_RECA 	} from './subworkflows/BQSR'
+include { CALL_SNPs_GATK	} from './subworkflows/variantcalling'
+include { VEP_CACHE		} from './subworkflows/annotations/vep/vepcache'
 
 workflow {
   params.exec = null  // Default to 'none' if not provided
@@ -98,11 +109,11 @@ workflow {
 if (params.exec == null ){
 	
   DelMoroWelcome()   
-  GenerateCSVs(preparecsv)
+  GENERATE_CSVS(PrepareCsv)
   
   } else if (params.exec == 'rawqc') {	// check quality of raw reads
  
-      QC_RAW_READS(RawREADS)  
+      QC_RAW_READS(RawReads)  
 	
       } else if (params.exec == 'trim') {		// trim reads
 
@@ -110,34 +121,55 @@ if (params.exec == null ){
 	
    	} else if (params.exec == 'refidx') { 	// generate index for reference genome	
 
-      	  INDEXING_REF_GENOME(ref_gen_channel) 
+      	  INDEXING_REF_GENOME(RefGenChannel) 
  
    	  } else if (params.exec == 'align') {	// align reads to reference
 
-  	    ALIGN_TO_REF_GENOME(ref_gen_channel,ALignidxREF,ReadsToBeAligned,Target) 
+  	    ALIGN_TO_REF_GENOME(RefGenChannel,AlignIdxRef,ReadsToBeAligned,Target) 
   	
   	    } else if (params.exec == 'bqsr') {
   	      
-  	      BaseQuScoReac(ref_gen_channel,DictidxREF,SamtidxREF,MappedReads,IDXBAM,knownSite1,knownSite2 )
+  	      BASE_QU_SCO_RECA(RefGenChannel,DictIdxRef,SamtIdxRef,MappedReads,IdxBam,KnownSite1,KnownSite2 )
   	          
   	      } else if (params.exec == 'callsnp') {	// Call snp
- 
-     	        Call_SNPs_with_GATK(ref_gen_channel,DictidxREF,SamtidxREF,ToVarCall,IDXBAM) 
+              
+     	        CALL_SNPs_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall,IdxBam) 
   	     
-  	        } else if ( params.exec == 'help'){
+  	        } else if ( params.exec == 'annotate' ) {
+  	         // VEP_CACHE(VepSpecies,CacheDir )
+  	          DelMoroAnnotateHelp()
+  	          
+  	          } else if ( params.exec == 'vepcache' ) {
+  	         
+  	            VEP_CACHE(VepSpecies,Assembly,CacheType,CacheDir)
+  	          
+  	            } else if ( params.exec == 'help'){
   	        
-  	          DelMoroHelp()
+  	              DelMoroHelp()
   	       
-  	          } else if ( params.exec == 'params' ) {
-	          
-	            DelMoroParams()
+  	              } else if ( params.exec == 'params' ) {
+	                
+	                DelMoroParams()
 	         
-	            } else if ( params.exec == 'version' ) {
-	          
-	              DelMoroVersion()
+	                } else if ( params.exec == 'version' ) {
+	           
+	                  DelMoroVersion()
 
-  	  	    } else { DelMoroError() }
+  	  	          } else { DelMoroError() }
    
  }
  
  
+ 
+ /*
+ workflow.onComplete {
+    println "Pipeline completed at: $workflow.complete"
+    println "Execution status: ${ workflow.success ? 'OK' : 'failed' }"
+    file("./work").deleteDir()
+}
+*/
+
+
+
+
+
