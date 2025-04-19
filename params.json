@@ -22,9 +22,9 @@
 
 	"_comment"	: "for base recalibration let either knownSite1 & knownSite2 or ivcf1 & ivcf2",
 	
-	"knownSite1"	: "./knownsites/1000g_gold_standard.indels.filtered.vcf", 	 
-	"knownSite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",	
-	
+	"knownsite1"	: "./knownsites/1000g_gold_standard.indels.filtered.vcf", 	 
+	"knownsite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",	
+	 	
 	"ivcf1"		: "GRCh38.mills1000", 	 
 	"ivcf2"		: "GRCh38.omni"		  
 }
