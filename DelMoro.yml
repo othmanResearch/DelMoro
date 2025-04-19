@@ -18,3 +18,4 @@ dependencies:
  - awscli=2.23.6    
  - bbmap=39.18
  - fastp=0.23.2
+ - ensembl-vep=113.4
