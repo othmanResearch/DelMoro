@@ -8,7 +8,7 @@ include { WriteAssemblyCSV	} from '../../modules/0_GenerateCSVs.nf'
 include { WriteBamCSV 		} from '../../modules/0_GenerateCSVs.nf' 
 include { WriteRecalCSV		} from '../../modules/0_GenerateCSVs.nf' 
 
-workflow GenerateCSVs {
+workflow GENERATE_CSVS {
     take:
 	input
    
