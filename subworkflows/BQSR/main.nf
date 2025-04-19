@@ -12,7 +12,7 @@ include { ApplyBQSR		} from '../../modules/5_BQSR.nf'
 include { IndexRecalBam		} from '../../modules/5_BQSR.nf'    
 
 
-workflow BaseQuScoReac {
+workflow BASE_QU_SCO_RECA {
     take:
 	ref_gen_channel
 	dictREF
@@ -25,8 +25,8 @@ workflow BaseQuScoReac {
     main: 
     if ( params.ivcf1		== null &&
  	 params.ivcf2		== null && 
-	 params.knownSite1 	!= null && 
-	 params.knownSite2 	!= null ){
+	 params.knownsite1 	!= null && 
+	 params.knownsite2 	!= null ){
 	
 	if (params.reference 	!= null && 
 	    params.bam 		!= null ){
@@ -60,8 +60,8 @@ workflow BaseQuScoReac {
 	 		   
     } else if (	params.ivcf1 		!= null && 
                	params.ivcf2 		!= null && 
-           	params.knownSite1 	== null && 
-          	params.knownSite2 	== null ){
+           	params.knownsite1 	== null && 
+          	params.knownsite2 	== null ){
 	     	
          if ( params.IVCF && 
 	   !( params.IVCF.containsKey(params.ivcf1) && 
@@ -109,7 +109,7 @@ workflow BaseQuScoReac {
 	 print("\033[31m Please specify valid parameters:\n"			)
 	 print(" --reference option (--reference reference ) \n"			)
 	 print(" --bam option (--bam CSVs/4_samplesheetForBamFiles.csv )\n "	)
-	 print("\033[31m  --knownSite1  option --knownSite1 option \n"		)
+	 print("\033[31m  --knownsite1  option --knownsite2 option \n"		)
 	 print("\033[31m  or \n"							)
 	 print("\033[31m   --ivcf1  option --ivcf2 option  \n"			)
 	 print("For details, run: nextflow main.nf --exec params\n\033[37m"	)
