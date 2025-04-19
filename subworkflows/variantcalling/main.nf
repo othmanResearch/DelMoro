@@ -13,7 +13,7 @@ include { CombineGvcfs		} from '../../modules/6_variantSNPcall.nf'
 include { GenotypeGvcfs		} from '../../modules/6_variantSNPcall.nf' 
 
 
-workflow Call_SNPs_with_GATK {
+workflow CALL_SNPs_GATK {
 
     take:
 	ref_gen_channel
