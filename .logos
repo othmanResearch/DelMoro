@@ -41,6 +41,7 @@ Command : - \033[32mrawqc\033[37m 	: Check           quality      of     raw    
 	  - \033[32malign\033[37m 	: Align     reads      to     the     reference    genome.
 	  - \033[32mbqsr\033[37m 	: Base 		Quality 	Score	    recalibration.
 	  - \033[32mcallsnp\033[37m 	: Detect           SNPs      from      aligned      reads.
+	  - \033[32mannotate\033[37m 	: annotate 	    	    vfc 	             file.
 	  - \033[32mhelp\033[37m 	
 	  - \033[32mversion\033[37m  
 	   
@@ -77,13 +78,13 @@ Usage:   nextflow main.nf --exec <\033[32mcommand\033[37m> [Params]
 Commands:
   -- Quality Control
      \033[32mrawqc\033[37m 	   Check quality of raw reads. 
-                   require : --RawReads <path-to-csv>
+                   require : --rawreads <path-to-csv>
                    output  : .html reads 
                    	   : .html multiqc 
 
   -- Trimming
      \033[32mtrim\033[37m          Remove low-quality bp and adapters & checks its quality.
-     		   require : --ToBeTrimmed <path-to-csv>
+     		   require : --tobetrimmed <path-to-csv>
      		   	   : --trimmomatic, --fastp, --bbduk 
      		           : --adapters <path-to-adapter-file> [ optional ]
      		   output  : .fastq trimmed 
@@ -92,7 +93,7 @@ Commands:
 
   -- Indexing
      \033[32mrefidx\033[37m 	   Index reference genome for alignment.
-     		   require : --refGenome <path-to-ref>
+     		   require : --reference <path-to-ref>
      		   	   : --igenome <value-from-IGENOMES> [ optional ]
      		   output  : .dict 
                    	   : .fai  
@@ -100,7 +101,7 @@ Commands:
    
   -- BQSR  
      \033[32mbqsr\033[37m	   Base quality score recalibration.
-  		   require : --knownSite1, 2 <path-to-vcf-file> , 2 files 
+  		   require : --knownsite1, 2 <path-to-vcf-file> , 2 files 
   		   	   : --ivcf1, 2      <value>  [ optional ]
   		           : --bam	     <path-to-bam-csv)
 		   output  : .idx of knwons sites <vcf> 
@@ -109,8 +110,8 @@ Commands:
 		   	   : .bam
   -- Mapping	   
      \033[32malign\033[37m         Align reads to reference genome.
-  	           require : --refGenome   <path-to-ref>
-  	         	   : --ToBeAligned <path-to-trimmed-csv>
+  	           require : --reference   <path-to-ref>
+  	         	   : --Tobealigned <path-to-trimmed-csv>
   	           output  : .bam
   	           	   : .bai
   	           	   : .flagstat
@@ -118,10 +119,19 @@ Commands:
   	           	   
   -- Variant Calling	  
      \033[32mcallsnp\033[37m       Detect SNPs from aligned reads.
-  	           require : --refGenome   <path-to-ref>
+  	           require : --reference   <path-to-ref>
   		   	   : --tovarcall   <path-to-bam-csv)
   		   output  : .vcf
   		   	   : .table
+  -- Annotation	  
+     \033[32mannotate\033[37m       Print out Annotation manual
+     
+     \033[32mvepcache\033[37m       Download vep cache
+  	            require : --species   <value>
+  	           	    : --cachetype <value> [ optional ]
+  	           	    : --assembly <value> [ optional ]
+  	            output   : ./vep_cache directory 
+
   		   		
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
   To see Defauls params paths:  
@@ -155,14 +165,14 @@ log.info"""
 \033[32m --bam		=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  					  	=> Bam files paths 
 \033[32m --tovarcall	=\033[37m ./CSVs/5_samplesheetReclibFiles.csv 					  	=> Bam files paths 
 
-\033[32m --knownSite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  	=> knownsites should be .vcf  
-\033[32m --knownSite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
+\033[32m --knownsite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  	=> knownsites should be .vcf  
+\033[32m --knownsite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
 
-\033[32m --BamIndex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  	=> Bam Files Indexes
+\033[32m --bamindex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  	=> Bam Files Indexes
 
-\033[32m --ALIGNERIndex	=\033[37m ./outdir/Indexes/Reference/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}		=> Bwa			Reference Indexes
-\033[32m --Dictionary	=\033[37m ./outdir/Indexes/Reference/*.dict				  		=> GATK Dictionary 	Reference Index
-\033[32m --SamtoolsIndex=\033[37m ./outdir/Indexes/Reference/*.fa.fai  			  	  		=> Samtools fai 	Reference Index
+\033[32m --alignerindex	=\033[37m ./outdir/Indexes/Reference/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}		=> Bwa			Reference Indexes
+\033[32m --dictgatk	=\033[37m ./outdir/Indexes/Reference/*.dict				  		=> GATK Dictionary 	Reference Index
+\033[32m --samtoolsindex=\033[37m ./outdir/Indexes/Reference/*.fa.fai  			  	  		=> Samtools fai 	Reference Index
 \033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
 \033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    
 
@@ -183,7 +193,12 @@ log.info"""
 \033[32m --igenome     	=\033[37m null  									=> key Value from IGENOMES to download Reference 
 \033[32m --ivcf1 	=\033[37m null 										=> key Value from IVCF to Download vcf file for bqsr  
 \033[32m --ivcf2 	=\033[37m null 										=> key Value from IVCF to Download vcf file for bqsr
-                                           
+
+\033[32m --species    	=\033[37m null  									=> Vep Cache specie
+\033[32m --cachetype 	=\033[37m null 										=> Vep Cache type 
+\033[32m --assembly	=\033[37m null										=> Assembly version to use 
+\033[32m --cachedir  	=\033[37m ./vep_cache  									=> Vep Cache Directory           
+                                
 \033[37m
                                            
 """}
@@ -280,8 +295,8 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Known Sites (ivcf 1)  	=\033[37m ./knownsites/${params.ivcf1}
 \033[32m ✔ Known Sites (ivcf 2) 	=\033[37m ./knownsites/${params.ivcf2}
-\033[32m ✔ Known Sites (local vcf 1)  	=\033[37m ./knownsites/${params.knownSite1}
-\033[32m ✔ Known Sites (local vcf 2) 	=\033[37m ./knownsites/${params.knownSite2}
+\033[32m ✔ Known Sites (local vcf 1)  	=\033[37m ./knownsites/${params.knownsite1}
+\033[32m ✔ Known Sites (local vcf 2) 	=\033[37m ./knownsites/${params.knownsite2}
 \033[32m ✔ Known Sites vcf indexes 	=\033[37m ./${params.outdir}/Indexes/knownSites
 \033[32m ✔ Base Recalibration 		=\033[37m ./${params.outdir}/Mapping
 \033[32m ✔ Bam indexes 			=\033[37m ./${params.outdir}/Indexes/BamFiles
@@ -303,8 +318,47 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
+	
 
+// DelMoro Vep Cache Downloading
+def DelMoroVepCache() { 
 
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Species 			=\033[37m ${params.species}
+\033[32m ✔ Cache Type 			=\033[37m ${params.cachetype}
+\033[32m ✔ Assembly			=\033[37m ${params.assembly}
+\033[32m ✔ Cache Directory 		=\033[37m ${params.cachedir}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+
+def DelMoroAnnotateHelp() { 
+
+DelMoroWelcome()
+log.info"""
+ 
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ANNOTATION WORKFLOW HELP MENU
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\033[32m ✔ VEP Annotation Pipeline
+\033[37m   ----------------------
+\033[32m   ▸ Step 1: Download Cache
+\033[37m	▸    nextflow main.nf --exec vepcache
+\033[37m	 
+
+\033[32m   ▸ Step 2: Run Annotation
+\033[37m	▸    nextflow main.nf --exec vepannotate
+\033[37m 
+ 
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m Tip: Use nextflow main.nf --exec help for more options 
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[0m
+	"""
+	}
 
 
 
