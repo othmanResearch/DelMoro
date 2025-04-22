@@ -1,0 +1,4 @@
+patient_id,vcFile
+001,./outdir/Mapping/Variants/001_sor@RG@MD.bam.recal.HC.vcf
+002,./outdir/Mapping/Variants/002_sor@RG@MD.bam.recal.HC.vcf
+003,./outdir/Mapping/Variants/003_sor@RG@MD.bam.recal.HC.vcf
