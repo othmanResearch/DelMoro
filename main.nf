@@ -77,21 +77,25 @@ include {DelMoroAnnotateHelp	} 	from './.logos'
     DictIdxRef		= params.dictgatk	? Channel.fromPath(params.dictgatk, checkIfExists: false)  			: Channel.empty()
        	
     // SamtoolsIndex
-    SamtIdxRef    	= params.samtoolsindex 	? Channel.fromPath(params.samtoolsindex, checkIfExists: false)  		: Channel.empty()
+    SamtIdxRef    	= params.samtoolsindex 	? Channel.fromPath(params.samtoolsindex, checkIfExists: false).first()		: Channel.empty()
        		
     // Bam Files Index
     IdxBam     		= params.bamindex	? Channel.fromPath(params.bamindex, checkIfExists: false)  			: Channel.empty()
   
-  // Vep Annotations Params 
+  // Vep Annotations Channels
     
  
     VepSpecies		= params.species	?: ''     	 
     Assembly		= params.assembly 	?: ''	 
     CacheType 		= params.cachetype  	?: ''
-
-    CacheDir 		= params.cachedir	?: './vep_cache'	 	 
-
-       
+    CacheDir 		= params.cachedir 	?: ''
+    CacheDirANN		= CacheDir		? Channel.fromPath(params.cachedir , checkIfExists: false).first()		: Channel.empty()
+  
+  // vcf channels
+  
+    VcfChannel      	= params.toannotate 	? Channel.fromPath(params.toannotate, checkIfExists: false)
+    							  .splitCsv(header: true)  
+       	      			       		 	   .map { row -> tuple(row.patient_id, file(row.vcFile) ) }		: Channel.empty() 	 
 
 // subworkflows 
 include { GENERATE_CSVS		} from './subworkflows/GenerateCSV'
@@ -102,6 +106,8 @@ include { ALIGN_TO_REF_GENOME	} from './subworkflows/Assembly'
 include { BASE_QU_SCO_RECA 	} from './subworkflows/BQSR'
 include { CALL_SNPs_GATK	} from './subworkflows/variantcalling'
 include { VEP_CACHE		} from './subworkflows/annotations/vep/vepcache'
+include { VEP_ANNOTATE		} from './subworkflows/annotations/vep/vepannotate'
+
 
 workflow {
   params.exec = null  // Default to 'none' if not provided
@@ -136,30 +142,35 @@ if (params.exec == null ){
      	        CALL_SNPs_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall,IdxBam) 
   	     
   	        } else if ( params.exec == 'annotate' ) {
-  	         // VEP_CACHE(VepSpecies,CacheDir )
+
   	          DelMoroAnnotateHelp()
   	          
   	          } else if ( params.exec == 'vepcache' ) {
   	         
   	            VEP_CACHE(VepSpecies,Assembly,CacheType,CacheDir)
   	          
-  	            } else if ( params.exec == 'help'){
+  	            } else if ( params.exec == 'vepannotate' ) {
+  	         
+  	              VEP_ANNOTATE(VcfChannel,RefGenChannel,SamtIdxRef,CacheDirANN,VepSpecies,Assembly,CacheType)
+  	          
+  	              } else if ( params.exec == 'help'){
   	        
-  	              DelMoroHelp()
+  	                DelMoroHelp()
   	       
-  	              } else if ( params.exec == 'params' ) {
-	                
-	                DelMoroParams()
+  	                } else if ( params.exec == 'params' ) {
+	                 
+	                  DelMoroParams()
 	         
-	                } else if ( params.exec == 'version' ) {
+	                  } else if ( params.exec == 'version' ) {
 	           
-	                  DelMoroVersion()
+	                    DelMoroVersion()
 
-  	  	          } else { DelMoroError() }
+  	  	            } else { DelMoroError() }
    
  }
- 
- 
+   	 
+
+
  
  /*
  workflow.onComplete {
