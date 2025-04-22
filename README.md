@@ -125,7 +125,9 @@ nextflow main.nf --cpus 8 --exec bqsr --reference Reference_Genome/reference.fa 
 	"tobetrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
 	"tobealigned"	: "./CSVs/3_samplesheetForAssembly.csv",		 
 	"bam"		: "./CSVs/4_samplesheetForBamFiles.csv",
-	"tovarcall"	: "./CSVs/5_samplesheetReclibFiles.csv",	  			 		
+	"tovarcall"	: "./CSVs/5_samplesheetReclibFiles.csv",
+	"toannotate"	: "./CSVs/6_samplesheetvcfFiles.csv",	 		
+	  			 		
 
 	"_comment"	: "for base recalibration let either knownSite1 & knownSite2 or ivcf1 & ivcf2",
 	
