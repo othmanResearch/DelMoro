@@ -12,13 +12,13 @@ process DownloadVepCache {
     		'iarcbioinfo/ensembl-vep'	}"
 
     input:
-    val species
-    val assembly
-    val cachetype
-    val cachedir
+	val species
+	val assembly
+	val cachetype
+	val cachedir
 
     output:
-    path "${cachedir}"
+    	path "${cachedir}"
 
     script:
     def speciesArg = params.cachetype ? "--SPECIES ${params.species}_${params.cachetype}" : "--SPECIES ${params.species}"
