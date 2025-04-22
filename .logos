@@ -57,7 +57,9 @@ log.info"""
 \033[32m ✔ For Raw QC 		=\033[37m ./CSVs/1_samplesheetForRawQC.csv
 \033[32m ✔ For Timming		=\033[37m ./CSVs/2_SamplesheetForTrimming.csv
 \033[32m ✔ For Alignment	=\033[37m ./CSVs/3_samplesheetForAssembly.csv
-\033[32m ✔ For Variant Calling	=\033[37m ./CSVs/4_samplesheetForBamFiles.csv
+\033[32m ✔ For Recalibration	=\033[37m ./CSVs/4_samplesheetForBamFiles.csv
+\033[32m ✔ For Variant Calling	=\033[37m ./CSVs/5_samplesheetReclibFiles.csv
+\033[32m ✔ For Annotation	=\033[37m ./CSVs/6_samplesheetvcfFiles.csv
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 }
@@ -129,10 +131,20 @@ Commands:
      \033[32mvepcache\033[37m       Download vep cache
   	            require : --species   <value>
   	           	    : --cachetype <value> [ optional ]
-  	           	    : --assembly <value> [ optional ]
+  	           	    : --assembly  <value> [ optional ]
   	            output   : ./vep_cache directory 
-
-  		   		
+  	            
+     \033[32mvepannotate\033[37m    Vep annotation
+  	            require : --species    <value>
+  	            	    : --reference  <path-to-ref>
+  	            	    : --toannotate <path-to-csv> or <path-to-vcf>
+  	           	    : --assembly   <value>
+  	           	    : --cachetype  <value> [ optional ]
+  	            output  : vcf.gz
+  	            	    : .vcf.gz.tbi
+  	            	    : .html
+ 
+ 	   		
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
   To see Defauls params paths:  
    > nextflow main.nf --exec \033[32mparams\033[37m
@@ -163,7 +175,8 @@ log.info"""
 \033[32m --tobetrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv					  	=> Raw reads paths + trimmomatic parameters
 \033[32m --tobealigned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv					  	=> Trimmed read paths 
 \033[32m --bam		=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  					  	=> Bam files paths 
-\033[32m --tovarcall	=\033[37m ./CSVs/5_samplesheetReclibFiles.csv 					  	=> Bam files paths 
+\033[32m --tovarcall	=\033[37m ./CSVs/5_samplesheetReclibFiles.csv 					  	=> Recalibrated Bam files paths 
+\033[32m --toannotate	=\033[37m ./CSVs/6_samplesheetvcfFiles.csv 						=> Vcf files paths 
 
 \033[32m --knownsite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  	=> knownsites should be .vcf  
 \033[32m --knownsite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
@@ -195,9 +208,9 @@ log.info"""
 \033[32m --ivcf2 	=\033[37m null 										=> key Value from IVCF to Download vcf file for bqsr
 
 \033[32m --species    	=\033[37m null  									=> Vep Cache specie
-\033[32m --cachetype 	=\033[37m null 										=> Vep Cache type 
+\033[32m --cachetype 	=\033[37m null 										=> Vep Cache type , Must be refseq or merged 
 \033[32m --assembly	=\033[37m null										=> Assembly version to use 
-\033[32m --cachedir  	=\033[37m ./vep_cache  									=> Vep Cache Directory           
+\033[32m --cachedir  	=\033[37m .vepcachedir  								=> Vep Cache Directory           
                                 
 \033[37m
                                            
@@ -320,21 +333,8 @@ log.info"""
 	}
 	
 
-// DelMoro Vep Cache Downloading
-def DelMoroVepCache() { 
 
-DelMoroWelcome()
-log.info"""
-                                                                              
-\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Species 			=\033[37m ${params.species}
-\033[32m ✔ Cache Type 			=\033[37m ${params.cachetype}
-\033[32m ✔ Assembly			=\033[37m ${params.assembly}
-\033[32m ✔ Cache Directory 		=\033[37m ${params.cachedir}
-\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	"""
-	}
-
+// DelMoro Annotate Help
 def DelMoroAnnotateHelp() { 
 
 DelMoroWelcome()
@@ -359,6 +359,43 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[0m
 	"""
 	}
+	
+	
+// DelMoro Vep Cache Downloading
+def DelMoroVepCache() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Species 			=\033[37m ${params.species}
+\033[32m ✔ Cache Type 			=\033[37m ${params.cachetype}
+\033[32m ✔ Assembly			=\033[37m ${params.assembly}
+\033[32m ✔ Cache Directory 		=\033[37m ${params.cachedir}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+
+// DelMoro Vep Annotations	
+def DelMoroVepAnnot() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Species 			=\033[37m ${params.species}
+\033[32m ✔ Cache Type 			=\033[37m ${params.cachetype}
+\033[32m ✔ Assembly			=\033[37m ${params.assembly}
+\033[32m ✔ Cache Directory 		=\033[37m ${params.cachedir}
+\033[32m ✔ Annotated Files   		=\033[37m ./${params.outdir}/annotation/
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
+	
+	
+	
+	
+	
 
 
 
