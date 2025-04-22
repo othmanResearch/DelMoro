@@ -7,6 +7,7 @@ include { WriteTrimmingCSV	} from '../../modules/0_GenerateCSVs.nf'
 include { WriteAssemblyCSV	} from '../../modules/0_GenerateCSVs.nf' 
 include { WriteBamCSV 		} from '../../modules/0_GenerateCSVs.nf' 
 include { WriteRecalCSV		} from '../../modules/0_GenerateCSVs.nf' 
+include { WriteVcfCSV		} from '../../modules/0_GenerateCSVs.nf' 
 
 workflow GENERATE_CSVS {
     take:
@@ -22,6 +23,7 @@ workflow GENERATE_CSVS {
      	     WriteAssemblyCSV(input)
      	     WriteBamCSV(input)
      	     WriteRecalCSV(input)
+     	     WriteVcfCSV(input)
      	      
      	    } else { 
      	     	DelMoroWelcome()
