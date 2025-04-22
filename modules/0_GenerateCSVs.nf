@@ -151,3 +151,41 @@ process WriteRecalCSV {
     """
 }
 
+
+process WriteVcfCSV {
+    tag "PREPARE CSVs FOR VCF Files"
+    publishDir "./CSVs/", mode: 'copy'
+
+    input:
+        path input_csv
+
+    output:
+        path "6_samplesheetvcfFiles.csv",    emit: vcf_sheet
+
+    script:
+    """
+    python3 <<- EOF
+    import csv
+
+    input_csv = '${input_csv}'
+    output_vcf = '6_samplesheetvcfFiles.csv'
+    bam_path = "./${params.outdir}/Mapping/Variants/"
+
+    with open(input_csv, 'r') as input_file, open(output_vcf, 'w', newline='') as vcf_files:
+        csvreader = csv.reader(input_file)
+        csvwriter_for_vcf_files = csv.writer(vcf_files)
+
+        next(csvreader)  # Skip header
+        csvwriter_for_vcf_files.writerow(['patient_id', 'vcFile'])
+
+        for row in csvreader:
+            patient_id = row[0]
+            vcf_file = f'{bam_path}{patient_id}_sor@RG@MD.bam.recal.HC.vcf'
+            csvwriter_for_vcf_files.writerow([patient_id, vcf_file])
+    EOF
+    """
+}
+
+
+
+
