@@ -6,26 +6,27 @@
 	
 	"_comment"	: "for reference indexing use let either reference or igenome",	 
 	
-	"reference"	: "./Reference_Genome/reference.fa",
-	"igenome"	: "EB1",
+	"reference"	: "./Reference_Genome/genomeEns.GRCh37.fa",
+
 	
 	"_comment"	: "aligner eithr null or bwamem2",	 
 	
-	"aligner"	: "bwamem2",		 
-
+	"aligner"	: "bwamem2",	
+	
 	
  	"rawreads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
 	"tobetrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
 	"tobealigned"	: "./CSVs/3_samplesheetForAssembly.csv",		 
 	"bam"		: "./CSVs/4_samplesheetForBamFiles.csv",
-	"tovarcall"	: "./CSVs/5_samplesheetReclibFiles.csv",	  			 		
-
+	"tovarcall"	: "./CSVs/5_samplesheetReclibFiles.csv",	  		
+	"toannotate"	: "./CSVs/6_samplesheetvcfFiles.csv",	 		
+	
 	"_comment"	: "for base recalibration let either knownSite1 & knownSite2 or ivcf1 & ivcf2",
 	
 	"knownsite1"	: "./knownsites/1000g_gold_standard.indels.filtered.vcf", 	 
 	"knownsite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",	
 	 	
 	"ivcf1"		: "GRCh38.mills1000", 	 
-	"ivcf2"		: "GRCh38.omni"		  
+	"ivcf2"		: "GRCh38.omni"		  		  
 }
 
