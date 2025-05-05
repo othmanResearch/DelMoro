@@ -66,8 +66,8 @@ process Fastp {
     fastp \\
     -i ${R1} \\
     -I ${R2} \\
-    -o ${patient_id}_1.fastq \\
-    -O ${patient_id}_2.fastq \\
+    -o ${R1.baseName.takeWhile{ it != '.' }}.fastq \\
+    -O ${R2.baseName.takeWhile{ it != '.' }}.fastq \\
     ${adapterFile} \\
     --html ${patient_id}_fastp_report.html \\
     --json ${patient_id}_fastp_report.json \\
@@ -99,8 +99,8 @@ process Bbduk {
     bbduk.sh \\
     in1=${R1} \\
     in2=${R2} \\
-    out1=${patient_id}_1.fastq \\
-    out2=${patient_id}_2.fastq \\
+    out1=${R1.baseName.takeWhile{ it != '.' }}.fastq \\
+    out2=${R2.baseName.takeWhile{ it != '.' }}.fastq \\
     ${adapterFile} \\
     k=12 \\
     trimq=20 \\
