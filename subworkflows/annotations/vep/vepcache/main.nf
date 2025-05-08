@@ -11,6 +11,7 @@ workflow VEP_CACHE {
         assembly
         cachetype
         cachedir
+        cacheversion
 
     main:
     
@@ -33,7 +34,7 @@ workflow VEP_CACHE {
     	    } else {
 
     		DelMoroVepCache()
-    		DownloadVepCache(species, assembly, cachetype, cachedir) 
+    		DownloadVepCache(species, assembly, cachetype, cachedir, cacheversion) 
     } 
 }
 

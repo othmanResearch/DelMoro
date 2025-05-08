@@ -89,6 +89,8 @@ include {DelMoroAnnotateHelp	} 	from './.logos'
     Assembly		= params.assembly 	?: ''	 
     CacheType 		= params.cachetype  	?: ''
     CacheDir 		= params.cachedir 	?: ''
+    CacheVersion	= params.cacheversion 	?: ''
+    
     CacheDirANN		= CacheDir		? Channel.fromPath(params.cachedir , checkIfExists: false).first()		: Channel.empty()
   
   // vcf channels
@@ -147,7 +149,7 @@ if (params.exec == null ){
   	          
   	          } else if ( params.exec == 'vepcache' ) {
   	         
-  	            VEP_CACHE(VepSpecies,Assembly,CacheType,CacheDir)
+  	            VEP_CACHE(VepSpecies,Assembly,CacheType,CacheDir,CacheVersion)
   	          
   	            } else if ( params.exec == 'vepannotate' ) {
   	         

@@ -132,6 +132,7 @@ Commands:
   	            require : --species   <value>
   	           	    : --cachetype <value> [ optional ]
   	           	    : --assembly  <value> [ optional ]
+  	           	    : --cacheversion  <value> [ optional ] 
   	            output   : ./vep_cache directory 
   	            
      \033[32mvepannotate\033[37m    Vep annotation
@@ -210,7 +211,8 @@ log.info"""
 \033[32m --species    	=\033[37m null  									=> Vep Cache specie
 \033[32m --cachetype 	=\033[37m null 										=> Vep Cache type , Must be refseq or merged 
 \033[32m --assembly	=\033[37m null										=> Assembly version to use 
-\033[32m --cachedir  	=\033[37m .vepcachedir  								=> Vep Cache Directory           
+\033[32m --cacheversion	=\033[37m null		  								=> Vep Cache version -113.4 on conda not yet updated     
+\033[32m --cachedir  	=\033[37m .vepcachedir  								=> Vep Cache Directory     
                                 
 \033[37m
                                            

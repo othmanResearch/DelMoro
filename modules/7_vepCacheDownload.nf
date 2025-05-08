@@ -10,31 +10,28 @@ process DownloadVepCache {
     container "${workflow.containerEngine == 'singularity' 	?
     		'docker://iarcbioinfo/ensembl-vep' 		: 
     		'iarcbioinfo/ensembl-vep'	}"
-
     input:
-	val species
-	val assembly
-	val cachetype
-	val cachedir
-
+    val species
+    val assembly
+    val cachetype
+    val cachedir
+    val cacheversion  
+    
     output:
     	path "${cachedir}"
 
     script:
     def speciesArg = params.cachetype ? "--SPECIES ${params.species}_${params.cachetype}" : "--SPECIES ${params.species}"
     def assemblyArg = params.assembly ? "--ASSEMBLY ${params.assembly}" : ""
+    def cacheVersionArg = cacheversion ? "--CACHE_VERSION ${cacheversion}" : "--NO_UPDATE"  
 
     """
     vep_install \
         --AUTO c \
         ${speciesArg} \
         ${assemblyArg} \
-        --CACHE_DIR ${cachedir}
+        --CACHE_DIR ${cachedir} \
+	${cacheVersionArg} \  
     """
 }
-
-
-
-
-
 
