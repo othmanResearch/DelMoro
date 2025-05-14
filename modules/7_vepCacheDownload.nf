@@ -26,12 +26,12 @@ process DownloadVepCache {
     def cacheVersionArg = cacheversion ? "--CACHE_VERSION ${cacheversion}" : "--NO_UPDATE"  
 
     """
-    vep_install \
-        --AUTO c \
-        ${speciesArg} \
-        ${assemblyArg} \
-        --CACHE_DIR ${cachedir} \
-	${cacheVersionArg} \  
+    vep_install \\
+        --AUTO c \\
+        ${speciesArg} \\
+        ${assemblyArg} \\
+        --CACHE_DIR ${cachedir} \\
+	${cacheVersionArg} \\  
     """
 }
 
