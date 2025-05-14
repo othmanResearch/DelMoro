@@ -17,8 +17,8 @@ process Trimmomatic {
  
 
     output:
-    path "*.fastq"		, emit: paired 		// To be used in DOWNSTREAM Analysis
-    path "*_unpaired.fastq"	, emit: unpaired
+    path "*.trim.fastq.gz"		, emit: paired 		// To be used in DOWNSTREAM Analysis
+    path "*_unpaired.fastq.gz"	, emit: unpaired
 
     script:
     def adapterFile = params.adapters ? "ILLUMINACLIP:${params.adapters}:2:30:10" : ""
@@ -27,10 +27,10 @@ process Trimmomatic {
         trimmomatic PE \\
         -threads ${task.cpus} \\
         ${R1} ${R2} \\
-        ${R1.baseName.takeWhile{ it != '.' }}.fastq \\
-        ${R1.baseName.takeWhile{ it != '.' }}_unpaired.fastq \\
-        ${R2.baseName.takeWhile{ it != '.' }}.fastq \\
-        ${R2.baseName.takeWhile{ it != '.' }}_unpaired.fastq \\
+        ${patient_id}_1.trim.fastq.gz \\
+        ${patient_id}_1_unpaired.fastq.gz \\
+        ${patient_id}_2.trim.fastq.gz \\
+        ${patient_id}_2_unpaired.fastq.gz \\
         MINLEN:${MINLEN} \\
         LEADING:${LEADING} \\
         TRAILING:${TRAILING} \\
@@ -44,7 +44,7 @@ process Trimmomatic {
 process Fastp {
     tag "TRIMMING WITH FASTP"
     
-    publishDir path: "${params.outdir}/TrimmedREADS/", mode: 'copy', pattern: "*.fastq"
+    publishDir path: "${params.outdir}/TrimmedREADS/", mode: 'copy', pattern: "*.gz"
     publishDir path: "${params.outdir}/QualityControl/fastpMetrics", mode: 'copy', pattern: "*.{html,json}"
 
     conda "bioconda::fastp=0.23.2"
@@ -56,7 +56,7 @@ process Fastp {
     	tuple val(patient_id), path(R1), path(R2)
 
     output:
-	path "*.fastq"		, emit: fastpFastq
+	path "*.gz"		, emit: fastpFastq
 	path "*.{html,json}"	, emit: fastpMetrics
 
     script: 
@@ -66,8 +66,8 @@ process Fastp {
     fastp \\
     -i ${R1} \\
     -I ${R2} \\
-    -o ${R1.baseName.takeWhile{ it != '.' }}.fastq \\
-    -O ${R2.baseName.takeWhile{ it != '.' }}.fastq \\
+    -o ${patient_id}_1.trim.fastq.gz \\
+    -O ${patient_id}_2.trim.fastq.gz \\
     ${adapterFile} \\
     --html ${patient_id}_fastp_report.html \\
     --json ${patient_id}_fastp_report.json \\
@@ -99,8 +99,8 @@ process Bbduk {
     bbduk.sh \\
     in1=${R1} \\
     in2=${R2} \\
-    out1=${R1.baseName.takeWhile{ it != '.' }}.fastq \\
-    out2=${R2.baseName.takeWhile{ it != '.' }}.fastq \\
+    out1=${patient_id}_1.trim.fastq.gz \\
+    out2=${patient_id}_2.trim.fastq.gz \\
     ${adapterFile} \\
     k=12 \\
     trimq=20 \\
@@ -156,4 +156,3 @@ process MultiqcTrimmed {
     multiqc . --ai
     """
 }
-

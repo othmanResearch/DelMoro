@@ -58,14 +58,7 @@ process WriteAssemblyCSV {
     input_csv = '${input_csv}'
     output_assembly = '3_samplesheetForAssembly.csv'
     trimmed_path = "./${params.outdir}/TrimmedREADS/"
-
-    def process_file_name(file_name):
-        # Extract the base path dynamically
-        base_path = os.path.dirname(file_name)
-        file_name = file_name.replace(base_path, '').lstrip('/')
-        if file_name.endswith('.gz'):
-            file_name = os.path.splitext(file_name)[0]
-        return file_name
+ 
 
     with open(input_csv, 'r') as input_file, open(output_assembly, 'w', newline='') as to_be_assembled:
         csvreader = csv.reader(input_file)
@@ -76,8 +69,8 @@ process WriteAssemblyCSV {
 
         for row in csvreader:
             patient_id = row[0]
-            R1 = f'{trimmed_path}{process_file_name(row[1])}'
-            R2 = f'{trimmed_path}{process_file_name(row[2])}'
+            R1 = f'{trimmed_path}{patient_id}_1.trim.fastq.gz'
+            R2 = f'{trimmed_path}{patient_id}_2.trim.fastq.gz'
             csvwriter_to_be_assembled.writerow([patient_id, R1, R2])
     EOF
     """
