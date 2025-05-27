@@ -5,10 +5,10 @@ process WriteTrimmingCSV {
     publishDir "./CSVs/", mode: 'copy'
 
     input:
-        path input_csv
+    path input_csv
 
     output:
-        path "2_SamplesheetForTrimming.csv",    emit: trim_sheet
+    path "2_SamplesheetForTrimming.csv", emit: trim_sheet
 
     script:
     """
@@ -44,10 +44,10 @@ process WriteAssemblyCSV {
     publishDir "./CSVs/", mode: 'copy'
 
     input:
-        path input_csv
+    path input_csv
 
     output:
-        path "3_samplesheetForAssembly.csv", emit: assembly_sheet
+    path "3_samplesheetForAssembly.csv", emit: assembly_sheet
 
     script:
     """
@@ -81,10 +81,10 @@ process WriteBamCSV {
     publishDir "./CSVs/", mode: 'copy'
 
     input:
-        path input_csv
+    path input_csv
 
     output:
-        path "4_samplesheetForBamFiles.csv",    emit: bam_sheet
+    path "4_samplesheetForBamFiles.csv", emit: bam_sheet
 
     script:
     """
@@ -104,7 +104,7 @@ process WriteBamCSV {
 
         for row in csvreader:
             patient_id = row[0]
-            bam_file = f'{bam_path}{patient_id}_sor@RG@MD.bam'
+            bam_file = f'{bam_path}{patient_id}_sor_RG_MD.bam'
             csvwriter_for_bam_files.writerow([patient_id, bam_file])
     EOF
     """
@@ -115,10 +115,10 @@ process WriteRecalCSV {
     publishDir "./CSVs/", mode: 'copy'
 
     input:
-        path input_csv
+    path input_csv
 
     output:
-        path "5_samplesheetReclibFiles.csv",    emit: recal_sheet
+    path "5_samplesheetReclibFiles.csv", emit: recal_sheet
 
     script:
     """
@@ -138,7 +138,7 @@ process WriteRecalCSV {
 
         for row in csvreader:
             patient_id = row[0]
-            bam_file = f'{bam_path}{patient_id}_sor@RG@MD.bam.recal.bam'
+            bam_file = f'{bam_path}{patient_id}.recal.bam'
             csvwriter_for_recal_files.writerow([patient_id, bam_file])
     EOF
     """
@@ -150,10 +150,10 @@ process WriteVcfCSV {
     publishDir "./CSVs/", mode: 'copy'
 
     input:
-        path input_csv
+    path input_csv
 
     output:
-        path "6_samplesheetvcfFiles.csv",    emit: vcf_sheet
+    path "6_samplesheetvcfFiles.csv", emit: vcf_sheet
 
     script:
     """
@@ -173,12 +173,8 @@ process WriteVcfCSV {
 
         for row in csvreader:
             patient_id = row[0]
-            vcf_file = f'{bam_path}{patient_id}_sor@RG@MD.bam.recal.HC.vcf'
+            vcf_file = f'{bam_path}{patient_id}_sor_RG_MD.bam.recal.HC.vcf'
             csvwriter_for_vcf_files.writerow([patient_id, vcf_file])
     EOF
     """
 }
-
-
-
-

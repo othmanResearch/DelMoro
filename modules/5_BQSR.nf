@@ -3,19 +3,19 @@
 process DownloadKns1 {
     tag "Downloading ${params.ivcf1}"
     publishDir "./knownsites/${params.ivcf1}/", mode: 'copy'
-    storeDir "./knownsites/${params.ivcf1}/" 
-    
+    storeDir "./knownsites/${params.ivcf1}/"
+
     conda "conda-forge::awscli=2.23.6"
-    container "${ workflow.containerEngine == 'singularity' 	?
-		"docker://xueshanf/awscli:alpine-3.16" 		:
-		"xueshanf/awscli:alpine-3.16"		}"
-		
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://xueshanf/awscli:alpine-3.16"
+        : "xueshanf/awscli:alpine-3.16"}"
+
     output:
-	path "*", emit: igenome_ch
+    path "*", emit: igenome_ch
 
     script:
     def filename = "${params.IVCF[params.ivcf1].vcf.tokenize('/').last()}"
-	
+
     """
     aws s3 cp --no-sign-request \\
 	--region eu-west-1 ${params.IVCF[params.ivcf1].vcf} ./
@@ -25,23 +25,23 @@ process DownloadKns1 {
     fi
     """
 }
- 
+
 process DownloadKns2 {
     tag "Downloading ${params.ivcf2}"
     publishDir "./knownsites/${params.ivcf2}/", mode: 'copy'
-    storeDir "./knownsites/${params.ivcf2}/" 
-    
-    conda "conda-forge::awscli=2.23.6"   
-    container "${ workflow.containerEngine == 'singularity' 	?
-		"docker://xueshanf/awscli:alpine-3.16" 		:
-		"xueshanf/awscli:alpine-3.16"		}"
-    
+    storeDir "./knownsites/${params.ivcf2}/"
+
+    conda "conda-forge::awscli=2.23.6"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://xueshanf/awscli:alpine-3.16"
+        : "xueshanf/awscli:alpine-3.16"}"
+
     output:
-        path "*", emit: igenome_ch
+    path "*", emit: igenome_ch
 
     script:
-	def filename = "${params.IVCF[params.ivcf2].vcf.tokenize('/').last()}"
-    
+    def filename = "${params.IVCF[params.ivcf2].vcf.tokenize('/').last()}"
+
     """ 
     aws s3 cp --no-sign-request \\
     --region eu-west-1 ${params.IVCF[params.ivcf2].vcf} ./
@@ -51,7 +51,7 @@ process DownloadKns2 {
     fi
     """
 }
- 
+
 // indexing known sites files 
 
 process IndexKNownSites {
@@ -59,18 +59,16 @@ process IndexKNownSites {
     publishDir "${params.outdir}/Indexes/knownSites", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "${ workflow.containerEngine == 'singularity' 	?
-		"docker://broadinstitute/gatk:latest"		:
-		"broadinstitute/gatk:latest" 	}"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://broadinstitute/gatk:latest"
+        : "broadinstitute/gatk:latest"}"
 
     input:
-	path kn_site_File 	  // known Sites file n°1 related to params.knwonSite1
-	//path kn_site_File2 	  // known Sites file n°2 related to params.knwonSite2
+    path kn_site_File
 
     output:
-   	path "${kn_site_File}.idx"	//, emit: "IDXknS1"
-	//path "${kn_site_File2}.idx"     , emit: "IDXknS2"
-    
+    path "${kn_site_File}.idx"
+
     script:
     """
     gatk IndexFeatureFile \\
@@ -78,7 +76,7 @@ process IndexKNownSites {
 	--output ${kn_site_File}.idx
     """
 }
- 
+
 // BaseRecalibration 
 
 process BaseRecalibrator {
@@ -86,23 +84,24 @@ process BaseRecalibrator {
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "${ workflow.containerEngine == 'singularity' 	?
-		"docker://broadinstitute/gatk:latest"		:
-		"broadinstitute/gatk:latest" 	}"
-    
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://broadinstitute/gatk:latest"
+        : "broadinstitute/gatk:latest"}"
+
     input:
-	path ref
-	path dic
-	path fai
-	//path sor_md_bam_file
-	tuple val(patient_id), path(sor_md_bam_file)
-	path knownsiteFile1
-	path IDXknsF1 		  // index of known site file n° x
-	path knownsiteFile2
-	path IDXkGCF
+    path ref
+    path dic
+    path fai
+    //path sor_md_bam_file
+    tuple val(patient_id), path(sor_md_bam_file)
+    path knownsiteFile1
+    path IDXknsF1
+    // index of known site file n° x
+    path knownsiteFile2
+    path IDXkGCF
 
     output:
-	path "*bqsr.table" , emit: "BQSR_Table"
+    path "*bqsr.table", emit: "BQSR_Table"
 
     script:
     """
@@ -111,7 +110,7 @@ process BaseRecalibrator {
 	--input ${sor_md_bam_file} \\
 	--known-sites ${knownsiteFile1} \\
 	--known-sites ${knownsiteFile2} \\
-	--output ${sor_md_bam_file}.bqsr.table
+	--output ${sor_md_bam_file.baseName.takeWhile { it != '_' }}.bqsr.table
     """
 }
 
@@ -122,47 +121,46 @@ process ApplyBQSR {
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
-    container "${ workflow.containerEngine == 'singularity' 	?
-		"docker://broadinstitute/gatk:latest"		:
-		"broadinstitute/gatk:latest" 	}"
-    
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://broadinstitute/gatk:latest"
+        : "broadinstitute/gatk:latest"}"
+
     input:
-	//path sor_md_bam_file
-	tuple val(patient_id), path(sor_md_bam_file)
-	path bqsrTABLE
-     
+    //path sor_md_bam_file
+    tuple val(patient_id), path(sor_md_bam_file)
+    path bqsrTABLE
+
     output:
-   	path "*.recal.bam" , emit: "recal_bam"
+    path "*.recal.bam", emit: "recal_bam"
 
     script:
     """
     gatk ApplyBQSR \\
 	--input ${sor_md_bam_file} \\
 	--bqsr-recal-file ${bqsrTABLE} \\
-	--output ${sor_md_bam_file}.recal.bam
+	--output ${sor_md_bam_file.baseName.takeWhile { it != '_' }}.recal.bam
     """
-}  
+}
 
 // Generating Indexes of Recalibrated Bam files
 
-process IndexRecalBam{
+process IndexRecalBam {
     tag "CREATING INDEX FOR Recalibrated BAM FILES"
     publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
 
     conda "bioconda::samtools=1.21"
-    container "${ workflow.containerEngine == 'singularity' 	?
-		"docker://firaszemzem/bwa-samtools:latest"	:
-		"firaszemzem/bwa-samtools:latest" 	}"
-    
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://firaszemzem/bwa-samtools:latest"
+        : "firaszemzem/bwa-samtools:latest"}"
+
     input:
-	path RecalBamFile	// Bam file from recal_bam
+    path RecalBamFile
 
     output:
-    	path "${RecalBamFile}.bai"     	, emit: "IDXRECALBAM"
-    
+    path "${RecalBamFile}.bai", emit: "IDXRECALBAM"
+
     script:
     """
     samtools index -@ ${task.cpus}  ${RecalBamFile}
     """
 }
- 

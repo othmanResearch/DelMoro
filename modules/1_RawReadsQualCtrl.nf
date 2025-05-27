@@ -8,15 +8,15 @@ process FastqQc {
     errorStrategy 'ignore'
 
     conda "bioconda::fastqc=0.12.1"
-    container "${ workflow.containerEngine == 'singularity' ?
-		"docker://staphb/fastqc:0.12.1" :
-		"staphb/fastqc:0.12.1" 		}"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://staphb/fastqc:0.12.1"
+        : "staphb/fastqc:0.12.1"}"
 
     input:
-	tuple val(patient_id), path(R1), path(R2)
-	
+    tuple val(patient_id), path(R1), path(R2)
+
     output:
-        path "*.{html,zip}"
+    path "*.{html,zip}"
 
     script:
     """
@@ -28,23 +28,22 @@ process FastqQc {
 
 process ReadsMultiqc {
     tag "Gathering Multiqc FOR RAW READS"
-    publishDir "${params.outdir}/QualityControl/RAW/multiqc/" ,  mode:'copy'
+    publishDir "${params.outdir}/QualityControl/RAW/multiqc/", mode: 'copy'
 
-    
+
     conda "bioconda::multiqc=1.27"
-    container "${ workflow.containerEngine == 'singularity' ? 
-		"docker://multiqc/multiqc:latest" : 
-                "multiqc/multiqc:latest"    	  }"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://multiqc/multiqc:latest"
+        : "multiqc/multiqc:latest"}"
 
     input:
-        path (fastqc)
-            
+    path fastqc
+
     output:
-        path "{multiqc_data,multiqc_report.html}"
-           
+    path "{multiqc_data,multiqc_report.html}"
+
     script:
     """
     multiqc . --ai
     """
 }
-

@@ -1,28 +1,28 @@
 // Module files for DelMoro pipeline
- 
+
 // Trimming with Trimmomatic 
 
-process Trimmomatic {  
+process Trimmomatic {
     tag "TRIMMIG READS WITH TRIMMOMATIC"
 
     publishDir path: "${params.outdir}/TrimmedREADS/", mode: 'copy'
 
     conda "bioconda::trimmomatic=0.39"
-    container "${ workflow.containerEngine == 'singularity' ?
-        "docker://quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2" :
-        "quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2" }"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2"
+        : "quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2"}"
 
     input:
     tuple val(patient_id), path(R1), path(R2), val(MINLEN), val(LEADING), val(TRAILING), val(SLIDINGWINDOW)
- 
 
     output:
-    path "*.trim.fastq.gz"		, emit: paired 		// To be used in DOWNSTREAM Analysis
-    path "*_unpaired.fastq.gz"	, emit: unpaired
+    path "*.trim.fastq.gz", emit: paired
+    // To be used in DOWNSTREAM Analysis
+    path "*_unpaired.fastq.gz", emit: unpaired
 
     script:
     def adapterFile = params.adapters ? "ILLUMINACLIP:${params.adapters}:2:30:10" : ""
-    
+
     """ 
         trimmomatic PE \\
         -threads ${task.cpus} \\
@@ -43,23 +43,23 @@ process Trimmomatic {
 
 process Fastp {
     tag "TRIMMING WITH FASTP"
-    
+
     publishDir path: "${params.outdir}/TrimmedREADS/", mode: 'copy', pattern: "*.gz"
     publishDir path: "${params.outdir}/QualityControl/fastpMetrics", mode: 'copy', pattern: "*.{html,json}"
 
     conda "bioconda::fastp=0.23.2"
-    container "${ workflow.containerEngine == 'singularity' ?
-        "docker://quay.io/biocontainers/fastp:0.23.2--h79da9fb_0" :
-        "quay.io/biocontainers/fastp:0.23.2--h79da9fb_0" }"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://quay.io/biocontainers/fastp:0.23.2--h79da9fb_0"
+        : "quay.io/biocontainers/fastp:0.23.2--h79da9fb_0"}"
 
     input:
-    	tuple val(patient_id), path(R1), path(R2)
+    tuple val(patient_id), path(R1), path(R2)
 
     output:
-	path "*.gz"		, emit: fastpFastq
-	path "*.{html,json}"	, emit: fastpMetrics
+    path "*.gz", emit: fastpFastq
+    path "*.{html,json}", emit: fastpMetrics
 
-    script: 
+    script:
     def adapterFile = params.adapters ? "--adapter_fasta ${file(params.adapters)}" : ""
 
     """
@@ -82,19 +82,19 @@ process Bbduk {
     publishDir path: "${params.outdir}/TrimmedREADS/", mode: 'copy'
 
     conda "bioconda::bbmap=39.18"
-    container "${ workflow.containerEngine == 'singularity' ?
-        "docker://quay.io/biocontainers/bbmap:39.18--he5f24ec_0" :
-        "quay.io/biocontainers/bbmap:39.18--he5f24ec_0" }"
-        
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://quay.io/biocontainers/bbmap:39.18--he5f24ec_0"
+        : "quay.io/biocontainers/bbmap:39.18--he5f24ec_0"}"
+
     input:
-    	tuple val(patient_id), path(R1), path(R2)
-    
+    tuple val(patient_id), path(R1), path(R2)
+
     output:
-    	path "*"	, emit: bbdukFastq
+    path "*", emit: bbdukFastq
 
     script:
     def adapterFile = params.adapters ? "ref=${file(params.adapters)}" : ""
-    
+
     """
     bbduk.sh \\
     in1=${R1} \\
@@ -107,25 +107,25 @@ process Bbduk {
     minlen=50 \\
     threads=${task.cpus} \\
     tbo
-    """   
-} 
+    """
+}
 
 // Check Trimmed reads Quality ;
- 
+
 process TrimmedQC {
     tag "CHECK TRIMMED READS QUALITY"
     publishDir "${params.outdir}/QualityControl/TRIMMED/", mode: 'copy'
 
-    conda "bioconda::fastqc=0.12.1"    
-    container "${ workflow.containerEngine == 'singularity' ?
-		"docker://staphb/fastqc:0.12.1" :
-		"staphb/fastqc:0.12.1" 		}"
+    conda "bioconda::fastqc=0.12.1"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://staphb/fastqc:0.12.1"
+        : "staphb/fastqc:0.12.1"}"
 
     input:
-	path(reads)
+    path reads
 
     output:
-	path "*.{html,zip}"
+    path "*.{html,zip}"
 
     script:
     """
@@ -137,20 +137,19 @@ process TrimmedQC {
 
 process MultiqcTrimmed {
     tag "GATHER TRIMMED QC REPORTS"
-    publishDir "${params.outdir}/QualityControl/TRIMMED/multiqc/" ,  mode:'copy'
+    publishDir "${params.outdir}/QualityControl/TRIMMED/multiqc/", mode: 'copy'
 
     conda "bioconda::multiqc=1.27"
-    container "${ workflow.containerEngine == 'singularity' ?
-		"docker://multiqc/multiqc:latest" :
-		"multiqc/multiqc:latest" 	  }"
-
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://multiqc/multiqc:latest"
+        : "multiqc/multiqc:latest"}"
 
     input:
-	path (fastqc)
-            
+    path fastqc
+
     output:
-	path "{multiqc_data,multiqc_report.html}"
-           
+    path "{multiqc_data,multiqc_report.html}"
+
     script:
     """
     multiqc . --ai

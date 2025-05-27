@@ -3,19 +3,19 @@
 
 //         RETRIEVE IGENOMES
 ////////////////////////////////////////////////////
- 
+
 process DownloadIgenomes {
     tag "Downloading ${params.igenome} from iGenomes reference ${params.IGENOMES[params.igenome]}"
     publishDir "./Reference_Genome/", mode: 'copy'
-    storeDir "./Reference_Genome/" 
-    
+    storeDir "./Reference_Genome/"
+
     conda "conda-forge::awscli=2.23.6"
-    container "${ workflow.containerEngine == 'singularity' 	?
-		"docker://xueshanf/awscli:alpine-3.16" 		:
-		"xueshanf/awscli:alpine-3.16" 	}"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://xueshanf/awscli:alpine-3.16"
+        : "xueshanf/awscli:alpine-3.16"}"
 
     output:
-        path "./genome${params.igenome}.fa", emit: "igenome_ch"
+    path "./genome${params.igenome}.fa", emit: "igenome_ch"
 
     script:
     """
@@ -25,7 +25,7 @@ process DownloadIgenomes {
     """
 }
 
- 
+
 // 	CREATING INDEX FOR ALINGER
 ////////////////////////////////////////////////////
 
@@ -34,39 +34,37 @@ process createIndex {
     publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
 
     conda "bioconda::bwa=0.7.18"
-    container "${ workflow.containerEngine == 'singularity' 	?
-		"docker://firaszemzem/bwa-samtools:latest" 	:
-		"firaszemzem/bwa-samtools:latest" 		}"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://firaszemzem/bwa-samtools:latest"
+        : "firaszemzem/bwa-samtools:latest"}"
 
-
-    
     input:
-	path ref
-         
-    output:
-        path "*.{amb,ann,bwt,pac,sa}" 	, emit: "bwa_index"
+    path ref
 
-    script: 
+    output:
+    path "*.{amb,ann,bwt,pac,sa}", emit: "bwa_index"
+
+    script:
     """
     bwa index ${ref}               
-    """ 
+    """
 }
 
-process createIndexBWAMEM2 { 
+process createIndexBWAMEM2 {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
     publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
-    
+
     conda "bioconda::bwa-mem2=2.2.1"
-    container "${ workflow.containerEngine == 'singularity' ?
-		"docker://firaszemzem/bwamem2-samtools:latest" 	:
-		"firaszemzem/bwamem2-samtools:latest" 		}"
-    
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://firaszemzem/bwamem2-samtools:latest"
+        : "firaszemzem/bwamem2-samtools:latest"}"
+
     input:
-	path ref
-     		
+    path ref
+
     output:
-	path "*.{0123,amb,ann,bwt.2bit.64,pac}"	, emit: "bwa_index"
-	
+    path "*.{0123,amb,ann,bwt.2bit.64,pac}", emit: "bwa_index"
+
     script:
     """
     bwa-mem2 index ${ref}               
@@ -79,17 +77,17 @@ process createIndexBWAMEM2 {
 process createDictionary {
     tag "GENERATE DICTIONARY"
     publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
-    
+
     conda "bioconda::gatk4=4.4"
-    container "${ workflow.containerEngine == 'singularity' ?
-		"docker://broadinstitute/gatk:latest" 	:
-		"broadinstitute/gatk:latest" 		}"
-    
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://broadinstitute/gatk:latest"
+        : "broadinstitute/gatk:latest"}"
+
     input:
-	    path ref
-     		
+    path ref
+
     output:
-	    path "*.dict"   ,   emit: "gatk_dic"
+    path "*.dict", emit: "gatk_dic"
 
     script:
     """
@@ -104,21 +102,20 @@ process createDictionary {
 process createIndexSamtools {
     tag "GENERATE INDEX BY SAMTOOLS"
     publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
-    
+
     conda "bioconda::samtools=1.21"
-    container "${ workflow.containerEngine == 'singularity' ?
-		"docker://firaszemzem/bwa-samtools:latest" 	:
-		"firaszemzem/bwa-samtools:latest" 		}"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://firaszemzem/bwa-samtools:latest"
+        : "firaszemzem/bwa-samtools:latest"}"
 
     input:
-        path ref
-	    		
+    path ref
+
     output:
-        path "*.fai"	, emit: "samtools_index"
-        
+    path "*.fai", emit: "samtools_index"
+
     script:
     """
     samtools faidx ${ref}  --output ${ref}.fai                         
     """
 }
-
