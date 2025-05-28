@@ -56,7 +56,7 @@ process DownloadKns2 {
 
 process IndexKNownSites {
     tag "CREATING INDEX for known sites vcf"
-    publishDir "${params.outdir}/Indexes/knownSites", mode: 'copy'
+    publishDir "./knownsites/", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -146,7 +146,7 @@ process ApplyBQSR {
 
 process IndexRecalBam {
     tag "CREATING INDEX FOR Recalibrated BAM FILES"
-    publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
+    publishDir "${params.outdir}/Mapping/", mode: 'copy'
 
     conda "bioconda::samtools=1.21"
     container "${workflow.containerEngine == 'singularity'

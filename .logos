@@ -164,6 +164,8 @@ log.info"""
 \033[32m --cpus         =\033[37m 4									  	=> Default Cpus		
 
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
+\033[32m --cleanup    	=\033[37m false 									=> Remove temporary working directory  
+\033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM files derived from alignment  
 
 \033[32m --trimmomatic 	=\033[37m false 									=> Trimming with trimmomatic tool
 \033[32m --fastp	=\033[37m false 									=> Trimming with fastp tool
@@ -182,11 +184,11 @@ log.info"""
 \033[32m --knownsite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  	=> knownsites should be .vcf  
 \033[32m --knownsite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
 
-\033[32m --bamindex	=\033[37m ./outdir/Indexes/BamFiles/*.bai		       			  	=> Bam Files Indexes
+\033[32m --bamindex	=\033[37m ./outdir/Mapping/*.bai			       			  	=> Bam Files Indexes
 
-\033[32m --alignerindex	=\033[37m ./outdir/Indexes/Reference/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}		=> Bwa			Reference Indexes
-\033[32m --dictgatk	=\033[37m ./outdir/Indexes/Reference/*.dict				  		=> GATK Dictionary 	Reference Index
-\033[32m --samtoolsindex=\033[37m ./outdir/Indexes/Reference/*.fa.fai  			  	  		=> Samtools fai 	Reference Index
+\033[32m --alignerindex	=\033[37m ./Reference_Genome/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}			=> Bwa			Reference Indexes
+\033[32m --dictgatk	=\033[37m ./Reference_Genome/*.dict					  		=> GATK Dictionary 	Reference Index
+\033[32m --samtoolsindex=\033[37m ./Reference_Genome/*.fa.fai 	 			  	  		=> Samtools fai 	Reference Index
 \033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
 \033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    
 

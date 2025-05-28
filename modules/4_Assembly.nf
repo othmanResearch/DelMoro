@@ -4,12 +4,12 @@
 
 process alignReadsToRef {
     tag "ALIGNING GENOMES TO REFERENCE"
-    publishDir "${params.outdir}/Mapping", mode: 'copy'
+    publishDir "${params.outdir}/Mapping", mode: 'copy', enabled: params.keepinter 
 
     conda "bioconda::bwa=0.7.18"
     container "${workflow.containerEngine == 'singularity'
-        ? "docker://firaszemzem/bwa-samtools:latest"
-        : "firaszemzem/bwa-samtools:latest"}"
+	? "docker://firaszemzem/bwa-samtools:latest"  	
+    	: "firaszemzem/bwa-samtools:latest"}"
 
     input:
     path refGenome
@@ -30,12 +30,12 @@ process alignReadsToRef {
 
 process alignReadsToRefBWAMEM2 {
     tag "ALIGNING GENOMES TO REFERENCE"
-    publishDir "${params.outdir}/Mapping", mode: 'copy'
+    publishDir "${params.outdir}/Mapping", mode: 'copy', enabled: params.keepinter 
 
     conda "bioconda::bwa-mem2=2.2.1"
-    container "${workflow.containerEngine == 'singularity'
-        ? "docker://firaszemzem/bwamem2-samtools:latest"
-        : "firaszemzem/bwamem2-samtools:latest"}"
+    container "${workflow.containerEngine == 'singularity'	
+	? "docker://firaszemzem/bwamem2-samtools:latest" 
+	: "firaszemzem/bwamem2-samtools:latest"}"
 
     input:
     path refGenome
@@ -43,7 +43,7 @@ process alignReadsToRefBWAMEM2 {
     tuple val(patient_id), path(R1), path(R2)
 
     output:
-    path "${patient_id}_sor.bam", emit: sorted_bam
+    path "${patient_id}_sor.bam" , emit: sorted_bam
 
     script:
     """
@@ -58,18 +58,18 @@ process alignReadsToRefBWAMEM2 {
 
 process assignReadGroup {
     tag "ASSIGNING READ GROUPS"
-    publishDir "${params.outdir}/Mapping", mode: 'copy'
+    publishDir "${params.outdir}/Mapping", mode: 'copy', enabled: params.keepinter
 
     conda "bioconda::gatk4=4.4"
-    container "${workflow.containerEngine == 'singularity'
-        ? "docker://broadinstitute/gatk:latest"
-        : "broadinstitute/gatk:latest"}"
+    container "${workflow.containerEngine == 'singularity'	
+    	? "docker://broadinstitute/gatk:latest"	
+    	: "broadinstitute/gatk:latest"}"
 
     input:
     path aligned_bam
 
     output:
-    path "*_RG.bam", emit: sorted_labeled_bam
+    path "*_RG.bam" , emit: sorted_labeled_bam
 
     script:
     """
@@ -101,25 +101,25 @@ process markDuplicates {
     path sorted_bam
 
     output:
-    path "*_MD.bam", emit: sorted_markduplicates_bam
+    path "*_delMoro.bam", emit: sorted_markduplicates_bam
     path "*.metrict"
 
     script:
     """
     gatk MarkDuplicates \\
     -I ${sorted_bam} \\
-    -O ${sorted_bam.baseName}_MD.bam \\
-    --METRICS_FILE ${sorted_bam.baseName}_MD.metrict \\
+    -O ${sorted_bam.baseName.takeWhile{ it != '_' }}_delMoro.bam \\
+    --METRICS_FILE ${sorted_bam.baseName.takeWhile{ it != '_' }}_MD.metrict \\
     --TMP_DIR .
 
     """
 }
-
+//
 // Generating Indexes of Bam files
 
 process IndexBam {
     tag "CREATING INDEX FOR BAM FILES"
-    publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
+    publishDir "${params.outdir}/Mapping/", mode: 'copy'
 
     conda "bioconda::samtools=1.21"
     container "${workflow.containerEngine == 'singularity'

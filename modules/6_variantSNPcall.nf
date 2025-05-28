@@ -4,7 +4,7 @@
 
 process RecalHaploCall {
     tag "Recal Var Call with Gatk HaplotypeCaller"
-    publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
+    publishDir "${params.outdir}/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -35,7 +35,7 @@ process RecalHaploCall {
 
 process VarToTable {
     tag "Collect Variant in a Table using GATK4"
-    publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
+    publishDir "${params.outdir}/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -61,7 +61,7 @@ process VarToTable {
 
 process SnpFilter {
     tag "Collect SNP in a Table using GATK4"
-    publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
+    publishDir "${params.outdir}/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
@@ -87,7 +87,7 @@ process SnpFilter {
 
 process CreateGVCF {
     tag "CREATE GVCF with Gatk HaplotypeCaller"
-    publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
+    publishDir "${params.outdir}/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -121,7 +121,7 @@ process CreateGVCF {
 
 process IndexGVCF {
     tag "CREATING INDEX FOR Recalibrated BAM FILES"
-    publishDir "${params.outdir}/Indexes/BamFiles", mode: 'copy'
+    publishDir "${params.outdir}/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -146,7 +146,7 @@ process IndexGVCF {
 
 process CombineGvcfs {
     tag "COMBINE GVCF files with Gatk HaplotypeCaller"
-    publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
+    publishDir "${params.outdir}/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -176,7 +176,7 @@ process CombineGvcfs {
 
 process GenotypeGvcfs {
     tag "GENERATING GENOTYPES OF GVCF"
-    publishDir "${params.outdir}/Mapping/Variants", mode: 'copy'
+    publishDir "${params.outdir}/Variants", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'

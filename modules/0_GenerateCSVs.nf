@@ -104,7 +104,7 @@ process WriteBamCSV {
 
         for row in csvreader:
             patient_id = row[0]
-            bam_file = f'{bam_path}{patient_id}_sor_RG_MD.bam'
+            bam_file = f'{bam_path}{patient_id}_delMoro.bam'
             csvwriter_for_bam_files.writerow([patient_id, bam_file])
     EOF
     """
