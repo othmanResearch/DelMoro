@@ -31,7 +31,7 @@ process DownloadIgenomes {
 
 process createIndex {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
-    publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
+    publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
 
     conda "bioconda::bwa=0.7.18"
     container "${workflow.containerEngine == 'singularity'
@@ -52,7 +52,7 @@ process createIndex {
 
 process createIndexBWAMEM2 {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
-    publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
+    publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
 
     conda "bioconda::bwa-mem2=2.2.1"
     container "${workflow.containerEngine == 'singularity'
@@ -76,7 +76,7 @@ process createIndexBWAMEM2 {
 
 process createDictionary {
     tag "GENERATE DICTIONARY"
-    publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
+    publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
 
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
@@ -101,7 +101,7 @@ process createDictionary {
 
 process createIndexSamtools {
     tag "GENERATE INDEX BY SAMTOOLS"
-    publishDir "${params.outdir}/Indexes/Reference", mode: 'copy', overwrite: false
+    publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
 
     conda "bioconda::samtools=1.21"
     container "${workflow.containerEngine == 'singularity'
