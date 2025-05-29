@@ -1,0 +1,53 @@
+site_name: DelMoro
+site_url: https://yourusername.github.io/DelMoro
+site_description: Documentation for DelMoro Pipeline
+site_author: Firas Zemzem
+
+theme:
+  name: readthedocs
+  theme:
+     - content.code.copy
+     - content.tabs
+     - content.toggle
+
+
+extra_css:
+  - css/custom.css
+
+extra_javascript:
+  - assets/scripts.js
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Pipeline Overview:
+      - Workflow Structure: overview.md
+      - Requirements: requirements.md
+      - Inputs & Outputs: io.md
+  - Configuration:
+      - Parameters: parameters.md
+      - Config Files: config.md
+  - Running the Pipeline: running.md
+  - Development:
+      - Testing: testing.md
+      - Troubleshooting: troubleshooting.md
+      - Changelog: changelog.md
+      - About: about.md
+
+repo_url: https://github.com/yourusername/DelMoro
+repo_name: yourusername/DelMoro
+
+plugins:
+  - search
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - admonition
+  - codehilite
+  - footnotes
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+
