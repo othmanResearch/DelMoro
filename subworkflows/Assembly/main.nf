@@ -13,7 +13,12 @@ include { GenerateStat		 } from '../../modules/4_Assembly.nf'
 include { IndexBam as IndexRegion} from '../../modules/4_Assembly.nf' 
  
 include { BamCoverage		 } from '../../modules/4_CoverageStat.nf' 
-include { BamTargetCoverage	 } from '../../modules/4_CoverageStat.nf' 
+include { BamTargetCoverage	 } from '../../modules/4_CoverageStat.nf'
+         
+include { AlignmentMetrics	} from '../../modules/4_Metrics.nf' 
+include { InsertMetrics		} from '../../modules/4_Metrics.nf' 
+include { GcBiasMetrics 	} from '../../modules/4_Metrics.nf' 
+include { Qualimap	 	} from '../../modules/4_Metrics.nf' 
 
 workflow ALIGN_TO_REF_GENOME {
   take:
@@ -42,6 +47,12 @@ workflow ALIGN_TO_REF_GENOME {
 				 markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	) 
 		BamCoverage 	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),IndexBam.out.collect())
 		
+		AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
+		InsertMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true) 		  )
+		GcBiasMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel ) 
+		Qualimap	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+	
+		
 		// Case: CHECK COVERAGE IN TARGETD REGION FROM BED FILE 
 
 		} else if ( params.reference 	!= null && 
@@ -60,6 +71,11 @@ workflow ALIGN_TO_REF_GENOME {
 						   markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	) 
 				BamTargetCoverage (markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),
 					  	   IndexBam.out.collect(), target					)
+					  	   
+				AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
+				InsertMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+				GcBiasMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel ) 
+				Qualimap	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
 	
 			// Case: Region specified Extract BAM REGION FILE
 	
@@ -79,6 +95,12 @@ workflow ALIGN_TO_REF_GENOME {
 					IndexRegion	(Extractregion.out.collectFile(sort: true)				) 
 					GenerateStat	(assignReadGroup.out.sorted_labeled_bam.collectFile(sort: true),
 						 	 markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)
+						 	 
+					AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
+					InsertMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+					GcBiasMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel ) 
+					Qualimap	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+	
 		 			} else {  
 	 					DelMoroWelcome()
     						print("\033[31m Please specify valid parameters:\n"				)
@@ -108,6 +130,12 @@ workflow ALIGN_TO_REF_GENOME {
 					 markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	) 
 		BamCoverage 		(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),
 					 IndexBam.out.collect()							)
+					 
+		AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
+		InsertMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+		GcBiasMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel ) 
+		Qualimap	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+	
 		
 		// Case: CHECK COVERAGE IN TARGETD REGION FROM BED FILE 
 
@@ -127,6 +155,12 @@ workflow ALIGN_TO_REF_GENOME {
 							 markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	) 
 				BamTargetCoverage 	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),
 							 IndexBam.out.collect(),target						)
+							 
+				AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
+				InsertMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+				GcBiasMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel ) 
+				Qualimap	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+	
 	
 			// Case: Region specified Extract BAM REGION FILE
 	
@@ -146,6 +180,12 @@ workflow ALIGN_TO_REF_GENOME {
 					IndexRegion		(Extractregion.out.collectFile(sort: true)				) 
 					GenerateStat		(assignReadGroup.out.sorted_labeled_bam.collectFile(sort: true),
 								 markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)
+
+					AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
+					InsertMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+					GcBiasMetrics	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel ) 
+					Qualimap	  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)		  )
+	
 		 			} else {  
 	 					
 	 					DelMoroWelcome()
