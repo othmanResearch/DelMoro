@@ -15,10 +15,10 @@ include { IndexBam as IndexRegion} from '../../modules/4_Assembly.nf'
 include { BamCoverage		 } from '../../modules/4_CoverageStat.nf' 
 include { BamTargetCoverage	 } from '../../modules/4_CoverageStat.nf'
          
-include { AlignmentMetrics	} from '../../modules/4_Metrics.nf' 
-include { InsertMetrics		} from '../../modules/4_Metrics.nf' 
-include { GcBiasMetrics 	} from '../../modules/4_Metrics.nf' 
-include { Qualimap	 	} from '../../modules/4_Metrics.nf' 
+include { AlignmentMetrics	} from '../../modules/4_BamMetrics.nf' 
+include { InsertMetrics		} from '../../modules/4_BamMetrics.nf' 
+include { GcBiasMetrics 	} from '../../modules/4_BamMetrics.nf' 
+include { Qualimap	 	} from '../../modules/4_BamMetrics.nf' 
 
 workflow ALIGN_TO_REF_GENOME {
   take:

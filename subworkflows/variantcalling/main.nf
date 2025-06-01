@@ -12,7 +12,8 @@ include { IndexGVCF		} from '../../modules/6_variantSNPcall.nf'
 include { CombineGvcfs		} from '../../modules/6_variantSNPcall.nf'  
 include { GenotypeGvcfs		} from '../../modules/6_variantSNPcall.nf' 
 
-
+include { GenerateStats 	} from '../../modules/6_varMetrics.nf' 
+ 
 workflow CALL_SNPs_GATK {
 
     take:
@@ -37,17 +38,20 @@ workflow CALL_SNPs_GATK {
 			  BamToVarCall,
 			  IDXBAM.collect()				)
    	
-	 VarToTable 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true)	)
+	 VarToTable 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true), RecalHaploCall.out.RecalHaploCallidx.collect()	)
    			
-   	 SnpFilter 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true)	)
+   	 SnpFilter 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true), RecalHaploCall.out.RecalHaploCallidx.collect()	)
    	
+   	 ///// Metrics Extracting from vcfs  
+	 GenerateStats	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true), RecalHaploCall.out.RecalHaploCallidx.collect()	) 
+   	 ////
    	 CreateGVCF	( ref_gen_channel,
 			  dictREF.collect(),
 			  samidxREF.collect(),
 			  BamToVarCall,
 			  IDXBAM.collect()		)
 													
-	 IndexGVCF	( CreateGVCF.out.g_vcf_Recal.collectFile(sort: true)			)
+	 IndexGVCF	( CreateGVCF.out.g_vcf_Recal.collectFile(sort: true), CreateGVCF.out.CreateGVCFidx.collectFile()			)
 				
 	 CombineGvcfs	( ref_gen_channel,
 			  dictREF.collect(),
@@ -58,8 +62,10 @@ workflow CALL_SNPs_GATK {
 	 GenotypeGvcfs 	( ref_gen_channel,
 			  dictREF.collect(),
 			  samidxREF.collect(),
-			  CombineGvcfs.out.CohorteVcf.collectFile(sort: true)			)  
-
+			  CombineGvcfs.out.CohorteVcf.collectFile(sort: true),
+			  CombineGvcfs.out.CombineGvcfsidx.collect()		)  
+			  
+	
    		} else if ( params.reference 	!= null && 
    			    params.tovarcall	!= null &&
 			    params.generate 	== 'onlyVCF' ){	// generate vcf for all inputs 
@@ -72,10 +78,14 @@ workflow CALL_SNPs_GATK {
 					     BamToVarCall,
 					     IDXBAM.collect()	 	)
 	   
-	   		    VarToTable 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true)	)
+	   		    VarToTable 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true), RecalHaploCall.out.RecalHaploCallidx.collect()	)
 	   	
-	   		    SnpFilter 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true)	)
-	   	
+	   		    SnpFilter 	( RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true), RecalHaploCall.out.RecalHaploCallidx.collect()	)
+ 			    
+ 			    ///// Metrics Extracting from vcfs 
+			    GenerateStats	(RecalHaploCall.out.vcf_HaplotypeCaller_Recal.collectFile(sort: true), RecalHaploCall.out.RecalHaploCallidx.collect())
+	   		    /////
+	   		    
    			} else if ( params.reference 	!= null && 
    				    params.tovarcall	!= null &&
    				    params.generate 	== 'cohorteGVCF' ){ // Generate one file : the cohorte vcf
@@ -89,7 +99,7 @@ workflow CALL_SNPs_GATK {
 							  BamToVarCall,
 							  IDXBAM.collect()			)
 
-				    IndexGVCF		( CreateGVCF.out.g_vcf_Recal.collectFile(sort: true)		)
+				    IndexGVCF		( CreateGVCF.out.g_vcf_Recal.collectFile(sort: true), CreateGVCF.out.CreateGVCFidx.collectFile()		)
 			
 				    CombineGvcfs	( ref_gen_channel,
 							  dictREF.collect(),
@@ -100,8 +110,11 @@ workflow CALL_SNPs_GATK {
 				    GenotypeGvcfs 	( ref_gen_channel,
 							  dictREF.collect(),
 							  samidxREF.collect(),
-							  CombineGvcfs.out.CohorteVcf.collectFile(sort: true)		)  
-		 		
+							  CombineGvcfs.out.CohorteVcf.collectFile(sort: true),
+			  				  CombineGvcfs.out.CombineGvcfsidx.collect()			)
+			  				  
+				    GenerateStats	( GenotypeGvcfs.out) 
+				    
 				}  else { 
 				    DelMoroWelcome() 
 				    print("\033[31m Please specify valid parameters:\n"					)
