@@ -174,12 +174,4 @@ if (params.exec == null ){
 
 
 
-workflow.onComplete {
-    if (params.cleanup) {
-        println "\033[32m Temporary work directory './work' was successfully deleted. \033[37m"
-        file("./work").deleteDir()
-    } else {
-        println "\033[33m Skipping cleanup of './work' directory. \033[37m"
-    }
-}
 
