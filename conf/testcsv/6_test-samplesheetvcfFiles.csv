@@ -1,0 +1,3 @@
+patient_id,vcFile
+fatherID,https://github.com/Zemzemfiras1/mock/raw/refs/heads/test-data/vcfs/fatherID.recal.HC.vcf.gz
+motherID,https://github.com/Zemzemfiras1/mock/raw/refs/heads/test-data/vcfs/motherID.recal.HC.vcf.gz

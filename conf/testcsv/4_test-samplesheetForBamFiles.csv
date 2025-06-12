@@ -1,0 +1,3 @@
+patient_id,BamFile
+fatherID,https://github.com/Zemzemfiras1/mock/raw/refs/heads/test-data/bams/fatherID_delMoro.bam
+motherID,https://github.com/Zemzemfiras1/mock/raw/refs/heads/test-data/bams/motherID_delMoro.bam
