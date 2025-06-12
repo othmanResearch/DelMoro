@@ -1,4 +1,4 @@
 patient_id,vcFile
-41father,./outdir/Mapping/Variants/41father_sor_RG_MD.bam.recal.HC.vcf
-22mother,./outdir/Mapping/Variants/22mother_sor_RG_MD.bam.recal.HC.vcf
-33son,./outdir/Mapping/Variants/33son_sor_RG_MD.bam.recal.HC.vcf
+fatherID,./outdir/Mapping/Variants/fatherID_sor_RG_MD.bam.recal.HC.vcf
+motherID,./outdir/Mapping/Variants/motherID_sor_RG_MD.bam.recal.HC.vcf
+sonID,./outdir/Mapping/Variants/sonID_sor_RG_MD.bam.recal.HC.vcf

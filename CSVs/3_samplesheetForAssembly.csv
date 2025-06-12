@@ -1,4 +1,4 @@
 patient_id,R1,R2
-41father,./outdir/TrimmedREADS/41father_1.trim.fastq.gz,./outdir/TrimmedREADS/41father_2.trim.fastq.gz
-22mother,./outdir/TrimmedREADS/22mother_1.trim.fastq.gz,./outdir/TrimmedREADS/22mother_2.trim.fastq.gz
-33son,./outdir/TrimmedREADS/33son_1.trim.fastq.gz,./outdir/TrimmedREADS/33son_2.trim.fastq.gz
+fatherID,./outdir/TrimmedREADS/fatherID_1.trim.fastq.gz,./outdir/TrimmedREADS/fatherID_2.trim.fastq.gz
+motherID,./outdir/TrimmedREADS/motherID_1.trim.fastq.gz,./outdir/TrimmedREADS/motherID_2.trim.fastq.gz
+sonID,./outdir/TrimmedREADS/sonID_1.trim.fastq.gz,./outdir/TrimmedREADS/sonID_2.trim.fastq.gz

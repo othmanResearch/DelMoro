@@ -1,4 +1,4 @@
 patient_id,R1,R2,MINLEN,LEADING,TRAILING,SLIDINGWINDOW
-41father,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz,36,30,30,4:20
-22mother,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz,36,30,30,4:20
-33son,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz,36,30,30,4:20
+fatherID,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz,36,30,30,4:20
+motherID,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz,36,30,30,4:20
+sonID,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz,36,30,30,4:20

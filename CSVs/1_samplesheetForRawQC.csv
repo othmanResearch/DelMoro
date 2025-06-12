@@ -1,4 +1,4 @@
 patient_id,R1,R2
-41father,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz
-22mother,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz
-33son,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz
+fatherID,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz
+motherID,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz
+sonID,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz
