@@ -25,7 +25,7 @@ workflow CALL_SNPs_GATK {
  
     main: 
 
-    if  (params.generate 	== null && 
+    if  (params.mode 		== null && 
    	 params.reference 	!= null && 
    	 params.tovarcall	!= null ){
    		
@@ -62,13 +62,13 @@ workflow CALL_SNPs_GATK {
 	 GenotypeGvcfs 	( ref_gen_channel,
 			  dictREF.collect(),
 			  samidxREF.collect(),
-			  CombineGvcfs.out.CohorteVcf.collectFile(sort: true),
+			  CombineGvcfs.out.CohortVcf.collectFile(sort: true),
 			  CombineGvcfs.out.CombineGvcfsidx.collect()		)  
 			  
 	
    		} else if ( params.reference 	!= null && 
    			    params.tovarcall	!= null &&
-			    params.generate 	== 'onlyVCF' ){	// generate vcf for all inputs 
+			    params.mode 	== 'onlyVCF' ){	// generate vcf for all inputs 
   	 
 	  		    DelMoroVarCallOutput()
 	     				
@@ -88,7 +88,7 @@ workflow CALL_SNPs_GATK {
 	   		    
    			} else if ( params.reference 	!= null && 
    				    params.tovarcall	!= null &&
-   				    params.generate 	== 'cohorteGVCF' ){ // Generate one file : the cohorte vcf
+   				    params.mode 	== 'cohortGVCF' ){ // Generate one file : the cohort vcf
    	
    			
 		   		    DelMoroVarCallOutput()
@@ -110,7 +110,7 @@ workflow CALL_SNPs_GATK {
 				    GenotypeGvcfs 	( ref_gen_channel,
 							  dictREF.collect(),
 							  samidxREF.collect(),
-							  CombineGvcfs.out.CohorteVcf.collectFile(sort: true),
+							  CombineGvcfs.out.CohortVcf.collectFile(sort: true),
 			  				  CombineGvcfs.out.CombineGvcfsidx.collect()			)
 			  				  
 				    GenerateStats	( GenotypeGvcfs.out) 
@@ -120,7 +120,7 @@ workflow CALL_SNPs_GATK {
 				    print("\033[31m Please specify valid parameters:\n"					)
 				    print(" --reference option (--reference reference ) \n"				)
 				    print(" --tovarcall option (--tovarcall CSVs/5_samplesheetReclibFiles.csv )\n "	)
-				    print("optional : --generate option (--generate onlyVCF / cohorteGVCF )\n "		)  
+				    print("optional : --mode option (--mode onlyVCF / cohortGVCF )\n "		)  
 			    	    print("For details, run: nextflow main.nf --exec params\n\033[37m"			)
 	   } 
 }

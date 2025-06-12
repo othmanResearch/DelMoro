@@ -173,8 +173,8 @@ process CombineGvcfs {
     path IDXofGvcf
     
     output:
-    path "Cohort.g.vcf.gz", emit: "CohorteVcf"
-    path "*.gz.tbi"    ,emit: "CombineGvcfsidx"
+    path "Cohort.g.vcf.gz"	, emit: "CohortVcf"
+    path "*.gz.tbi"    		, emit: "CombineGvcfsidx"
     
     script:
     """
