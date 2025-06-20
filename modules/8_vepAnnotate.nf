@@ -35,6 +35,7 @@ process VepAnnotation {
         --input_file ${vcf} \\
         --output_file ${vcf.simpleName}_vep.vcf.gz \\
         --format vcf \\
+	--everything \\
         --vcf \\
         --species ${species} \\
         --cache \\
