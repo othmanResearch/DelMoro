@@ -162,7 +162,7 @@ process WriteVcfCSV {
 
     input_csv = '${input_csv}'
     output_vcf = '6_samplesheetvcfFiles.csv'
-    bam_path = "./${params.outdir}/Mapping/Variants/"
+    bam_path = "./${params.outdir}/Variants/"
 
     with open(input_csv, 'r') as input_file, open(output_vcf, 'w', newline='') as vcf_files:
         csvreader = csv.reader(input_file)
@@ -173,7 +173,7 @@ process WriteVcfCSV {
 
         for row in csvreader:
             patient_id = row[0]
-            vcf_file = f'{bam_path}{patient_id}_sor_RG_MD.bam.recal.HC.vcf'
+            vcf_file = f'{bam_path}{patient_id}.recal.HC.vcf.gz'
             csvwriter_for_vcf_files.writerow([patient_id, vcf_file])
     EOF
     """
