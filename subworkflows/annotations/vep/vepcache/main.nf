@@ -19,7 +19,12 @@ workflow VEP_CACHE {
     
          DelMoroWelcome()
  	 print("\033[31m Please specify valid parameters:\n" )
-	 print("\033[31m  --species   parameter ( For more info please check https://ftp.ensembl.org/pub/release-113/variation/indexed_vep_cache/ )\n") 
+	 print("\033[31m  --species   parameter ( For more info please check https://ftp.ensembl.org/pub/release-114/variation/indexed_vep_cache/ )\n") 
+	 print("\033[31m  --cachetype parameter [ optional ] \n") 
+	 print("\033[31m  --assembly  parameter [ optional ] \n") 
+ 	 print("\033[31m  --cacheversion  parameter [ optional ] \n") 
+	 
+	 
 	 print(" For details, run: nextflow main.nf --exec params\n\033[37m"			  	)
 
  
