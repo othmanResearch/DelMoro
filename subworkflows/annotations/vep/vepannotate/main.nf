@@ -62,6 +62,7 @@ workflow VEP_ANNOTATE {
 	species
 	assembly
 	cachetype
+	CacheVersion
  
 
     main:
@@ -72,7 +73,7 @@ workflow VEP_ANNOTATE {
      	(!params.cachetype || params.cachetype == 'refseq' || params.cachetype == 'merged' ) ) {
 
    	 DelMoroVepAnnot()
-   	 VepAnnotation(vcf, fasta, genomeindex, vepcache, species, assembly, cachetype)
+   	 VepAnnotation(vcf, fasta, genomeindex, vepcache, species, assembly, cachetype, CacheVersion)
 
 	
 

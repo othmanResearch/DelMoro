@@ -6,10 +6,10 @@ process DownloadVepCache {
     tag "DOWNLOAD VEP CACHE FOR ${species}"
     publishDir "./", mode: 'copy'
 
-    conda 'bioconda::ensembl-vep=113.4'
+    conda 'bioconda::ensembl-vep=114.2'
     container "${workflow.containerEngine == 'singularity'
-        ? 'docker://ensemblorg/ensembl-vep:release_113.4'
-        : 'ensemblorg/ensembl-vep:release_113.4'}"
+        ? 'docker://ensemblorg/ensembl-vep:latest'
+        : 'ensemblorg/ensembl-vep:latest'}"
 
     input:
     val species
@@ -27,11 +27,11 @@ process DownloadVepCache {
     def cacheVersionArg = cacheversion ? "--CACHE_VERSION ${cacheversion}" : "--NO_UPDATE"
 
     """
-    vep_install \\
+    INSTALL.pl \\
         --AUTO c \\
         ${speciesArg} \\
         ${assemblyArg} \\
         --CACHE_DIR ${cachedir} \\
-	${cacheVersionArg} \\  
+	${cacheVersionArg}  
     """
 }

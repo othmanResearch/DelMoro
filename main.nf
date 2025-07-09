@@ -153,7 +153,7 @@ if (params.exec == null ){
   	          
   	            } else if ( params.exec == 'vepannotate' ) {
   	         
-  	              VEP_ANNOTATE(VcfChannel,RefGenChannel,SamtIdxRef,CacheDirANN,VepSpecies,Assembly,CacheType)
+  	              VEP_ANNOTATE(VcfChannel,RefGenChannel,SamtIdxRef,CacheDirANN,VepSpecies,Assembly,CacheType,CacheVersion)
   	          
   	              } else if ( params.exec == 'help'){
   	        

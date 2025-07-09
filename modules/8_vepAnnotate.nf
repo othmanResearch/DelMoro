@@ -7,10 +7,10 @@ process VepAnnotation {
     tag "ANNOTATE ${vcf} WITH VEP"
     publishDir "${params.outdir}/annotation/", mode: 'copy'
 
-    conda 'bioconda::ensembl-vep=113.4'
+    conda 'bioconda::ensembl-vep=114.2'
     container "${workflow.containerEngine == 'singularity'
-        ? 'docker://ensemblorg/ensembl-vep:release_113.4'
-        : 'ensemblorg/ensembl-vep:release_113.4'}"
+        ? 'docker://ensemblorg/ensembl-vep:latest'
+        : 'ensemblorg/ensembl-vep:latest'}"
 
     input:
     tuple val(patient_id), path(vcf)
@@ -20,6 +20,7 @@ process VepAnnotation {
     val species
     val assembly
     val cachetype
+    val cacheversion
 
     output:
     path "*.vcf.gz", emit: vcf
@@ -29,6 +30,7 @@ process VepAnnotation {
     script:
     // Set cache flags using ternary operator
     def cachetypeArg = cachetype ? "--${cachetype}" : ""
+    def cacheVersionArg = cacheversion ? " --cache_version ${cacheversion}" : ""
 
     """
     vep \\
@@ -47,7 +49,8 @@ process VepAnnotation {
         --force_overwrite \\
         --compress_output bgzip \\
         --fork ${task.cpus} \\
-        ${cachetypeArg}
+        ${cachetypeArg} \\
+        ${cacheVersionArg}
         
     tabix -p vcf ${vcf.simpleName}_vep.vcf.gz
     """
