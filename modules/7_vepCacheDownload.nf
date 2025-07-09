@@ -8,8 +8,8 @@ process DownloadVepCache {
 
     conda 'bioconda::ensembl-vep=113.4'
     container "${workflow.containerEngine == 'singularity'
-        ? 'docker://iarcbioinfo/ensembl-vep'
-        : 'iarcbioinfo/ensembl-vep'}"
+        ? 'docker://ensemblorg/ensembl-vep:release_113.4'
+        : 'ensemblorg/ensembl-vep:release_113.4'}"
 
     input:
     val species
