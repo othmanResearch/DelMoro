@@ -22,16 +22,17 @@ process DownloadVepCache {
     path "${cachedir}"
 
     script:
+    def installerCmd =  System.getenv('CONDA_PREFIX') != null ? "vep_install"  : "INSTALL.pl"
     def speciesArg = params.cachetype ? "--SPECIES ${params.species}_${params.cachetype}" : "--SPECIES ${params.species}"
     def assemblyArg = params.assembly ? "--ASSEMBLY ${params.assembly}" : ""
     def cacheVersionArg = cacheversion ? "--CACHE_VERSION ${cacheversion}" : "--NO_UPDATE"
 
     """
-    INSTALL.pl \\
+    ${installerCmd} \\
         --AUTO c \\
         ${speciesArg} \\
         ${assemblyArg} \\
         --CACHE_DIR ${cachedir} \\
-	${cacheVersionArg}  
+        ${cacheVersionArg}
     """
 }
