@@ -7,6 +7,11 @@ process AlignmentMetrics {
     publishDir "${params.outdir}/Mapping/BamMetrics/AlignmentMetrics/", mode: "copy"
     cpus "${params.cpus}"
     
+    conda "bioconda::gatk4=4.4.0.0"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://broadinstitute/gatk:latest"
+        : "broadinstitute/gatk:latest"}"
+    
     input:
     path bam
     path ref
@@ -29,7 +34,12 @@ process InsertMetrics {
     tag  "COLLECTING INSERT SIZE METRICS WITH GATK"
     publishDir "${params.outdir}/Mapping/BamMetrics/InsertMetrics/", mode: "copy"
     cpus "${params.cpus}"
-    
+ 
+    conda "bioconda::gatk4=4.4.0.0"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://broadinstitute/gatk:latest"
+        : "broadinstitute/gatk:latest"}"
+            
     input:
     path bam
 
@@ -52,7 +62,12 @@ process GcBiasMetrics {
     tag "COLLECTING GC BIAS METRICS WITH GATK"
     publishDir "${params.outdir}/Mapping/BamMetrics/GCMetrics/", mode: "copy"
     cpus "${params.cpus}"
-    
+
+    conda "bioconda::gatk4=4.4.0.0"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://broadinstitute/gatk:latest"
+        : "broadinstitute/gatk:latest"}"
+            
     input:
     path bam
     path ref
@@ -80,6 +95,11 @@ process Qualimap {
     publishDir "${params.outdir}/Mapping/BamMetrics/Qualimap/", mode: "copy"
     cpus "${params.cpus}"
     
+    conda "bioconda::qualimap==2.3"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://pegi3s/qualimap:latest"
+        : "pegi3s/qualimap:latest"}"
+        
     input:
     path bam
 

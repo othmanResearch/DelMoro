@@ -7,8 +7,13 @@
 process GenerateStats {
     tag "GENERATE BCFTOOLS STATS FROM VCF"
     publishDir "${params.outdir}/Variants/Metrics/", mode: 'copy'
-    cpus 8
 
+    
+    conda "bioconda::bcftools=1.21"
+    container "${workflow.containerEngine == 'singularity'
+	? "docker://staphb/bcftools:latest"
+	: "staphb/bcftools:latest"}"
+	
     input:
     path vcf
     path gzidx
