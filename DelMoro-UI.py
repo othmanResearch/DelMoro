@@ -3,7 +3,7 @@ import os
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QWidget, QStackedWidget, QDesktopWidget
-)
+) 
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFont, QPixmap, QPalette
 
