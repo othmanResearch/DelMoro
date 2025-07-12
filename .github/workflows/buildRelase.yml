@@ -56,8 +56,8 @@ jobs:
           body: |
             ### Ready-to-Run
             ```bash
-	    chmod +x DelMoro-UI  # Make sure it's executable  
-	    ./DelMoro-UI         # Run the application
+            chmod +x DelMoro-UI  # Make sure it's executable 
+            ./DelMoro-UI         # Pre-set with execute permissions
             ```
 
             ### Complete Source Code
