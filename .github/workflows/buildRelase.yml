@@ -1,0 +1,68 @@
+name: DelMoro UI Release
+
+on:
+  push:
+    branches: [release]
+    paths: ['DelMoro-UI.py', 'fullParams.py', 'paramsFile.py']
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          ref: release
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyQt5 pyinstaller
+
+      - name: Build application
+        run: |
+          pyinstaller --onefile --windowed --add-data "delmoro.png:." --name DelMoro-UI DelMoro-UI.py
+          chmod +x dist/DelMoro-UI
+
+      - name: Commit PyInstaller outputs
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add dist/ build/ DelMoro-UI.spec
+          git commit -m "Add PyInstaller build outputs" || echo "No changes to commit"
+          git push origin release
+
+      - name: Generate version
+        id: version
+        run: |
+          echo "RELEASE_VERSION=v1.0.0-$(date -u +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.RELEASE_VERSION }}
+          target_commitish: release  # Ensures source archives match release branch
+          name: "${{ steps.version.outputs.RELEASE_VERSION }}"
+          body: |
+            ### Ready-to-Run
+            ```bash
+	    chmod +x DelMoro-UI  # Make sure it's executable  
+	    ./DelMoro-UI         # Run the application
+            ```
+
+            ### Complete Source Code
+            Includes all PyInstaller outputs:
+            - `dist/`, `build/` directories
+            - `DelMoro-UI.spec` file
+            - Original source files
+          files: dist/DelMoro-UI
