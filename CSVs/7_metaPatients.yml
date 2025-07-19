@@ -1,0 +1,62 @@
+# Clinical Data Record
+physician:
+  name: "Dr. Jane Doe"
+  specialty: "Clinical Genetics"
+  contact:
+    email: "jane.doe@geneticshospital.org"
+    phone: "+1-555-123-4567"
+  affiliation: "Genetics and Genomics Institute"
+
+institution:
+  name: "Genetics and Genomics Institute"
+  address:
+    street: "123 Medical Center Drive"
+    city: "Boston"
+    state: "MA"
+    zip: "02115"
+    country: "USA"
+  department: "Department of Medical Genetics"
+  accreditation: "CAP/CLIA Certified"
+
+hpo_terms:
+  - id: "HP:0001627"
+    term: "Abnormality of cardiac morphology"
+  - id: "HP:0001250"
+    term: "Seizure"
+  - id: "HP:0004322"
+    term: "Short stature"
+  - id: "HP:0001513"
+    term: "Obesity"
+
+# Pipeline Execution
+pipeline:
+  quality_check:
+    performed: true
+    tools: ["FastQC"]
+  trimming:
+    performed: true
+    tool: "Fastp" # Trimmomatic or Fastp or Bbduk
+    parameters: "Default"
+  alignment:
+    reference_genome: "GRCh38"
+    performed: true
+    tool: "BWA-MEM2"
+
+  base_quality_score_recalibration:
+    performed: true
+    tool: "GATK BaseRecalibrator"
+    vcf1: "omni"
+    vcf2: "mills1000"
+
+  variant_calling:
+    performed: true
+    tool: "GATK HaplotypeCaller"
+    mode: "onlyVCF"  # onlyVCF or cohortGVCF
+
+  annotation:
+    performed: true
+    tools: ["VEP"]
+    cache: "114 GRCh38"
+    
+    
+    

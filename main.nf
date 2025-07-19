@@ -99,6 +99,41 @@ include {DelMoroAnnotateHelp	} 	from './.logos'
     							  .splitCsv(header: true)  
        	      			       		 	   .map { row -> tuple(row.patient_id, file(row.vcFile) ) }		: Channel.empty() 	 
 
+	
+  // Reporting 
+     	// Function to parse YAML file
+	import groovy.yaml.YamlSlurper
+
+ 	def parseYamlFile(yamlFile) { new YamlSlurper().parse(yamlFile) }
+    // DelMoro Logo Channel
+    delmoroLogoCh 	= params.delmoroLogo	? Channel.fromPath(params.delmoroLogo)						: Channel.empty()
+    // Patients Metadata with annotated Vcf paths Combined to Logo Channel
+    metaPatiLogCh 	= params.metaPatients	? Channel.fromPath(params.metaPatients)
+							  .splitCsv(header: true)
+							   .map { row ->
+							    	metaPatients = [
+								    Identifier: row.Identifier,
+								    SampleID: row.SampleID,
+								    Sex: row.Gender,
+								    Dob: row.Dob,
+								    Ethnicity: row.Ethnicity,
+								    Diagnosis: row.Diagnosis,
+							    	]
+							    	[metaPatients, file(row.vcFile)]   
+								}.combine(delmoroLogoCh)					: Channel.empty()
+
+    // Pipeline Executions step with Physician Metadata Parsing
+    pipeExecYamlCh 	= params.metaYaml	? Channel.fromPath(params.metaYaml)
+        						  .map { file -> parseYamlFile(file) }					: Channel.empty()
+ 
+
+    // Combine both channels ( metaPatiLogCh with  pipeExecYamlCh ) 
+    // Combine both channels ( metaPatiLogCh with  pipeExecYamlCh ) 
+    metaPipeExecYaml = params.metaPatients && params.metaYaml ? metaPatiLogCh.combine(pipeExecYamlCh)
+                        						      .map { metaPatients, vcFile, delmoroLogo, pipeExecYamlCh -> 
+										    [metaPatients, vcFile, delmoroLogo, pipeExecYamlCh]  
+										}						: Channel.empty()
+        
 // subworkflows 
 include { GENERATE_CSVS		} from './subworkflows/GenerateCSV'
 include { QC_RAW_READS		} from './subworkflows/RawQualCtrl'
@@ -109,6 +144,7 @@ include { BASE_QU_SCO_RECA 	} from './subworkflows/BQSR'
 include { CALL_SNPs_GATK	} from './subworkflows/variantcalling'
 include { VEP_CACHE		} from './subworkflows/annotations/vep/vepcache'
 include { VEP_ANNOTATE		} from './subworkflows/annotations/vep/vepannotate'
+include { REPORTING		} from './subworkflows/reporting/main.nf' 
 
 
 workflow {
@@ -155,19 +191,23 @@ if (params.exec == null ){
   	         
   	              VEP_ANNOTATE(VcfChannel,RefGenChannel,SamtIdxRef,CacheDirANN,VepSpecies,Assembly,CacheType,CacheVersion)
   	          
-  	              } else if ( params.exec == 'help'){
+  	              } else if (params.exec == 'reporting') {
+  	              
+  	                REPORTING(metaPipeExecYaml)
+  	              	
+  	                 } else if ( params.exec == 'help'){
   	        
-  	                DelMoroHelp()
+  	                    DelMoroHelp()
   	       
-  	                } else if ( params.exec == 'params' ) {
+  	                    } else if ( params.exec == 'params' ) {
 	                 
-	                  DelMoroParams()
+	                      DelMoroParams()
 	         
-	                  } else if ( params.exec == 'version' ) {
+	                      } else if ( params.exec == 'version' ) {
 	           
-	                    DelMoroVersion()
+	                        DelMoroVersion()
 
-  	  	            } else { DelMoroError() }
+  	  	                } else { DelMoroError() }
    
  }
    	 

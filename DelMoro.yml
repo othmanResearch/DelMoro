@@ -25,3 +25,6 @@ dependencies:
   - pyinstaller
   - qrcode    
   - reportlab
+  - pandas
+  - matplotlib
+  - seaborn

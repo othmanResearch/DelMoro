@@ -42,6 +42,7 @@ Command : - \033[32mrawqc\033[37m 	: Check           quality      of     raw    
 	  - \033[32mbqsr\033[37m 	: Base 		Quality 	Score	    recalibration.
 	  - \033[32mcallsnp\033[37m 	: Detect           SNPs      from      aligned      reads.
 	  - \033[32mannotate\033[37m 	: annotate 	    	    vfc 	             file.
+	  - \033[32mreporting\033[37m 	: Auto  	Generate   PDF 	  of   	  vcf 	  reports.
 	  - \033[32mhelp\033[37m 	
 	  - \033[32mversion\033[37m  
 	   
@@ -397,10 +398,21 @@ log.info"""
 	"""
 	}
 	
+// DelMoro Reporting 	
+
+def DelMoroReporting() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Reports			=\033[37m ${params.outdir}/Reporting/
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}	
 	
 	
-	
-	
+
 
 
 
