@@ -1,4 +1,10 @@
 # Clinical Data Record
+
+# The names, institutions, and contact information used in this document are entirely fictitious 
+# and are intended solely for illustrative purposes. 
+# Any resemblance to actual persons, living or dead, or actual organizations is purely coincidental. 
+#There is no intentional reference or misrepresentation of real individuals or entities.
+
 physician:
   name: "Dr. Jane Doe"
   specialty: "Clinical Genetics"
