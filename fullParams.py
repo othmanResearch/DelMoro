@@ -3,7 +3,7 @@ import subprocess
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QComboBox, QTextEdit, QMessageBox, QFileDialog, QSlider, QGroupBox, QRadioButton, QButtonGroup,
-    QCheckBox
+    QCheckBox, QScrollArea
 )
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 
@@ -318,7 +318,7 @@ class FullParamsPage(QWidget):
         }
 
         QScrollBar::handle:vertical {
-            background: #4a5568;
+            background: #ADD8E6; /* 80 = ~50% opacity */
             min-height: 20px;
             border-radius: 4px;
         }
@@ -416,8 +416,8 @@ class FullParamsPage(QWidget):
         self.csvForRawQcLabel = QLabel("CSV for Raw QC:")
         sidebarLayout.addWidget(self.csvForRawQcLabel)
         self.csvForRawQcInput = QLineEdit()
-        self.csvForRawQcInput.setPlaceholderText("path/to/raw_qc_samples.csv")  
-        self.csvForRawQcInput.setToolTip("CSV for raw read quality control")  
+        self.csvForRawQcInput.setPlaceholderText("path/to/raw_qc_samples.csv")
+        self.csvForRawQcInput.setToolTip("CSV for raw read quality control")
         sidebarLayout.addWidget(self.csvForRawQcInput)
         self.csvForRawQcButton = QPushButton("Browse CSV")
         self.csvForRawQcButton.setObjectName("browseButton")
@@ -429,8 +429,8 @@ class FullParamsPage(QWidget):
         self.csvForTrimmingLabel = QLabel("CSV for Trimming:")
         sidebarLayout.addWidget(self.csvForTrimmingLabel)
         self.csvForTrimmingInput = QLineEdit()
-        self.csvForTrimmingInput.setPlaceholderText("path/to/trimming_samples.csv")  
-        self.csvForTrimmingInput.setToolTip("CSV for read trimming samples")  
+        self.csvForTrimmingInput.setPlaceholderText("path/to/trimming_samples.csv")
+        self.csvForTrimmingInput.setToolTip("CSV for read trimming samples")
         sidebarLayout.addWidget(self.csvForTrimmingInput)
         self.csvForTrimmingButton = QPushButton("Browse CSV")
         self.csvForTrimmingButton.setObjectName("browseButton")
@@ -442,8 +442,8 @@ class FullParamsPage(QWidget):
         self.csvForAssemblyLabel = QLabel("CSV for Assembly:")
         sidebarLayout.addWidget(self.csvForAssemblyLabel)
         self.csvForAssemblyInput = QLineEdit()
-        self.csvForAssemblyInput.setPlaceholderText("path/to/assembly_samples.csv")  
-        self.csvForAssemblyInput.setToolTip("CSV for assembly samples")  
+        self.csvForAssemblyInput.setPlaceholderText("path/to/assembly_samples.csv")
+        self.csvForAssemblyInput.setToolTip("CSV for assembly samples")
         sidebarLayout.addWidget(self.csvForAssemblyInput)
         self.csvForAssemblyButton = QPushButton("Browse CSV")
         self.csvForAssemblyButton.setObjectName("browseButton")
@@ -455,8 +455,8 @@ class FullParamsPage(QWidget):
         self.csvForBqsrLabel = QLabel("CSV for BQSR:")
         sidebarLayout.addWidget(self.csvForBqsrLabel)
         self.csvForBqsrInput = QLineEdit()
-        self.csvForBqsrInput.setPlaceholderText("path/to/bqsr_samples.csv")  
-        self.csvForBqsrInput.setToolTip("CSV for BQSR analysis")  
+        self.csvForBqsrInput.setPlaceholderText("path/to/bqsr_samples.csv")
+        self.csvForBqsrInput.setToolTip("CSV for BQSR analysis")
         sidebarLayout.addWidget(self.csvForBqsrInput)
         self.csvForBqsrButton = QPushButton("Browse CSV")
         self.csvForBqsrButton.setObjectName("browseButton")
@@ -468,8 +468,8 @@ class FullParamsPage(QWidget):
         self.csvForVarCLabel = QLabel("CSV for Variant Calling:")
         sidebarLayout.addWidget(self.csvForVarCLabel)
         self.csvForVarCInput = QLineEdit()
-        self.csvForVarCInput.setPlaceholderText("path/to/variant_samples.csv")  
-        self.csvForVarCInput.setToolTip("CSV for variant calling samples")  
+        self.csvForVarCInput.setPlaceholderText("path/to/variant_samples.csv")
+        self.csvForVarCInput.setToolTip("CSV for variant calling samples")
         sidebarLayout.addWidget(self.csvForVarCInput)
         self.csvForVarCButton = QPushButton("Browse CSV")
         self.csvForVarCButton.setObjectName("browseButton")
@@ -481,8 +481,8 @@ class FullParamsPage(QWidget):
         self.csvForAnnLabel = QLabel("CSV for Annotation:")
         sidebarLayout.addWidget(self.csvForAnnLabel)
         self.csvForAnnInput = QLineEdit()
-        self.csvForAnnInput.setPlaceholderText("path/to/annotation_samples.csv")  
-        self.csvForAnnInput.setToolTip("CSV for variant annotation")  
+        self.csvForAnnInput.setPlaceholderText("path/to/annotation_samples.csv")
+        self.csvForAnnInput.setToolTip("CSV for variant annotation")
         sidebarLayout.addWidget(self.csvForAnnInput)
         self.csvForAnnButton = QPushButton("Browse CSV")
         self.csvForAnnButton.setObjectName("browseButton")
@@ -496,8 +496,8 @@ class FullParamsPage(QWidget):
         self.referenceFileLabel = QLabel("Reference File:")
         sidebarLayout.addWidget(self.referenceFileLabel)
         self.referenceFileInput = QLineEdit()
-        self.referenceFileInput.setPlaceholderText("path/to/reference.fasta")  
-        self.referenceFileInput.setToolTip("Genome reference file (FASTA format)")  
+        self.referenceFileInput.setPlaceholderText("path/to/reference.fasta")
+        self.referenceFileInput.setToolTip("Genome reference file (FASTA format)")
         sidebarLayout.addWidget(self.referenceFileInput)
         self.referenceFileButton = QPushButton("Browse Reference")
         self.referenceFileButton.setObjectName("browseButton")
@@ -510,7 +510,7 @@ class FullParamsPage(QWidget):
         sidebarLayout.addWidget(self.alignerLabel)
         self.alignerDropdown = QComboBox()
         self.alignerDropdown.addItems(["bwa", "bwamem2"])
-        self.alignerDropdown.setToolTip("Select alignment algorithm")  
+        self.alignerDropdown.setToolTip("Select alignment algorithm")
         sidebarLayout.addWidget(self.alignerDropdown)
 
         # Variant Calling Options
@@ -518,7 +518,7 @@ class FullParamsPage(QWidget):
         sidebarLayout.addWidget(self.callsnpLabel)
         self.callsnpDropdown = QComboBox()
         self.callsnpDropdown.addItems(["Defaults", "onlyVCF", "cohortGVCF"])
-        self.callsnpDropdown.setToolTip("Variant calling output mode")  
+        self.callsnpDropdown.setToolTip("Variant calling output mode")
         sidebarLayout.addWidget(self.callsnpDropdown)
 
         # VCF Selection Group
@@ -601,11 +601,30 @@ class FullParamsPage(QWidget):
         self.logOutput.setLineWrapMode(QTextEdit.NoWrap)
 
         # Main layout
-        mainLayout = QHBoxLayout()
+        """ Create the scrollable sidebar """
         sidebarWidget = QWidget()
         sidebarWidget.setLayout(sidebarLayout)
-        mainLayout.addWidget(sidebarWidget, 1)
-        mainLayout.addWidget(self.logOutput, 8)
+
+        # Configure the scroll area
+        scrollArea = QScrollArea()
+        scrollArea.setWidgetResizable(True)  # Critical for dynamic resizing
+        scrollArea.setWidget(sidebarWidget)
+        scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # No horizontal scroll
+
+        # Fix width behavior
+        scrollArea.setMinimumWidth(220)     # Set minimum width for sidebar
+        sidebarWidget.setMinimumWidth(200)  # Slightly less to account for scrollbar
+
+        """ Log output and main layout"""
+        self.logOutput = QTextEdit()
+        self.logOutput.setReadOnly(True)
+        self.logOutput.setFontFamily("Courier")
+        self.logOutput.setLineWrapMode(QTextEdit.NoWrap)
+
+        mainLayout = QHBoxLayout()
+        mainLayout.addWidget(scrollArea, 1)  # Scrollable sidebar (stretch factor 1)
+        mainLayout.addWidget(self.logOutput, 8)  # Log area takes most space (stretch factor 8)
 
         self.setLayout(mainLayout)
 
@@ -785,7 +804,7 @@ class FullParamsPage(QWidget):
         self.vcf1Layout = QHBoxLayout()
         self.vcf1Label = QLabel("VCF 1:")
         self.vcf1Input = QLineEdit()
-        self.vcf1Button = QPushButton("Browse")
+        self.vcf1Button = QPushButton("📂")
         self.vcf1Button.clicked.connect(lambda: self.browseVcfFile(self.vcf1Input))
         self.vcf1Layout.addWidget(self.vcf1Label)
         self.vcf1Layout.addWidget(self.vcf1Input)
@@ -795,7 +814,7 @@ class FullParamsPage(QWidget):
         self.vcf2Layout = QHBoxLayout()
         self.vcf2Label = QLabel("VCF 2:")
         self.vcf2Input = QLineEdit()
-        self.vcf2Button = QPushButton("Browse")
+        self.vcf2Button = QPushButton("📂️")
         self.vcf2Button.clicked.connect(lambda: self.browseVcfFile(self.vcf2Input))
         self.vcf2Layout.addWidget(self.vcf2Label)
         self.vcf2Layout.addWidget(self.vcf2Input)
