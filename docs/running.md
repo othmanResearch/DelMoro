@@ -348,14 +348,6 @@ This step adds functional information to your variants using **Ensembl VEP (Vari
 <pre><code>nextflow run main.nf --exec vepcache --species homo_sapiens</code></pre>
 </div>
 
- 
-??? warning "⚠️ Conda Limitation"
-    When using the **conda** environment, only **VEP cache version 113** is available.
-    To use a newer version (e.g., **114**), you must run with the **Docker profile**:
-    
-    ```
-    nextflow run main.nf --exec vepcache --species homo_sapiens --assembly GRCh37 --cachetype refseq --cacheversion 114 -profile docker
-    ```
 
 <label>
   <input type="checkbox" onchange="toggleCommand('cmd-full-vep-cache', this)">

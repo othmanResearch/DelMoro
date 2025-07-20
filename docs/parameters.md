@@ -11,7 +11,6 @@ This section provides a comprehensive overview of all configurable parameters av
 ## General Settings
 - `--cpus`  = Number of CPUs allocated to the pipeline. <span title="Default: 4">💡</span>  
 - `--outdir` = Directory where all outputs will be saved. <span title="Default: ./outdir">💡</span>
-- `--cleanup` = Remove temporary working directory. <span title="[Optional] - Default: false">💡</span>  
 
 
 ## nitialize my pipeline 
@@ -50,6 +49,7 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--generate` = Generate coverage from bed file <span title="[Optional] - Default: null">💡</span>  
 - `--bedtarget` = BED file for coverage extraction. <span title="[Optional] - Default: null">💡</span>
 - `--keepinter` =  Keep intermediate BAM files derived from alignment. <span title="[Optional] - Default: false">💡</span>
+- `--metrics` = Run Metrics Processes for Bam files   . <span title="[Optional] - Default: false">💡</span>  
 
 ## Base Quality Score Recalibration 
 - `--bam` = CSV with BAM file paths. <span title="Default: ./CSVs/4_samplesheetForBamFiles.csv">💡</span>  
@@ -62,7 +62,7 @@ This section provides a comprehensive overview of all configurable parameters av
 ## Variant Calling
 - `--reference` = Path to reference genome FASTA file. <span title="Default: ./Reference_Genome/*.fa">💡</span>  
 - `--tovarcall` = CSV with recalibrated BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">💡</span>  
-- `--generate` = Output type: onlyVCF  or cohorteGVCF <span title="Default: onlyVCF = vcf file / cohorteGCVF = Gvcf file">💡</span>  
+- `--mode` = Output type: onlyVCF  or cohortGVCF <span title="Default: onlyVCF = vcf file / cohorteGCVF = Gvcf file">💡</span>  
  
 ## Annotation (VEP)
 - `--species` = Species name for VEP cache. <span title="Default: null">💡</span>  
