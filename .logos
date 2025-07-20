@@ -102,7 +102,17 @@ Commands:
                    	   : .fai  
                    	   : .{.0123,amb,ann,bwt.2bit.64,pac} 
    
-  -- BQSR  
+  -- Mapping	   
+     \033[32malign\033[37m         Align reads to reference genome.
+  	           require : --reference   <path-to-ref>
+  	         	   : --Tobealigned <path-to-trimmed-csv>
+  		           : --metrics [ optional ]
+  	           output  : .bam
+  	           	   : .bai
+  	           	   : .flagstat
+  	           	   : .coverage.bed
+  
+    -- BQSR  
      \033[32mbqsr\033[37m	   Base quality score recalibration.
   		   require : --knownsite1, 2 <path-to-vcf-file> , 2 files 
   		   	   : --ivcf1, 2      <value>  [ optional ]
@@ -111,15 +121,7 @@ Commands:
 		   	   : .table
 		   	   : .bam
 		   	   : .bam
-  -- Mapping	   
-     \033[32malign\033[37m         Align reads to reference genome.
-  	           require : --reference   <path-to-ref>
-  	         	   : --Tobealigned <path-to-trimmed-csv>
-  	           output  : .bam
-  	           	   : .bai
-  	           	   : .flagstat
-  	           	   : .coverage.bed
-  	           	   
+		   	   	           	   
   -- Variant Calling	  
      \033[32mcallsnp\033[37m       Detect SNPs from aligned reads.
   	           require : --reference   <path-to-ref>
@@ -165,8 +167,8 @@ log.info"""
 \033[32m --cpus         =\033[37m 4									  	=> Default Cpus		
 
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
-\033[32m --cleanup    	=\033[37m false 									=> Remove temporary working directory  
 \033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM files derived from alignment  
+\033[32m --metrics  	=\033[37m false 									=> Run Metrics for Bam file
 
 \033[32m --trimmomatic 	=\033[37m false 									=> Trimming with trimmomatic tool
 \033[32m --fastp	=\033[37m false 									=> Trimming with fastp tool
