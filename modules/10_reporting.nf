@@ -5,15 +5,16 @@
 process generateReports {
     publishDir "${params.outdir}/Reporting/", mode: 'copy'
     input:
-    	tuple val(metaPatients), path(vcFile), path(delmoroLogo), val(pipeExecYamlCh)
- 
+    	tuple val(metadata), path(vcFile), path(delmorologo), val(metaYaml)
+
+
     output:
-        path("${metaPatients.SampleID}.pdf")
-        path("plots/${metaPatients.SampleID}/*.png")
+        path("${metadata.SampleID}.pdf")
+        path("plots/${metadata.SampleID}/*.png")
 
     script:
-    // Convert pipeExecYamlCh to properly escaped JSON string
-    def pipeExecYamlChJson = new groovy.json.JsonBuilder(pipeExecYamlCh).toString().replace("'", "\\'")
+    // Convert metaYaml to properly escaped JSON string
+    def metaYamlJson = new groovy.json.JsonBuilder(metaYaml).toString().replace("'", "\\'")
 
     """
 #!/usr/bin/env python
@@ -39,37 +40,38 @@ import subprocess
 ##################################################################################
 
 # Main script
-# Define metaPatients (this should come from the Nextflow workflow)
-metaPatients = {
-    "SampleID": "${metaPatients.SampleID}",
-    "Sex": "${metaPatients.Sex}",
-    "Dob": "${metaPatients.Dob}",
-    "Ethnicity": "${metaPatients.Ethnicity}",
-    "Diagnosis": "${metaPatients.Diagnosis}",
-    "Identifier": "${metaPatients.Identifier}"
+# Define metadata (this should come from the Nextflow workflow)
+metadata = {
+    "SampleID": "${metadata.SampleID}",
+    "Sex": "${metadata.Sex}",
+    "Dob": "${metadata.Dob}",
+    "Ethnicity": "${metadata.Ethnicity}",
+    "Diagnosis": "${metadata.Diagnosis}",
+    "Identifier": "${metadata.Identifier}"
 }
 
 # Define the DelMoro logo path (this should come from the Nextflow workflow)
-delmoroLogo = "${delmoroLogo}"
+delmorologo = "${delmorologo}"
+vcFile = "${vcFile}"
 
 # Create a directory for the sample plots
-sample_plot_dir = f"plots/{metaPatients['SampleID']}"
+sample_plot_dir = f"plots/{metadata['SampleID']}"
 os.makedirs(sample_plot_dir, exist_ok=True)
 
 # Create a PDF file
-pdf_file = f"{metaPatients['SampleID']}.pdf"
+pdf_file = f"{metadata['SampleID']}.pdf"
 c = canvas.Canvas(pdf_file, pagesize=letter)
-c.setTitle(f"DelMoro-Report-proband-{metaPatients['SampleID']}-{datetime.today().strftime('%Y-%m-%d')}")
+c.setTitle(f"DelMoro-Report-proband-{metadata['SampleID']}-{datetime.today().strftime('%Y-%m-%d')}")
 # Define page dimensions
 width, height = letter
 
 
-# Parse the pipeExecYamlCh JSON
+# Parse the metaYaml JSON
 try:
-    pipeExecYamlCh = json.loads('''${pipeExecYamlChJson}''')
+    metaYaml = json.loads('''${metaYamlJson}''')
 except Exception as e:
-    print(f"Error parsing pipeExecYamlCh: {e}")
-    pipeExecYamlCh = {
+    print(f"Error parsing metaYaml: {e}")
+    metaYaml = {
         'physician': {'name': 'N/A', 'specialty': 'N/A', 'contact': {'email': 'N/A', 'phone': 'N/A'}, 'affiliation': 'N/A'},
         'institution': {'name': 'N/A', 'department': 'N/A', 'accreditation': 'N/A', 'address': {}},
         'hpo_terms': []
@@ -78,7 +80,7 @@ except Exception as e:
 ##################################################################################
 
 # Function to draw the header, patient info, and footer
-def draw_header_to_footer(c, width, height, metaPatients, delmoroLogo):
+def draw_header_to_footer(c, width, height, metadata, delmorologo):
     # Draw the header
     delmoro_text = [("Del", colors.black), ("M", colors.red), ("oro", colors.black)]
     text = c.beginText(50, height - 50)
@@ -98,7 +100,7 @@ def draw_header_to_footer(c, width, height, metaPatients, delmoroLogo):
     c.drawString(190, height - 107, "FOR CLINICAL USE")
 
     # Add DelMoro logo
-    c.drawImage(delmoroLogo, width - 580, height - 132, width=140, height=70)
+    c.drawImage(delmorologo, width - 580, height - 132, width=140, height=70)
 
     # Add report date
     report_date_text = datetime.now().strftime("Report Date: %Y-%m-%d")
@@ -111,7 +113,7 @@ def draw_header_to_footer(c, width, height, metaPatients, delmoroLogo):
     c.setFillColor(colors.black)
 
     # Draw the identifier
-    identifier = metaPatients["Identifier"]
+    identifier = metadata["Identifier"]
     c.drawString(width - 200, height - 80, f"Identifier: {identifier}")
 
     # Draw a horizontal line below the identifier
@@ -123,11 +125,11 @@ def draw_header_to_footer(c, width, height, metaPatients, delmoroLogo):
     start_x = width - 200
     start_y = height - 100
     patient_info = {
-        "Sample ID": metaPatients["SampleID"],
-        "Sex": metaPatients["Sex"],
-        "Date of Birth": metaPatients["Dob"],
-        "Ethnicity": metaPatients["Ethnicity"],
-        "Diagnosis": metaPatients["Diagnosis"]
+        "Sample ID": metadata["SampleID"],
+        "Sex": metadata["Sex"],
+        "Date of Birth": metadata["Dob"],
+        "Ethnicity": metadata["Ethnicity"],
+        "Diagnosis": metadata["Diagnosis"]
     }
     info_items = list(patient_info.items())
     for i in range(0, len(info_items), 2):
@@ -157,7 +159,7 @@ def draw_header_to_footer(c, width, height, metaPatients, delmoroLogo):
     c.drawString(30, 40,  f"Delmoro | Email: zemzemfiras@gmail.com | Page {c.getPageNumber()}")
     # Draw QR code at bottom right
     qr = qrcode.QRCode(version=1, box_size=6, border=2)
-    qr.add_data("https://github.com/othmanResearch/DelMoro")
+    qr.add_data("https://github.com/Zemzemfiras1/DelMoro")
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color="black", back_color="white")
     qr_img.save("delmoro_qr.png")
@@ -170,10 +172,28 @@ def draw_header_to_footer(c, width, height, metaPatients, delmoroLogo):
 
 ##################################################################################
 
-# Draw header, patient info, and footer on the first page
-draw_header_to_footer(c, width, height, metaPatients, delmoroLogo)
+def extract_assembly_reference(vcFile):
 
-def order_info(c, width, height, pipeExecYamlCh):
+   assembly_pattern = r'assembly=([^>\s,]+)'
+   try:
+       # Handle both gzipped and uncompressed VCF files
+       opener = gzip.open if vcFile.endswith('.gz') else open
+       with opener(vcFile, 'rt') as vcf:
+           for line in vcf:
+               if line.startswith('##'):
+                   match = re.search(assembly_pattern, line)
+                   if match:
+                       return match.group(1).strip('"')  
+               elif line.startswith('#'):
+                   break
+       return 'unknown'
+   except Exception as e:
+       return 'unknown'
+##################################################################################
+# Draw header, patient info, and footer on the first page
+draw_header_to_footer(c, width, height, metadata, delmorologo)
+
+def order_info(c, width, height, metaYaml):
     xpos_left = 50
     xpos_right = xpos_left + 280
     ypos = height - 170
@@ -185,11 +205,11 @@ def order_info(c, width, height, pipeExecYamlCh):
     c.setFont("Helvetica", 8)
 
     physician_data = [
-        ("Name", pipeExecYamlCh.get('physician', {}).get('name', 'N/A')),
-        ("Specialty", pipeExecYamlCh.get('physician', {}).get('specialty', 'N/A')),
-        ("Email", pipeExecYamlCh.get('physician', {}).get('contact', {}).get('email', 'N/A')),
-        ("Phone", pipeExecYamlCh.get('physician', {}).get('contact', {}).get('phone', 'N/A')),
-        ("Affiliation", pipeExecYamlCh.get('physician', {}).get('affiliation', 'N/A')),
+        ("Name", metaYaml.get('physician', {}).get('name', 'N/A')),
+        ("Specialty", metaYaml.get('physician', {}).get('specialty', 'N/A')),
+        ("Email", metaYaml.get('physician', {}).get('contact', {}).get('email', 'N/A')),
+        ("Phone", metaYaml.get('physician', {}).get('contact', {}).get('phone', 'N/A')),
+        ("Affiliation", metaYaml.get('physician', {}).get('affiliation', 'N/A')),
     ]
 
     # Draw first row (same line as header)
@@ -212,7 +232,7 @@ def order_info(c, width, height, pipeExecYamlCh):
     c.drawString(xpos_left, ypos, "Institution Info:")
     c.setFont("Helvetica", 8)
 
-    address = pipeExecYamlCh.get('institution', {}).get('address', {})
+    address = metaYaml.get('institution', {}).get('address', {})
     full_address = ', '.join(filter(None, [
         address.get('street', ''),
         address.get('city', ''),
@@ -222,9 +242,9 @@ def order_info(c, width, height, pipeExecYamlCh):
     ]))
 
     institution_data = [
-        ("Name", pipeExecYamlCh.get('institution', {}).get('name', 'N/A')),
-        ("Department", pipeExecYamlCh.get('institution', {}).get('department', 'N/A')),
-        ("Accreditation", pipeExecYamlCh.get('institution', {}).get('accreditation', 'N/A')),
+        ("Name", metaYaml.get('institution', {}).get('name', 'N/A')),
+        ("Department", metaYaml.get('institution', {}).get('department', 'N/A')),
+        ("Accreditation", metaYaml.get('institution', {}).get('accreditation', 'N/A')),
         ("Address", full_address),
     ]
 
@@ -248,7 +268,7 @@ def order_info(c, width, height, pipeExecYamlCh):
     c.drawString(xpos_left, ypos, "HPO Terms:")
     c.setFont("Helvetica", 8)
 
-    hpo_terms = pipeExecYamlCh.get('hpo_terms', [])
+    hpo_terms = metaYaml.get('hpo_terms', [])
     hpo_ids = ', '.join([str(term.get('id', '')) for term in hpo_terms]) if hpo_terms else 'None provided'
     hpo_terms_text = ', '.join([term.get('term', '') for term in hpo_terms]) if hpo_terms else 'None provided'
 
@@ -262,170 +282,19 @@ def order_info(c, width, height, pipeExecYamlCh):
     c.setStrokeColor(colors.red)
     c.line(125, height - 160, 125, 60)
 
-order_info(c, width, height, pipeExecYamlCh)
-
-
-####################################################
-def pipeline_info(c, width, height, pipeExecYamlCh):
-    # Column setup with same left start position as original
-    xpos_left = 50  # Same as original left position
-    column_spacing = 250  # Space between columns
-    xpos_middle = xpos_left + column_spacing
-    xpos_right = xpos_middle + 170
-    ypos = height - 280  # Start position
-    line_height = 18
-
     c.setStrokeColor(colors.red)
-    c.line(150, ypos - 10, xpos_right + 150, ypos - 10)  # Adjusted to match original line length
+    c.line(150, ypos - 10, xpos_right + 250, ypos - 10)  # Adjusted to match original line length
     ypos -= 30
-
-    # Get pipeline info or use defaults
-    pipeline_info = pipeExecYamlCh.get('pipeline', {})
-
-    # ----------------- Quality Control -----------------
+    
+    # Reference Genome
+    assembly_version = extract_assembly_reference(vcFile)
     c.setFont("Helvetica-Bold", 9)
-    c.drawString(xpos_left, ypos, "Quality Control:")
+    c.drawString(xpos_left, ypos, "Reference:")
     c.setFont("Helvetica", 8)
+    c.drawString(xpos_left + 100, ypos, assembly_version)  # No f-string needed now
+    ypos -= line_height
 
-    qc_data = [
-        ("Performed", "Yes" if pipeline_info.get('quality_check', {}).get('performed', False) else "No"),
-        ("Tools", ", ".join(pipeline_info.get('quality_check', {}).get('tools', ["N/A"]))),
-    ]
-
-    # Draw in three columns with original left alignment
-    for i in range(0, len(qc_data), 3):
-        key1, val1 = qc_data[i] if i < len(qc_data) else ("", "")
-        c.drawString(xpos_left + 100, ypos, f"{key1}: {val1}")  # +100 offset as original
-        if i + 1 < len(qc_data):
-            key2, val2 = qc_data[i + 1]
-            c.drawString(xpos_middle, ypos, f"{key2}: {val2}")
-        if i + 2 < len(qc_data):
-            key3, val3 = qc_data[i + 2]
-            c.drawString(xpos_right, ypos, f"{key3}: {val3}")
-        ypos -= line_height
-
-    # ----------------- Trimming -----------------
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(xpos_left, ypos, "Trimming:")
-    c.setFont("Helvetica", 8)
-
-    trim_data = [
-        ("Performed", "Yes" if pipeline_info.get('trimming', {}).get('performed', False) else "No"),
-        ("Tool", pipeline_info.get('trimming', {}).get('tool', "N/A")),
-        ("Parameters", pipeline_info.get('trimming', {}).get('parameters', "N/A"))
-    ]
-
-    # Draw in three columns with original left alignment
-    for i in range(0, len(trim_data), 3):
-        key1, val1 = trim_data[i] if i < len(trim_data) else ("", "")
-        c.drawString(xpos_left + 100, ypos, f"{key1}: {val1}")  # +100 offset as original
-        if i + 1 < len(trim_data):
-            key2, val2 = trim_data[i + 1]
-            c.drawString(xpos_middle, ypos, f"{key2}: {val2}")
-        if i + 2 < len(trim_data):
-            key3, val3 = trim_data[i + 2]
-            c.drawString(xpos_right, ypos, f"{key3}: {val3}")
-        ypos -= line_height
-
-    # ----------------- Alignment -----------------
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(xpos_left, ypos, "Alignment:")
-    c.setFont("Helvetica", 8)
-
-    align_data = [
-        ("Performed", "Yes" if pipeline_info.get('alignment', {}).get('performed', False) else "No"),
-        ("Tool", pipeline_info.get('alignment', {}).get('tool', "N/A")),
-        ("Reference", pipeline_info.get('alignment', {}).get('reference_genome', "N/A"))
-    ]
-
-    # Draw in three columns with original left alignment
-    for i in range(0, len(align_data), 3):
-        key1, val1 = align_data[i] if i < len(align_data) else ("", "")
-        c.drawString(xpos_left + 100, ypos, f"{key1}: {val1}")  # +100 offset as original
-        if i + 1 < len(align_data):
-            key2, val2 = align_data[i + 1]
-            c.drawString(xpos_middle, ypos, f"{key2}: {val2}")
-        if i + 2 < len(align_data):
-            key3, val3 = align_data[i + 2]
-            c.drawString(xpos_right, ypos, f"{key3}: {val3}")
-        ypos -= line_height
-
-    # ----------------- Base Quality Score Recalibration -----------------
-    bqsr = pipeline_info.get('base_quality_score_recalibration', {})
-    if bqsr:
-        c.setFont("Helvetica-Bold", 9)
-        c.drawString(xpos_left, ypos, "BQSR:")
-        c.setFont("Helvetica", 8)
-
-        bqsr_data = [
-            ("Performed", "Yes" if bqsr.get('performed', False) else "No"),
-            ("Tool", bqsr.get('tool', "N/A")),
-            ("VCF1", bqsr.get('vcf1', "N/A")),
-            ("VCF2", bqsr.get('vcf2', "N/A"))
-        ]
-
-        # Draw in three columns with original left alignment
-        for i in range(0, len(bqsr_data), 3):
-            key1, val1 = bqsr_data[i] if i < len(bqsr_data) else ("", "")
-            c.drawString(xpos_left + 100, ypos, f"{key1}: {val1}")
-            if i + 1 < len(bqsr_data):
-                key2, val2 = bqsr_data[i + 1]
-                c.drawString(xpos_middle, ypos, f"{key2}: {val2}")
-            if i + 2 < len(bqsr_data):
-                key3, val3 = bqsr_data[i + 2]
-                c.drawString(xpos_right, ypos, f"{key3}: {val3}")
-            ypos -= line_height
-
-
-    # ----------------- Variant Calling -----------------
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(xpos_left, ypos, "Variant Calling:")
-    c.setFont("Helvetica", 8)
-
-    vc_data = [
-        ("Performed", "Yes" if pipeline_info.get('variant_calling', {}).get('performed', False) else "No"),
-        ("Tool", pipeline_info.get('variant_calling', {}).get('tool', "N/A")),
-        ("mode", pipeline_info.get('variant_calling', {}).get('mode', "N/A"))
-    ]
-
-    # Draw in three columns with original left alignment
-    for i in range(0, len(vc_data), 3):
-        key1, val1 = vc_data[i] if i < len(vc_data) else ("", "")
-        c.drawString(xpos_left + 100, ypos, f"{key1}: {val1}")  # +100 offset as original
-        if i + 1 < len(vc_data):
-            key2, val2 = vc_data[i + 1]
-            c.drawString(xpos_middle, ypos, f"{key2}: {val2}")
-        if i + 2 < len(vc_data):
-            key3, val3 = vc_data[i + 2]
-            c.drawString(xpos_right, ypos, f"{key3}: {val3}")
-        ypos -= line_height
-
-
-    # ----------------- Annotation -----------------
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(xpos_left, ypos, "Annotation:")
-    c.setFont("Helvetica", 8)
-
-    annot_data = [
-        ("Performed", "Yes" if pipeline_info.get('annotation', {}).get('performed', False) else "No"),
-        ("Tools", ", ".join(pipeline_info.get('annotation', {}).get('tools', ["N/A"]))),
-        ("cache", pipeline_info.get('annotation', {}).get('cache', "N/A") or "N/A")
-    ]
-
-    # Draw in three columns with original left alignment
-    for i in range(0, len(annot_data), 3):
-        key1, val1 = annot_data[i] if i < len(annot_data) else ("", "")
-        c.drawString(xpos_left + 100, ypos, f"{key1}: {val1}")  # +100 offset as original
-        if i + 1 < len(annot_data):
-            key2, val2 = annot_data[i + 1]
-            c.drawString(xpos_middle, ypos, f"{key2}: {val2}")
-        if i + 2 < len(annot_data):
-            key3, val3 = annot_data[i + 2]
-            c.drawString(xpos_right, ypos, f"{key3}: {val3}")
-        ypos -= line_height
-
-
-pipeline_info(c, width, height, pipeExecYamlCh)
+order_info(c, width, height, metaYaml)
 
 ##################################################################################
 
@@ -663,7 +532,7 @@ def create_impact_distribution_plot(df_consequences, sample_plot_dir, sample_id)
     return plot_path
 
 # Generate and add impact plot below the tables
-impact_plot = create_impact_distribution_plot(df_consequences, sample_plot_dir, metaPatients['SampleID'])
+impact_plot = create_impact_distribution_plot(df_consequences, sample_plot_dir, metadata['SampleID'])
 plot_width = 160  # Width of plot in PDF
 plot_height = 185  # Height of plot in PDF
 
@@ -703,7 +572,7 @@ def add_plot_to_pdf(plot_file, c, width, height, plot_index):
     # If this is the first plot on a new page (not the first page), create a new page
     if index_in_page == 0 and plot_index > 0:
         c.showPage()  # Start a new page
-        draw_header_to_footer(c, width, height, metaPatients, delmoroLogo)  # Add header/footer
+        draw_header_to_footer(c, width, height, metadata, delmorologo)  # Add header/footer
 
     # Draw the plot image
     c.drawImage(plot_file, x, y, width=plot_width, height=plot_height, preserveAspectRatio=True)
@@ -711,11 +580,11 @@ def add_plot_to_pdf(plot_file, c, width, height, plot_index):
 ##################################################################################
 
 # Draw header, patient info, and footer on the first page
-draw_header_to_footer(c, width, height, metaPatients, delmoroLogo)
+draw_header_to_footer(c, width, height, metadata, delmorologo)
 
 # Save the current page
 c.showPage()
-draw_header_to_footer(c, width, height, metaPatients, delmoroLogo)
+draw_header_to_footer(c, width, height, metadata, delmorologo)
 
 
 ##################################################################################

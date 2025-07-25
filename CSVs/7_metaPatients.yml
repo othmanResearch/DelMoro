@@ -33,36 +33,5 @@ hpo_terms:
     term: "Short stature"
   - id: "HP:0001513"
     term: "Obesity"
-
-# Pipeline Execution
-pipeline:
-  quality_check:
-    performed: true
-    tools: ["FastQC"]
-  trimming:
-    performed: true
-    tool: "Fastp" # Trimmomatic or Fastp or Bbduk
-    parameters: "Default"
-  alignment:
-    reference_genome: "GRCh38"
-    performed: true
-    tool: "BWA-MEM2"
-
-  base_quality_score_recalibration:
-    performed: true
-    tool: "GATK BaseRecalibrator"
-    vcf1: "omni"
-    vcf2: "mills1000"
-
-  variant_calling:
-    performed: true
-    tool: "GATK HaplotypeCaller"
-    mode: "onlyVCF"  # onlyVCF or cohortGVCF
-
-  annotation:
-    performed: true
-    tools: ["VEP"]
-    cache: "114 GRCh38"
-    
     
     
