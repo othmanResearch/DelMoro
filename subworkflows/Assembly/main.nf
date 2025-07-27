@@ -51,7 +51,7 @@ workflow ALIGN_TO_REF_GENOME {
 		BamCoverage 	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),IndexBam.out.collect())
 		
 		BigWig		    (markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),IndexBam.out.collect())
-	    BigWigCoveragePlots (BigWig.out.collectFile())
+	    BigWigCoveragePlots (BigWig.out.collectFile(),params.mindepth)
 
 		if (params.metrics) {
 		AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
@@ -79,7 +79,7 @@ workflow ALIGN_TO_REF_GENOME {
 				BamTargetCoverage (markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),
 					  	   IndexBam.out.collect(), target					)
 				BigWig		(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),IndexBam.out.collect())
-			    BigWigCoveragePlots (BigWig.out.collectFile())
+			    BigWigCoveragePlots (BigWig.out.collectFile(),params.mindepth)
 
 				if (params.metrics) {	  	   
 				AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
@@ -106,7 +106,7 @@ workflow ALIGN_TO_REF_GENOME {
 					GenerateStat	(assignReadGroup.out.sorted_labeled_bam.collectFile(sort: true),
 						 	 markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)
 					BigWig		(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),IndexBam.out.collect())	 	 
-    			    BigWigCoveragePlots (BigWig.out.collectFile())
+    			    BigWigCoveragePlots (BigWig.out.collectFile(),params.mindepth)
 
 					if (params.metrics) {
 					AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
@@ -144,7 +144,7 @@ workflow ALIGN_TO_REF_GENOME {
 		BamCoverage 		(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),
 					 IndexBam.out.collect()							)
 		BigWig		(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),IndexBam.out.collect())			 
-	    BigWigCoveragePlots (BigWig.out.collectFile())
+	    BigWigCoveragePlots (BigWig.out.collectFile(),params.mindepth)
 
 		if (params.metrics) {
 		AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
@@ -172,7 +172,7 @@ workflow ALIGN_TO_REF_GENOME {
 				BamTargetCoverage 	(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),
 							 IndexBam.out.collect(),target						)
 				BigWig			(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),IndexBam.out.collect())					 
-			    BigWigCoveragePlots (BigWig.out.collectFile())
+			    BigWigCoveragePlots (BigWig.out.collectFile(),params.mindepth)
 
 				if (params.metrics) {
 				AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )
@@ -201,7 +201,7 @@ workflow ALIGN_TO_REF_GENOME {
 								 markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true)	)
 		
 					BigWig		(markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true),IndexBam.out.collect())
-				    BigWigCoveragePlots (BigWig.out.collectFile())
+				    BigWigCoveragePlots (BigWig.out.collectFile(),params.mindepth)
 
 					if (params.metrics) {
 					AlignmentMetrics  ( markDuplicates.out.sorted_markduplicates_bam.collectFile(sort: true), ref_gen_channel )

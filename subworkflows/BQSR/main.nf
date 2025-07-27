@@ -59,7 +59,7 @@ workflow BASE_QU_SCO_RECA {
 	    IndexRecalBam ( ApplyBQSR.out.recal_bam.collectFile(sort: true) )
 	    
 	    BigWig		    (ApplyBQSR.out.recal_bam.collectFile(sort: true),IndexRecalBam.out.collect())
-	    BigWigCoveragePlots (BigWig.out.collectFile())
+	    BigWigCoveragePlots (BigWig.out.collectFile(),params.mindepth)
 
 		if (params.metrics) {
 		AlignmentMetrics  ( ApplyBQSR.out.recal_bam.collectFile(sort: true), ref_gen_channel )
@@ -115,7 +115,7 @@ workflow BASE_QU_SCO_RECA {
 	    IndexRecalBam ( ApplyBQSR.out.recal_bam.collectFile(sort: true) )
 
         BigWig		    (ApplyBQSR.out.recal_bam.collectFile(sort: true),IndexRecalBam.out.collect())
-	    BigWigCoveragePlots (BigWig.out.collectFile())
+	    BigWigCoveragePlots (BigWig.out.collectFile(),params.mindepth)
 
 		if (params.metrics) {
 		AlignmentMetrics  ( ApplyBQSR.out.recal_bam.collectFile(sort: true), ref_gen_channel )

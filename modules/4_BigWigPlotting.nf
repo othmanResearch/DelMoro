@@ -12,9 +12,11 @@ process BigWigCoveragePlots {
         : "firaszemzem/pybigwig-tools:1.0"}"
     input:
     path bigWigFile
+    val mindepth
 
     output:
     path "*.png", emit: plots
+
     script:
     """
     #!/usr/bin/env python3
@@ -31,12 +33,10 @@ process BigWigCoveragePlots {
             return 'chr'
         return 'no_chr'
 
-    def plot_coverage(bigWigFile,  autobin=True, min_coverage=0.1):
+    def plot_coverage(bigWigFile, min_coverage=${mindepth}):
         # Generate coverage plots for all chromosomes in a BigWig file
         # Parameters:
         #   bigWigFile (str): Path to BigWig file
-        #   output_dir (str): Output directory for plots
-        #   autobin (bool): Auto-adjust bin size based on chromosome length
         #   min_coverage (float): Minimum coverage threshold for visualization
 
         # Retrieve bw file baseName
@@ -51,6 +51,7 @@ process BigWigCoveragePlots {
             # Detect naming convention
             naming_conv = detect_chrom_naming(bw)
             print(f"Chromosome naming: {'chr-prefixed' if naming_conv == 'chr' else 'unprefixed'}")
+            print(f"Parameter - min_coverage: {min_coverage}")
 
             # Process each chromosome
             for chrom in tqdm(bw.chroms(), desc='Processing chromosomes'):
@@ -94,9 +95,9 @@ process BigWigCoveragePlots {
                         print(f"\\nError processing {chrom}: {str(e)}")
                         continue
 
-                # Standard chromosome processing
-                bin_size = 1000 if autobin and chrom_length < 1e6 else (
-                          5000 if autobin and chrom_length < 10e6 else 100000)
+                # Standard chromosome processing (always auto-binned)
+                bin_size = 1000 if chrom_length < 1e6 else (
+                          5000 if chrom_length < 10e6 else 100000)
 
                 starts = np.arange(0, chrom_length, bin_size)
                 ends = starts + bin_size
@@ -136,7 +137,7 @@ process BigWigCoveragePlots {
                 bw.close()
             print("\\nProcessing complete!")
 
-    # Run the plotting function with default parameters
+    # Run the plotting function with parameters
     plot_coverage("${bigWigFile}")
     """
 }
