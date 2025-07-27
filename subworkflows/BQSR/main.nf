@@ -9,7 +9,15 @@ include { IndexKNownSites as IndexKNownSite1	} from '../../modules/5_BQSR.nf'
 include { IndexKNownSites as IndexKNownSite2	} from '../../modules/5_BQSR.nf'  
 include { BaseRecalibrator	} from '../../modules/5_BQSR.nf'  
 include { ApplyBQSR		} from '../../modules/5_BQSR.nf'    
-include { IndexRecalBam		} from '../../modules/5_BQSR.nf'    
+include { IndexRecalBam		} from '../../modules/5_BQSR.nf'
+
+include { BigWig		    } from '../../modules/4_BamToBigWig.nf'
+include {BigWigCoveragePlots} from '../../modules/4_BigWigPlotting.nf'
+
+include { AlignmentMetrics	} from '../../modules/4_BamMetrics.nf'
+include { InsertMetrics		} from '../../modules/4_BamMetrics.nf'
+include { GcBiasMetrics 	} from '../../modules/4_BamMetrics.nf'
+include { Qualimap	 	    } from '../../modules/4_BamMetrics.nf'
 
 
 workflow BASE_QU_SCO_RECA {
@@ -23,7 +31,7 @@ workflow BASE_QU_SCO_RECA {
 	knwonSite2
    
     main: 
-    if ( params.ivcf1		== null &&
+    if ( params.ivcf1	== null &&
  	 params.ivcf2		== null && 
 	 params.knownsite1 	!= null && 
 	 params.knownsite2 	!= null ){
@@ -49,6 +57,16 @@ workflow BASE_QU_SCO_RECA {
 				BaseRecalibrator.out.BQSR_Table.collectFile(sort:true)	)	
 							
 	    IndexRecalBam ( ApplyBQSR.out.recal_bam.collectFile(sort: true) )
+	    
+	    BigWig		    (ApplyBQSR.out.recal_bam.collectFile(sort: true),IndexRecalBam.out.collect())
+	    BigWigCoveragePlots (BigWig.out.collectFile())
+
+		if (params.metrics) {
+		AlignmentMetrics  ( ApplyBQSR.out.recal_bam.collectFile(sort: true), ref_gen_channel )
+		InsertMetrics	  ( ApplyBQSR.out.recal_bam.collectFile(sort: true) 		  )
+		GcBiasMetrics	  ( ApplyBQSR.out.recal_bam.collectFile(sort: true), ref_gen_channel ) 
+		Qualimap	      ( ApplyBQSR.out.recal_bam.collectFile(sort: true)		      )
+		}
 		
 	    } else { DelMoroWelcome() 
 		     print("\033[31m Please specify valid parameters:\n"			)
@@ -96,6 +114,15 @@ workflow BASE_QU_SCO_RECA {
 													
 	    IndexRecalBam ( ApplyBQSR.out.recal_bam.collectFile(sort: true) )
 
+        BigWig		    (ApplyBQSR.out.recal_bam.collectFile(sort: true),IndexRecalBam.out.collect())
+	    BigWigCoveragePlots (BigWig.out.collectFile())
+
+		if (params.metrics) {
+		AlignmentMetrics  ( ApplyBQSR.out.recal_bam.collectFile(sort: true), ref_gen_channel )
+		InsertMetrics	  ( ApplyBQSR.out.recal_bam.collectFile(sort: true) 		  )
+		GcBiasMetrics	  ( ApplyBQSR.out.recal_bam.collectFile(sort: true), ref_gen_channel ) 
+		Qualimap	  ( ApplyBQSR.out.recal_bam.collectFile(sort: true)		  )
+		}
 		    } else { DelMoroWelcome() 
 		  	     print("\033[31m Please specify valid parameters:\n"			)
 			     print(" --reference option (--reference reference ) \n"			)
