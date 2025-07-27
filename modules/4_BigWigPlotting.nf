@@ -6,6 +6,10 @@ process BigWigCoveragePlots {
     tag "BIGWIG PLOTS FOR ${bigWigFile}"
     publishDir "${params.outdir}/Mapping/coveragePlots/${bigWigFile.baseName}/", mode: 'copy'
 
+    conda "bioconda::pybigwig=0.3.22 matplotlib=3.10.3 conda-forge::numpy=1.26.4 conda-forge::tqdm=4.67.1"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://firaszemzem/pybigwig-tools:1.0"
+        : "firaszemzem/pybigwig-tools:1.0"}"
     input:
     path bigWigFile
 

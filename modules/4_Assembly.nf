@@ -6,7 +6,7 @@ process alignReadsToRef {
     tag "ALIGNING GENOMES TO REFERENCE"
     publishDir "${params.outdir}/Mapping", mode: 'copy', enabled: params.keepinter 
 
-    conda "bioconda::bwa=0.7.18"
+    conda "bioconda::bwa=0.7.18 bioconda::samtools=1.21"
     container "${workflow.containerEngine == 'singularity'
 	? "docker://firaszemzem/bwa-samtools:latest"  	
     	: "firaszemzem/bwa-samtools:latest"}"
@@ -32,7 +32,7 @@ process alignReadsToRefBWAMEM2 {
     tag "ALIGNING GENOMES TO REFERENCE"
     publishDir "${params.outdir}/Mapping", mode: 'copy', enabled: params.keepinter 
 
-    conda "bioconda::bwa-mem2=2.2.1"
+    conda "bioconda::bwa-mem2=2.2.1 bioconda::samtools=1.21"
     container "${workflow.containerEngine == 'singularity'	
 	? "docker://firaszemzem/bwamem2-samtools:latest" 
 	: "firaszemzem/bwamem2-samtools:latest"}"

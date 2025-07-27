@@ -9,8 +9,8 @@ process BigWig {
     
     conda "bioconda::deeptools==3.5.5"
     container "${workflow.containerEngine == 'singularity'
-        ? "docker://dukegcb/deeptools:latest"
-        : "dukegcb/deeptools:latest"}"
+        ? "docker://mgibio/deeptools:3.5.3"
+        : "mgibio/deeptools:3.5.3"}"
       
     input: 
  	path bam

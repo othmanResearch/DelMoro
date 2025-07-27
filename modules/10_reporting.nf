@@ -3,7 +3,14 @@
 // Reporting Module with reportlab
 
 process generateReports {
+    tag "GeNERATE PDF REPORTS "
     publishDir "${params.outdir}/Reporting/", mode: 'copy'
+
+    conda "reportlab=4.4.1 matplotlib=3.9.1 seaborn=0.13.2 pandas=2.3.1 numpy=1.26.4 qrcode=8.2"
+    container "${workflow.containerEngine == 'singularity'
+	? "docker://firaszemzem/pyreportlab-toolkit:1.0"
+	: "firaszemzem/pyreportlab-toolkit:1.0"}"
+
     input:
     	tuple val(metadata), path(vcFile), path(delmorologo), val(metaYaml)
 
