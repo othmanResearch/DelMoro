@@ -23,8 +23,14 @@ dependencies:
   - qualimap=2.3
   - pyqt
   - pyinstaller
-  - qrcode    
+  - qrcode
   - reportlab
   - pandas
   - matplotlib
   - seaborn
+  - numpy
+  - pybigwig
+  - tqdm
+  
+
+
