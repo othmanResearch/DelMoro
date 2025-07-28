@@ -107,6 +107,8 @@ Commands:
   	           require : --reference   <path-to-ref>
   	         	   : --Tobealigned <path-to-trimmed-csv>
   		           : --metrics [ optional ]
+  		           : --mindepth [ optional ] 
+  		           : --saveImg [ optional ] 
   	           output  : .bam
   	           	   : .bai
   	           	   : .flagstat
@@ -136,7 +138,7 @@ Commands:
   	           	    : --cachetype <value> [ optional ]
   	           	    : --assembly  <value> [ optional ]
   	           	    : --cacheversion  <value> [ optional ] 
-  	            output   : ./vep_cache directory 
+  	            output  : ./vep_cache directory 
   	            
      \033[32mvepannotate\033[37m    Vep annotation
   	            require : --species    <value>
@@ -169,6 +171,10 @@ log.info"""
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
 \033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM files derived from alignment  
 \033[32m --metrics  	=\033[37m false 									=> Run Metrics for Bam file
+
+
+\033[32m --mindepth	= \033[37m 0 										=> Minimum depth in coverage bin plots
+\033[32m --saveImg 	= \033[37m false 	 								=> Save images( plots ) from bigwig files
 
 \033[32m --trimmomatic 	=\033[37m false 									=> Trimming with trimmomatic tool
 \033[32m --fastp	=\033[37m false 									=> Trimming with fastp tool
