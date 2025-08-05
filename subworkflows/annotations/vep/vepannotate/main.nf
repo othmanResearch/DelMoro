@@ -3,8 +3,8 @@
 include { DelMoroWelcome	} from '../../../../.logos'
 include { DelMoroVepAnnot	} from '../../../../.logos'  
 	
-include { VepAnnotation		} from '../../../../modules/8_vepAnnotate.nf'  
-include { extractImpactVariant	} from '../../../../modules/9_so_Terms.nf'  
+include { VepAnnotation		} from '../../../../modules/8_VepAnnotate.nf'  
+include { ExtractImpactVariant	} from '../../../../modules/9_SoTerms.nf'  
 
     // Map of SO terms to impact level
     def impact_map = [
@@ -55,14 +55,14 @@ include { extractImpactVariant	} from '../../../../modules/9_so_Terms.nf'
 
 workflow VEP_ANNOTATE {
     take:
-    	vcf
-	fasta
-	genomeindex
-	vepcache
-	species
-	assembly
-	cachetype
-	CacheVersion
+    vcf
+    fasta
+    genomeindex
+    vepcache
+    species
+    assembly
+    cachetype
+    CacheVersion
  
 
     main:
@@ -72,10 +72,8 @@ workflow VEP_ANNOTATE {
     	 params.toannotate &&
      	(!params.cachetype || params.cachetype == 'refseq' || params.cachetype == 'merged' ) ) {
 
-   	 DelMoroVepAnnot()
-   	 VepAnnotation(vcf, fasta, genomeindex, vepcache, species, assembly, cachetype, CacheVersion)
-
-	
+    DelMoroVepAnnot()
+    VepAnnotation(vcf, fasta, genomeindex, vepcache, species, assembly, cachetype, CacheVersion)
 
   // Convert map to list of tuples (term, impact)
     term_impact = Channel.from(impact_map.collect { k, v -> tuple(k, v) })
@@ -89,21 +87,18 @@ workflow VEP_ANNOTATE {
         }
         .set { soImpctVcf }
 
-    extractImpactVariant(soImpctVcf)
+    ExtractImpactVariant(soImpctVcf)
  
-	} else {
-
-	    DelMoroWelcome()
-	    print("\033[31m Please specify valid parameters:\n")
-	    print("\033[31m --species option (e.g. --species homo_sapiens )\n")
-	    print("\033[31m --reference option ( --reference <reference-path> ), For more info: https://ftp.ensembl.org/pub/release-113/variation/indexed_vep_cache/\n")
-	    print("\033[31m --assembly option (e.g. --assembly GRCh37 )\n")
-	    print("\033[31m --toannotate option (e.g. --vcftoannotate <path-to-vcf> )\n")
-	    print("\033[31m Optional: --cachetype must be one of: refseq, merged\n")
-	    print(" For details, run: nextflow main.nf --exec params\n\033[37m")
-
-	}
-
+    } else {
+	DelMoroWelcome()
+	print("\033[31m Please specify valid parameters:\n")
+	print("\033[31m --species option (e.g. --species homo_sapiens )\n")
+	print("\033[31m --reference option ( --reference <reference-path> ), For more info: https://ftp.ensembl.org/pub/release-113/variation/indexed_vep_cache/\n")
+	print("\033[31m --assembly option (e.g. --assembly GRCh37 )\n")
+	print("\033[31m --toannotate option (e.g. --vcftoannotate <path-to-vcf> )\n")
+	print("\033[31m Optional: --cachetype must be one of: refseq, merged\n")
+	print(" For details, run: nextflow main.nf --exec params\n\033[37m")
+    }
 }
 
 

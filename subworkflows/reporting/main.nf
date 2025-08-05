@@ -3,29 +3,27 @@
 include { DelMoroWelcome	} from '../../.logos'
 include { DelMoroReporting	} from '../../.logos'
 	
-include { generateReports	} from '../../modules/10_reporting.nf'
+include { GenerateReports	} from '../../modules/10_Reporting.nf'
  
 workflow REPORTING {
 
     take:
-	patInfoVcfLogoMeta
+    patInfoVcfLogoMeta
     
     main:  
- 
-    
-	if (params.delmoroLogo 	&&
-	    params.metaPatients &&
-	    params.metaYaml )  {
+    if (params.delmoroLogo 	&&
+    	params.metaPatients &&
+    	params.metaYaml )  {
 	    
-	 DelMoroReporting()
-	 generateReports(patInfoVcfLogoMeta)
+    	DelMoroReporting()
+    	GenerateReports(patInfoVcfLogoMeta)
  
- 	}  else { 
-	    DelMoroWelcome() 
-	    print("\033[31m Please specify valid parameters:\n"			)
-	    print(" --metaPatients option (--metaPatients CSVs/7_metaPatients.csv ) \n"	)
-	    print(" --metaYaml option (--metaYaml CSVs/7_metaPatients.yml)\n "		)
-	} 
+    } else { 
+   	DelMoroWelcome() 
+	print("\033[31m Please specify valid parameters:\n"			)
+	print(" --metaPatients option (--metaPatients CSVs/7_metaPatients.csv ) \n"	)
+	print(" --metaYaml option (--metaYaml CSVs/7_metaPatients.yml)\n "		)
+    } 
 }
 
 
