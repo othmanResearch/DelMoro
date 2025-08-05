@@ -3,7 +3,7 @@
 // Trimming with Trimmomatic 
 
 process Trimmomatic {
-    tag "TRIMMIG READS WITH TRIMMOMATIC"
+    tag "TRIMMING READS WITH TRIMMOMATIC"
 
     publishDir path: "${params.outdir}/TrimmedREADS/", mode: 'copy'
 
@@ -16,28 +16,28 @@ process Trimmomatic {
     tuple val(patient_id), path(R1), path(R2), val(MINLEN), val(LEADING), val(TRAILING), val(SLIDINGWINDOW)
 
     output:
-    path "*.trim.fastq.gz", emit: paired
-    // To be used in DOWNSTREAM Analysis
-    path "*_unpaired.fastq.gz", emit: unpaired
+    tuple val(patient_id), path("*.trim.fastq.gz"), emit: paired
+    tuple val(patient_id), path("*_unpaired.fastq.gz"), emit: unpaired
 
     script:
     def adapterFile = params.adapters ? "ILLUMINACLIP:${params.adapters}:2:30:10" : ""
 
     """ 
-        trimmomatic PE \\
-        -threads ${task.cpus} \\
-        ${R1} ${R2} \\
-        ${patient_id}_1.trim.fastq.gz \\
-        ${patient_id}_1_unpaired.fastq.gz \\
-        ${patient_id}_2.trim.fastq.gz \\
-        ${patient_id}_2_unpaired.fastq.gz \\
-        MINLEN:${MINLEN} \\
-        LEADING:${LEADING} \\
-        TRAILING:${TRAILING} \\
-        SLIDINGWINDOW:${SLIDINGWINDOW} \\
-        ${adapterFile}
+    trimmomatic PE \\
+    -threads ${task.cpus} \\
+    ${R1} ${R2} \\
+    ${patient_id}_1.trim.fastq.gz \\
+    ${patient_id}_1_unpaired.fastq.gz \\
+    ${patient_id}_2.trim.fastq.gz \\
+    ${patient_id}_2_unpaired.fastq.gz \\
+    MINLEN:${MINLEN} \\
+    LEADING:${LEADING} \\
+    TRAILING:${TRAILING} \\
+    SLIDINGWINDOW:${SLIDINGWINDOW} \\
+    ${adapterFile}
     """
 }
+
 
 // Trimming with Fastp
 
@@ -114,6 +114,7 @@ process Bbduk {
 
 process TrimmedQC {
     tag "CHECK TRIMMED READS QUALITY"
+
     publishDir "${params.outdir}/QualityControl/TRIMMED/", mode: 'copy'
 
     conda "bioconda::fastqc=0.12.1"
@@ -122,18 +123,19 @@ process TrimmedQC {
         : "staphb/fastqc:0.12.1"}"
 
     input:
-    path reads
+    tuple val(patient_id), path(reads)
 
     output:
-    path "*.{html,zip}"
+    path "*.{html,zip}", emit: htmlZipQc
 
     script:
     """
-    fastqc -t ${task.cpus} ${reads}
+    fastqc -t ${task.cpus} ${reads} 
     """
 }
 
 // GATHER TRIMMED QC REPORTS 
+
 
 process MultiqcTrimmed {
     tag "GATHER TRIMMED QC REPORTS"
@@ -145,10 +147,11 @@ process MultiqcTrimmed {
         : "multiqc/multiqc:latest"}"
 
     input:
-    path fastqc
+    path fastqcFiles
 
     output:
-    path "{multiqc_data,multiqc_report.html}"
+    path "multiqc_data"
+    path "multiqc_report.html", emit: multiqcHtml
 
     script:
     """

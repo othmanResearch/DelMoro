@@ -6,20 +6,20 @@ process BigWigCoveragePlots {
     tag "BIGWIG PLOTS FOR ${bigWigFile}"
     publishDir "${params.outdir}/Mapping/coveragePlots/${bigWigFile.baseName}/", mode: 'copy', pattern: "*.png", enabled: params.saveImg
     publishDir "${params.outdir}/Mapping/coverageSummaryHtmls/", mode: 'copy', pattern: "*.html"
-    
+
     conda "bioconda::pybigwig=0.3.22 matplotlib=3.10.3 conda-forge::numpy=1.26.4 conda-forge::tqdm=4.67.1"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://firaszemzem/pybigwig-tools:1.1"
         : "firaszemzem/pybigwig-tools:1.1"}"
 
     input:
-    path bigWigFile
+    tuple val(patient_id), path(bigWigFile)
     val mindepth
     val saveImg
 
     output:
-    path "*.html"   , emit: stats
-    path "*.png"    , optional: true
+    tuple val(patient_id), path("*.html"), emit: stats
+    tuple val(patient_id), path("*.png"), optional: true
 
     script:
     """
@@ -245,7 +245,3 @@ process BigWigCoveragePlots {
     plot_coverage("${bigWigFile}", ${mindepth}, ${saveImg ? 'True' : 'False'})
     """
 }
-
-
-
-

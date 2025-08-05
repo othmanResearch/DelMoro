@@ -6,6 +6,9 @@
 process BigWig {
     tag " GENRATE BIGWIG FILES "
     publishDir "${params.outdir}/Mapping/", mode: "copy"
+    errorStrategy 'retry'
+    maxRetries 3
+
     
     conda "bioconda::deeptools==3.5.5"
     container "${workflow.containerEngine == 'singularity'
@@ -13,11 +16,11 @@ process BigWig {
         : "mgibio/deeptools:3.5.3"}"
       
     input: 
- 	path bam
- 	path bamIdx
+    tuple val(patient_id), path(bam)
+    tuple val(patient_id), path(bamIdx)
  	
     output: 
-    path "*.bw" 
+    tuple val(patient_id), path("*.bw")
     	
     script:
      

@@ -29,10 +29,10 @@ process DownloadIgenomes {
 // 	CREATING INDEX FOR ALINGER
 ////////////////////////////////////////////////////
 
-process createIndex {
+process CreateIndex {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
     publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
-
+    
     conda "bioconda::bwa=0.7.18"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://firaszemzem/bwa-samtools:latest"
@@ -42,7 +42,7 @@ process createIndex {
     path ref
 
     output:
-    path "*.{amb,ann,bwt,pac,sa}", emit: "bwa_index"
+    path "*.{amb,ann,bwt,pac,sa}", emit: "bwaIndex"
 
     script:
     """
@@ -50,10 +50,10 @@ process createIndex {
     """
 }
 
-process createIndexBWAMEM2 {
+process CreateIndexBwaMem2 {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
     publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
-
+    
     conda "bioconda::bwa-mem2=2.2.1"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://firaszemzem/bwamem2-samtools:latest"
@@ -63,7 +63,7 @@ process createIndexBWAMEM2 {
     path ref
 
     output:
-    path "*.{0123,amb,ann,bwt.2bit.64,pac}", emit: "bwa_index"
+    path "*.{0123,amb,ann,bwt.2bit.64,pac}", emit: "bwaIndex"
 
     script:
     """
@@ -74,10 +74,10 @@ process createIndexBWAMEM2 {
 ////////////////////////////////////////////////////
 //	CREATING DICTIONARY FOR REF GENOME FOR ALIGNER
 
-process createDictionary {
+process CreateDictionary {
     tag "GENERATE DICTIONARY"
     publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
-
+    
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://broadinstitute/gatk:latest"
@@ -87,7 +87,7 @@ process createDictionary {
     path ref
 
     output:
-    path "*.dict", emit: "gatk_dic"
+    path "*.dict", emit: "gatkDict"
 
     script:
     """
@@ -99,10 +99,10 @@ process createDictionary {
 ////////////////////////////////////////////////////
 //	CREATING INDEX BY SAMTOOLS
 
-process createIndexSamtools {
+process CreateIndexSamtools {
     tag "GENERATE INDEX BY SAMTOOLS"
     publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
-
+    
     conda "bioconda::samtools=1.21"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://firaszemzem/bwa-samtools:latest"
@@ -112,7 +112,7 @@ process createIndexSamtools {
     path ref
 
     output:
-    path "*.fai", emit: "samtools_index"
+    path "*.fai", emit: "samtoolsIndex"
 
     script:
     """

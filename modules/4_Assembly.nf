@@ -2,7 +2,7 @@
 
 // Alignment based-reference
 
-process alignReadsToRef {
+process AlignReadsToRef {
     tag "ALIGNING GENOMES TO REFERENCE"
     publishDir "${params.outdir}/Mapping", mode: 'copy', enabled: params.keepinter 
 
@@ -17,7 +17,7 @@ process alignReadsToRef {
     tuple val(patient_id), path(R1), path(R2)
 
     output:
-    path "${patient_id}_sor.bam", emit: sorted_bam
+    tuple val(patient_id), path("${patient_id}_sor.bam"), emit: sorted_bam
 
     script:
     """
@@ -28,7 +28,7 @@ process alignReadsToRef {
 }
 
 
-process alignReadsToRefBWAMEM2 {
+process AlignReadsToRefBwaMem2 {
     tag "ALIGNING GENOMES TO REFERENCE"
     publishDir "${params.outdir}/Mapping", mode: 'copy', enabled: params.keepinter 
 
@@ -43,7 +43,7 @@ process alignReadsToRefBWAMEM2 {
     tuple val(patient_id), path(R1), path(R2)
 
     output:
-    path "${patient_id}_sor.bam" , emit: sorted_bam
+    tuple val(patient_id), path("${patient_id}_sor.bam") , emit: sorted_bam
 
     script:
     """
@@ -56,7 +56,7 @@ process alignReadsToRefBWAMEM2 {
 
 // Assigning ReadGroups
 
-process assignReadGroup {
+process AssignReadGroup {
     tag "ASSIGNING READ GROUPS"
     publishDir "${params.outdir}/Mapping", mode: 'copy', enabled: params.keepinter
 
@@ -66,10 +66,10 @@ process assignReadGroup {
     	: "broadinstitute/gatk:latest"}"
 
     input:
-    path aligned_bam
+    tuple val(patient_id), path (aligned_bam)
 
     output:
-    path "*_RG.bam" , emit: sorted_labeled_bam
+    tuple val(patient_id), path ("*_RG.bam") , emit: sorted_labeled_bam
 
     script:
     """
@@ -88,7 +88,7 @@ process assignReadGroup {
 
 // Marking Duplicates
 
-process markDuplicates {
+process MarkDuplicates {
     tag "MARKING DUPLICATES"
     publishDir "${params.outdir}/Mapping", mode: 'copy'
 
@@ -98,11 +98,11 @@ process markDuplicates {
         : "broadinstitute/gatk:latest"}"
 
     input:
-    path sorted_bam
+    tuple val(patient_id), path (sorted_bam)
 
     output:
-    path "*_delMoro.bam", emit: sorted_markduplicates_bam
-    path "*.metrict"
+    tuple val(patient_id), path ("*_delMoro.bam"), emit: sorted_markduplicates_bam
+    tuple val(patient_id), path ("*.metrict")
 
     script:
     """
@@ -127,10 +127,10 @@ process IndexBam {
         : "firaszemzem/bwa-samtools:latest"}"
 
     input:
-    path BamFile
+    tuple val(patient_id), path (BamFile)
 
     output:
-    path "${BamFile}.bai", emit: "IDXBAM"
+    tuple val(patient_id), path ("${BamFile}.bai"), emit: "IDXBAM"
 
     script:
     """
@@ -150,12 +150,12 @@ process Extractregion {
         : "firaszemzem/bwa-samtools:latest"}"
 
     input:
-    path BamFile
+    tuple val(patient_id), path (BamFile)
     // Bam file from sorted_markduplicates_bam
-    path BamIdx
+    tuple val(patient_id), path (BamIdx)
 
     output:
-    path "*.bam"
+    tuple val(patient_id), path ("*.bam")
 
     script:
     """
@@ -177,11 +177,11 @@ process GenerateStat {
         : "firaszemzem/bwa-samtools:latest"}"
 
     input:
-    path sorted_labeled_bam
-    path sorted_markduplicates_bam
+    tuple val(patient_id), path (sorted_labeled_bam)
+    tuple val(patient_id), path (sorted_markduplicates_bam)
 
     output:
-    path "*.flagstat"
+    tuple val(patient_id), path ("*.flagstat")
 
     script:
     """
