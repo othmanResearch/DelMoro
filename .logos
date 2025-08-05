@@ -33,19 +33,10 @@ log.info"""
                                                                                 \033[31m o o X\033[37m
 
 \033[32m
-Usage   :\033[37m nextflow main.nf --exec <\033[32mcommand\033[37m> <Params>
+Usage: nextflow run main.nf <modality> [--exec <command>] <params>
 
-Command : - \033[32mrawqc\033[37m 	: Check           quality      of     raw           reads. 
-	  - \033[32mtrim\033[37m 	: Remove low-quality bp and adapters & checks its quality.
-	  - \033[32mrefidx\033[37m 	: Index   the    reference   genome    for      alignment.
-	  - \033[32malign\033[37m 	: Align     reads      to     the     reference    genome.
-	  - \033[32mbqsr\033[37m 	: Base 		Quality 	Score	    recalibration.
-	  - \033[32mcallsnp\033[37m 	: Detect           SNPs      from      aligned      reads.
-	  - \033[32mannotate\033[37m 	: annotate 	    	    vfc 	             file.
-	  - \033[32mreporting\033[37m 	: Auto  	Generate   PDF 	  of   	  vcf 	  reports.
-	  - \033[32mhelp\033[37m 	
-	  - \033[32mversion\033[37m  
-	   
+For more details, run: nextflow run main.nf --help
+\033[37m
 """		
 }
 
@@ -72,13 +63,27 @@ def DelMoroHelp(){
 
 log.info"""
 
-Program: DelMoro (Bioinformatics Tool Used In Clinical Genomics)
-Version: v1.00 
+Program : DelMoro (Bioinformatics Tool Used In Clinical Genomics)
+Version : v1.00 
+\033[32m
+Usage   : nextflow run main.nf <modality> [--exec <module>] <params>
+
+Modality:\033[37m - \033[32m--fullmode\033[37m  : Executing   full   mode from fastq until vaiant calling.
+	  - \033[32m--stepmode\033[37m  : Executing   different   modules   in   standalone  mode.
+\033[32m
+Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of     raw           reads. 
+	  - \033[32mtrim\033[37m 	: Remove low-quality bp and adapters & checks its quality.
+	  - \033[32mrefidx\033[37m 	: Index   the    reference   genome    for      alignment.
+	  - \033[32malign\033[37m 	: Align     reads      to     the     reference    genome.
+	  - \033[32mbqsr\033[37m 	: Base 		Quality 	Score	    recalibration.
+	  - \033[32mcallsnp\033[37m 	: Detect           SNPs      from      aligned      reads.
+	  - \033[32mannotate\033[37m 	: annotate 	    	    vfc 	             file.
+	  - \033[32mreporting\033[37m 	: Auto  	Generate   PDF 	  of   	  vcf 	  reports.
+	  - \033[32mhelp\033[37m 	
+	  - \033[32mversion\033[37m  
 
 
-Usage:   nextflow main.nf --exec <\033[32mcommand\033[37m> [Params] 
-
-Commands:
+\033[32mRequirements :
   -- Quality Control
      \033[32mrawqc\033[37m 	   Check quality of raw reads. 
                    require : --rawreads <path-to-csv>
@@ -113,6 +118,7 @@ Commands:
   	           	   : .bai
   	           	   : .flagstat
   	           	   : .coverage.bed
+  	           	   : .bw
   
     -- BQSR  
      \033[32mbqsr\033[37m	   Base quality score recalibration.
@@ -153,7 +159,7 @@ Commands:
  	   		
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
   To see Defauls params paths:  
-   > nextflow main.nf --exec \033[32mparams\033[37m
+   > nextflow main.nf \033[32m--params\033[37m
 
 """}
 
@@ -171,7 +177,12 @@ log.info"""
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
 \033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM files derived from alignment  
 \033[32m --metrics  	=\033[37m false 									=> Run Metrics for Bam file
-
+\033[32m --stepmode	=\033[37m null  									=> Step mode for running modules
+\033[32m --fullmode	=\033[37m null									  	=> full mode [ fq to vcf ]
+\033[32m --input 	=\033[37m null										=> input for full mode
+\033[32m --bqsr		=\033[37m null  									=> bqsr enable in full mode
+	
+	
 
 \033[32m --mindepth	= \033[37m 0 										=> Minimum depth in coverage bin plots
 \033[32m --saveImg 	= \033[37m false 	 								=> Save images( plots ) from bigwig files
@@ -419,9 +430,61 @@ log.info"""
 	"""
 	}	
 	
+
+// DelMoro FullMode Output Default
 	
+def FullModeOutput() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m ✔ outdir 			=\033[37m ${params.outdir}
+\033[32m ✔ ALIGNER indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Dictionary indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Samtools indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Mapped reads 		=\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics  	=\033[37m ./${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
+\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 	"""
+}
 
 
+def FullModeBqsrOutput() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m ✔ outdir 			=\033[37m ${params.outdir}
+\033[32m ✔ ALIGNER indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Dictionary indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Samtools indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Mapped reads 		=\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics  	=\033[37m ./${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Known Sites (ivcf 1)  	=\033[37m ./knownsites/${params.ivcf1}
+\033[32m ✔ Known Sites (ivcf 2) 	=\033[37m ./knownsites/${params.ivcf2}
+\033[32m ✔ Known Sites (local vcf 1)  	=\033[37m ./knownsites/${params.knownsite1}
+\033[32m ✔ Known Sites (local vcf 2) 	=\033[37m ./knownsites/${params.knownsite2}
+\033[32m ✔ Known Sites vcf indexes 	=\033[37m ./${params.outdir}/Indexes/knownSites
+\033[32m ✔ Base Recalibration 		=\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Bam indexes 			=\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
+\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 	"""
+}
 
 
 
