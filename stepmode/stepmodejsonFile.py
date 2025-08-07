@@ -55,7 +55,7 @@ class DelMoroRunnerThread(QThread):
                 return
 
             # Build BASE Nextflow command
-            cmd = ["nextflow", "run", self.workflow, "-profile", self.profile, "--cpus", str(self.cores)]
+            cmd = ["nextflow", "run", self.workflow, "-profile", self.profile, "--cpus", str(self.cores), "--stepmode"]
 
             # Add params file if not in test profile and exists
             if not isTestProfile and self.paramsFile:
@@ -122,7 +122,7 @@ class DelMoroRunnerThread(QThread):
             self.logSignal.emit("Pipeline execution aborted.\n")
             self.finishedSignal.emit(False)
 
-class NextflowRunnerPage(QWidget):
+class sMJsonFilesPage(QWidget):
     def __init__(self, mainWindow):
         super().__init__()
         self.mainWindow = mainWindow
@@ -572,4 +572,4 @@ class NextflowRunnerPage(QWidget):
             self.logOutput.append("\nPipeline failed.")
 
 
-__all__ = ['NextflowRunnerPage']
+__all__ = ['sMJsonFilesPage']

@@ -3,14 +3,15 @@ import os
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QWidget, QStackedWidget, QDesktopWidget
-) 
+)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFont, QPixmap, QPalette
 
-""" Importing Customized Pages :NextflowRunnerPage & FullParamsPage """
-from paramsFile import NextflowRunnerPage
-from fullParams import FullParamsPage
+""" Importing Customized Pages :sMJsonFilesPage & sMFullParamsPage """
+from stepmode.stepmodefullParams import sMFullParamsPage
+from stepmode.stepmodejsonFile import sMJsonFilesPage
 
+from fullmode.fullmodefullParams import fMFullParamsPage
 
 class WelcomePage(QWidget):
     def __init__(self, mainWindow):
@@ -49,14 +50,19 @@ class WelcomePage(QWidget):
         logoLabel.setAlignment(Qt.AlignCenter)
 
         """ Buttons """
-        btnFullParams = self.createButton("Use Full Parameters", "#4CAF50", self.mainWindow.showFullParamsPage)
-        btnParamsFile = self.createButton("Use Params File", "#2196F3", self.mainWindow.showNextflowRunner)
+        # Step Mode Full Parameters button (green)
+        btnsMFullParams = self.createButton("Step Mode Full Parameters", "#4CAF50", self.mainWindow.showsMFullParamsPage)
+        # Full Mode Full Parameters button (green)
+        btnfMFullParams = self.createButton("Full Mode Full Parameters", "#2196F3", self.mainWindow.showfMFullParamsPage)
+        # Step Mode Json File button (blue)
+        btnsMParamsFile = self.createButton("Step Mode Json File", "#4CAF50", self.mainWindow.showsMjsonParamsPage)
 
         """ Button container (horizontal layout) """
         buttonLayout = QHBoxLayout()
         buttonLayout.addStretch()
-        buttonLayout.addWidget(btnFullParams)
-        buttonLayout.addWidget(btnParamsFile)
+        buttonLayout.addWidget(btnsMFullParams)
+        buttonLayout.addWidget(btnfMFullParams)
+        buttonLayout.addWidget(btnsMParamsFile)
         buttonLayout.addStretch()
 
         """ Add widgets to main layout in desired order """
@@ -170,13 +176,17 @@ class MainWindow(QMainWindow):
 
         # Create pages
         self.welcomePage = WelcomePage(self)
-        self.nextflowRunnerPage = NextflowRunnerPage(self)
-        self.fullParamsPage = FullParamsPage(self)
+        # step mode pages
+        self.sMJsonFilesPage = sMJsonFilesPage(self)
+        self.sMFullParamsPage = sMFullParamsPage(self)
+        # full mode page (only full parameters now)
+        self.fMFullParamsPage = fMFullParamsPage(self)
 
         # Add pages to stacked widget
         self.stackedWidget.addWidget(self.welcomePage)
-        self.stackedWidget.addWidget(self.nextflowRunnerPage)
-        self.stackedWidget.addWidget(self.fullParamsPage)
+        self.stackedWidget.addWidget(self.sMJsonFilesPage)
+        self.stackedWidget.addWidget(self.sMFullParamsPage)
+        self.stackedWidget.addWidget(self.fMFullParamsPage)
 
         self.showWelcomePage()
 
@@ -184,14 +194,17 @@ class MainWindow(QMainWindow):
         """Show the welcome page in the stacked widget."""
         self.stackedWidget.setCurrentWidget(self.welcomePage)
 
-    def showNextflowRunner(self):
+    def showsMjsonParamsPage(self):
         """Show the Nextflow runner page in the stacked widget."""
-        self.stackedWidget.setCurrentWidget(self.nextflowRunnerPage)
+        self.stackedWidget.setCurrentWidget(self.sMJsonFilesPage)
 
-    def showFullParamsPage(self):
+    def showsMFullParamsPage(self):
         """Show the full parameters page in the stacked widget."""
-        self.stackedWidget.setCurrentWidget(self.fullParamsPage)
+        self.stackedWidget.setCurrentWidget(self.sMFullParamsPage)
 
+    def showfMFullParamsPage(self):
+        """Show the full parameters page in the stacked widget."""
+        self.stackedWidget.setCurrentWidget(self.fMFullParamsPage)
 
 if __name__ == "__main__":
     """

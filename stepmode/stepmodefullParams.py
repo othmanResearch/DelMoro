@@ -64,7 +64,7 @@ class FullParamsRunnerThread(QThread):
                 return
 
             # Base Nextflow command components
-            cmd = ["nextflow", "run", self.workflow, "-profile", self.profile, "--cpus", str(self.cores)]
+            cmd = ["nextflow", "run", self.workflow, "-profile", self.profile, "--cpus", str(self.cores), "--stepmode"]
 
             # Check if test profile is selected (simplified execution)
             if "test" in self.profile.split(","):
@@ -187,7 +187,7 @@ class FullParamsRunnerThread(QThread):
         self.wait()  # Wait for the thread to finish
 
 
-class FullParamsPage(QWidget):
+class sMFullParamsPage(QWidget):
     def __init__(self, mainWindow):
         super().__init__()
         self.mainWindow = mainWindow
@@ -1124,4 +1124,4 @@ class FullParamsPage(QWidget):
             self.logOutput.append("\nPipeline failed.")
 
 
-__all__ = ['FullParamsPage']
+__all__ = ['sMFullParamsPage']
