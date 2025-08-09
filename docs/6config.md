@@ -65,7 +65,6 @@ To automatically generate all required CSV files as part of the setup, consult t
 ???+ note "💡 **1_samplesheetForRawQC.csv**"
     Header: `patient_id,R1,R2`
     ```csv
-    patient_id,R1,R2
     41TNS1,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz
     2TNS12,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz
     3TNS13,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz
@@ -119,3 +118,50 @@ To automatically generate all required CSV files as part of the setup, consult t
     2TNS12,./outdir/Mapping/Variants/2TNS12_sor_RG_MD.bam.recal.HC.vcf
     3TNS13,./outdir/Mapping/Variants/3TNS13_sor_RG_MD.bam.recal.HC.vcf
     ```
+### Patients Metadata csv Template  
+???+ note "💡 **CSVs/7_metaPatients.csv**"
+    Header: `csvIdentifier,SampleID,Gender,Dob,Ethnicity,Diagnosis,vcFile`
+    ```
+    SRR13-FVXF,SRR13-FVXF,female,2025-06-01,African,WES,./outdir/annotation/SRR13_vep.vcf.gz
+    ```
+
+
+### User Metadata csv Template  
+???+ note "💡 **CSVs/7_metaPatients.yml**"
+    ```
+    # Clinical Data Record
+    
+    # The names, institutions, and contact information used in this document are entirely fictitious 
+    # and are intended solely for illustrative purposes. 
+    # Any resemblance to actual persons, living or dead, or actual organizations is purely coincidental. 
+    #There is no intentional reference or misrepresentation of real individuals or entities.
+    
+    physician:
+      name: "Dr. Jane Doe"
+      specialty: "Clinical Genetics"
+      contact:
+        email: "jane.doe@geneticshospital.org"
+        phone: "+1-555-123-4567"
+      affiliation: "Genetics and Genomics Institute"
+    
+    institution:
+      name: "Genetics and Genomics Institute"
+      address:
+        street: "123 Medical Center Drive"
+        city: "Boston"
+        state: "MA"
+        zip: "02115"
+        country: "USA"
+      department: "Department of Medical Genetics"
+      accreditation: "CAP/CLIA Certified"
+    
+    hpo_terms:
+      - id: "HP:0001627"
+        term: "Abnormality of cardiac morphology"
+      - id: "HP:0001250"
+        term: "Seizure"
+      - id: "HP:0004322"
+        term: "Short stature"
+      - id: "HP:0001513"
+        term: "Obesity"
+    ```    

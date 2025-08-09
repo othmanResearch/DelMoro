@@ -28,13 +28,13 @@ These tools allow DelMoro to run reproducibly across systems using software envi
 Clone the DelMoro repository from GitHub:
 
 ```bash
-git clone https://github.com/yourusername/DelMoro.git
+git clone https://github.com/othmanResearch/DelMoro.git
 cd DelMoro
 ```
 
 ## 3. Install All Dependencies via Conda
 
 ```bash
-mamba env create -f environment.yml
+mamba env create -f DelMoro.yml
 conda activate DelMoro
 ```

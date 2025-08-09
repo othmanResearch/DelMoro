@@ -14,36 +14,59 @@
 
 DelMoro automates the entire genomic variant calling pipeline, including:
 
-1. **Raw Data Quality Control**  
-   Ensures input FASTQ files are high quality using tools like:
-   - `FastQC`
-   - `MultiQC`
+---
 
-2. **Read Trimming**  
-   Trims adapters and low-quality bases with your choice of:
-   - `Trimmomatic`
-   - `Fastp`
-   - `BBDuk`
+**1. Raw Data Quality Control** : Ensures input FASTQ files are high quality using tools like:  
+- `FastQC`  
+- `MultiQC`  
 
-3. **Alignment**  
-   Aligns reads to a reference genome using:
-   - `BWA`
-   - `BWA-MEM2`
+---
 
-4. **Base Recalibration**  
-   Applies GATK's best practices with:
-   - `BaseRecalibrator`
-   - `ApplyBQSR`
+**2. Read Trimming** : Trims adapters and low-quality bases with your choice of:  
+- `Trimmomatic`  
+- `Fastp`  
+- `BBDuk`  
 
-5. **Variant Calling**  
-   Detects SNPs and indels using:
-   - `GATK HaplotypeCaller`
+---
 
-6. **Variant Annotation**  
-   Annotates variants using:
-   - `Ensembl VEP (Variant Effect Predictor)`
+**3. Alignment**
+Aligns reads to a reference genome using:  
+- `BWA`  
+- `BWA-MEM2`  
 
-7. **Coverage Depth Calculation & Reports**  
+**Metrics:**  
+- `CollectAlignmentSummaryMetrics`  
+- `CollectInsertSizeMetrics`  
+- `CollectGcBiasMetrics`  
+- `QualiMap`  
+
+**BigWigs:**  
+- `bamCoverage`  
+
+**BigWigs Plotting:**  
+- `pyBigWig`  
+
+---
+
+**4. Base Recalibration**
+Applies GATK's best practices with:  
+- `BaseRecalibrator`  
+- `ApplyBQSR`  
+- Metrics, BigWigs, and plotting  
+
+---
+
+**5. Variant Calling**
+Detects SNPs and indels using:  
+- `GATK HaplotypeCaller`  
+
+---
+
+**6. Variant Annotation**
+Annotates variants using:  
+- `Ensembl VEP (Variant Effect Predictor)`  
+
+**7. Coverage Depth Calculation & Reports**
    Automatically generates coverage depth metrics for your aligned data and creates detailed reports from the VCF files to help assess the quality of your variant calls.
 
 Each stage includes logging and quality reports to help ensure data integrity and reproducibility throughout the workflow.
@@ -76,4 +99,4 @@ You can run DelMoro with your preferred software environment, including:
 
 ## Get Started
 
-Jump to the [Quickstart](quickstart.md) guide to start processing your own data with just a few configuration changes.
+Jump to the [Quickstart](1quickstart.md) guide to start processing your own data with just a few configuration changes.

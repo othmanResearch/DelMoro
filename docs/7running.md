@@ -4,9 +4,167 @@ This guide allows you to interactively select the pipeline steps you want to run
 
 ---
 
-<!-- 🔹 Step 1: Initialize the pipeline -->
 
-## Step 1: Initialize the Pipeline
+## Help Menu 
+```
+Program : DelMoro (Bioinformatics Tool Used In Clinical Genomics)
+Version : v1.00 
+Github  : https://github.com/othmanResearch/DelMoro
+Documentation : - 
+
+
+Usage   : nextflow run main.nf <modality> [--exec <module>] <params>
+
+Modality: - --fullmode  : Executing   full   mode from fastq until vaiant calling.
+	      - --stepmode  : Executing   different   modules   in   standalone  mode.
+
+
+
+Executing fullmode :  
+nextflow run main.nf  
+    --fullmode
+    --input  
+    --reference   | [--igenome ]   
+    [--aligner bwamem2]  
+    [--mode onlyVCF|cohortGVCF]  
+    [--bqsr]  
+    [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Executing stepmode :  
+nextflow run main.nf  
+    --stepmode
+    --exec <module>
+
+Module  : - rawqc 	    : Check quality of raw reads. 
+	      - trim 	    : Remove low-quality bp and adapters & checks its quality.
+	      - refidx 	    : Index the reference genome for alignment.
+	      - align 	    : Align reads to the reference genome.
+	      - bqsr 	    : Base Quality Score recalibration.
+	      - callsnp 	: Detect SNPs from aligned reads.
+	      - annotate 	: annotate vfc file.
+	      - reporting 	: Auto Generate PDF of  vcf reports.
+	      - help 	
+	      - version  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Requirements :
+  -- Quality Control
+     rawqc 	   Check quality of raw reads. 
+                require : --rawreads <path-to-csv>
+                output  : .html reads 
+                   	    : .html multiqc 
+
+  -- Trimming
+     trim          Remove low-quality bp and adapters & checks its quality.
+     		    require : --tobetrimmed <path-to-csv>
+     		   	        : --trimmomatic, --fastp, --bbduk 
+     		            : --adapters <path-to-adapter-file> [ optional ]
+     		    output  : .fastq trimmed 
+                   	    : .html trimmed reads 
+                   	    : .html multiqc  
+
+  -- Indexing
+     refidx 	   Index reference genome for alignment.
+     		    require : --reference <path-to-ref>
+     		   	        : --igenome   <value-from-IGENOMES> [ optional ]
+     		    output  : .dict 
+                        : .fai  
+                        : .{.0123,amb,ann,bwt.2bit.64,pac} 
+   
+  -- Mapping	   
+     align         Align reads to reference genome.
+  	            require : --reference   <path-to-ref>
+  	            	    : --Tobealigned <path-to-trimmed-csv>
+  		                : --metrics  [ optional ]
+  		                : --mindepth [ optional ] 
+  		                : --saveImg  [ optional ] 
+  	            output  : .bam
+  	           	        : .bai
+  	           	        : .flagstat
+  	           	        : .coverage.bed
+  	                    : .bw
+  
+    -- BQSR  
+     bqsr	   Base quality score recalibration.
+  		        require : --knownsite1, 2 <path-to-vcf-file> , 2 files 
+  		   	            : --ivcf1, 2      <value>  [ optional ]
+  		                : --bam	     <path-to-bam-csv)
+  		                : --metrics  [ optional ]
+  		                : --mindepth [ optional ] 
+  		                : --saveImg  [ optional ] 
+		        output  : .idx of knwons sites <vcf> 
+		   	            : .table
+		   	            : .bam
+		   	            : .bam
+		   	   	           	   
+  -- Variant Calling	  
+     callsnp       Detect SNPs from aligned reads.
+  	            require : --reference   <path-to-ref>
+  		   	            : --tovarcall   <path-to-bam-csv)
+  		        output  : .vcf
+  		   	            : .table
+  -- Annotation	  
+     annotate       Print out Annotation manual
+     
+     vepcache       Download vep cache
+  	            require : --species   <value>
+  	           	        : --cachetype <value> [ optional ]
+  	           	        : --assembly  <value> [ optional ]
+  	           	        : --cacheversion  <value> [ optional ] 
+  	            output  : ./vep_cache directory 
+  	            
+     vepannotate    Vep annotation
+  	            require : --species    <value>
+  	            	    : --reference  <path-to-ref>
+  	            	    : --toannotate <path-to-csv> 
+  	           	        : --assembly   <value>
+  	           	        : --cachetype  <value> [ optional ]
+  	            output  : vcf.gz
+  	            	    : .vcf.gz.tbi
+  	            	    : .html
+   -- Reporting
+      reporting       Auto Generate PDF of vcf reports
+  	            require : --metaPatients <path-to-csv>
+			            : --metaYaml 	 <path-to-yaml>
+  	            output  : .png
+  	            	    : .pdf
+ 	   		
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  To see Defauls params paths:  
+   > nextflow main.nf --params
+
+
+```
+
+<!-- 🔹 Step 1: Initialize the pipeline -->
+## full mode
+The **DelMoro full mode** follows a standard workflow, requiring an `--input` CSV file formatted like the example in the [Config Section](6config.md#rawqc-csv-template) and a `--reference` path.  
+
+In this mode, the pipeline performs **reference indexing**, **mapping**, and **variant calling**, applying the same sub-options for each step:  
+- **Reference**: `igenome/reference`  
+- **Aligner**: `bwa` or `bwamem2`  
+- **Mode**: `onlyVCF` or `cohort GVCF`  
+
+You can optionally enable **Base Quality Score Recalibration (BQSR)** by adding the `--bqsr` parameter, which requires either:  
+- Local known sites: `--knownsite1`, `--knownsite2`  
+- retrieval from AWS: `--ivcf1`, `--ivcf2`  
+
+<div id="cmd-qc" class="full-command">
+<pre><code>
+nextflow run main.nf \
+    --input <input_csv> \
+    --reference <reference_path>  | [--igenome <str>]  \
+    [--aligner bwamem2] \
+    [--mode onlyVCF|cohortGVCF] \
+    [--bqsr] \
+    [--knownsite1 <path>,--knownsite2 <path>|--ivcf1 <str>,--ivcf2 <str>]
+</code></pre>
+</div>
+
+## Step mode
+### Step 1: Initialize the Pipeline
 
 <div align="justify"> 
 This step sets up the required input data.  
@@ -34,14 +192,14 @@ These files are automatically generated based on an initial CSV file provided by
 </label>
 
 <div id="cmd-init" class="step-command">
-<pre><code>nextflow run main.nf --generate CSV --basedon CSVs/1_samplesheetForRawQC.csv</code></pre>
+<pre><code>nextflow run main.nf --stepmode --generate CSV --basedon CSVs/1_samplesheetForRawQC.csv</code></pre>
 </div>
 
 ---
 
 <!-- 🔹 Step 2: Quality Control -->
 
-## Step 2: Quality Control
+### Step 2: Quality Control
 
 <div align="justify">  
 Perform quality checks on raw FASTQ files using tools like FastQC,  
@@ -57,12 +215,12 @@ and summarize results with MultiQC.
 </label>
 
 <div id="cmd-qc" class="step-command">
-<pre><code>nextflow run main.nf --exec rawqc --rawreads CSVs/1_samplesheetForRawQC.csv</code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec rawqc --rawreads CSVs/1_samplesheetForRawQC.csv</code></pre>
 </div>
 
 <!-- 🔹 Step 3: Read Trimming -->
 
-## Step 3: Read Trimming
+### Step 3: Read Trimming
 
 <div align="justify">  
 This step removes adapters and low-quality bases from reads  
@@ -80,7 +238,7 @@ You may also optionally provide a custom adapter file.
 
 <!-- 🔸 Trimmomatic -->
 
-### Trimmomatic
+#### Trimmomatic
 
 <label>
   <input type="checkbox" onchange="toggleCommand('cmd-trim-trimmomatic', this)">
@@ -88,12 +246,12 @@ You may also optionally provide a custom adapter file.
 </label>
 
 <div id="cmd-trim-trimmomatic" class="step-command">
-<pre><code>nextflow run main.nf --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --trimmomatic --adapters polyA_polyG.fa</code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --trimmomatic --adapters polyA_polyG.fa</code></pre>
 </div>
 
 <!-- 🔸 fastp -->
 
-### fastp
+#### fastp
 
 <label>
   <input type="checkbox" onchange="toggleCommand('cmd-trim-fastp', this)">
@@ -101,12 +259,12 @@ You may also optionally provide a custom adapter file.
 </label>
 
 <div id="cmd-trim-fastp" class="step-command">
-<pre><code>nextflow run main.nf --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --fastp --adapters polyA_polyG.fa </code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --fastp --adapters polyA_polyG.fa </code></pre>
 </div>
  
 <!-- 🔸 BBDuk -->
 
-### BBDuk
+#### BBDuk
 
 <label>
   <input type="checkbox" onchange="toggleCommand('cmd-trim-bbduk', this)">
@@ -114,13 +272,13 @@ You may also optionally provide a custom adapter file.
 </label>
 
 <div id="cmd-trim-bbduk" class="step-command">
-<pre><code>nextflow run main.nf --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --bbduk --adapters polyA_polyG.fa</code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --bbduk --adapters polyA_polyG.fa</code></pre>
 </div>
  
 
 <!-- 🔹 Step 4: Reference Indexing -->
 
-## Step 4: Index the Reference Genome
+### Step 4: Index the Reference Genome
 
 <div align="justify">  
 This step prepares the reference genome by generating the necessary index files.  
@@ -130,7 +288,7 @@ or use the `--igenome` parameter to automatically download and index a standard 
 
 ---
 
-### Local Reference
+#### Local Reference
 
 ???+ note " 💡**Option 1**: Local FASTA"
     Use your own reference FASTA file.  
@@ -142,12 +300,12 @@ or use the `--igenome` parameter to automatically download and index a standard 
 </label>
 
 <div id="cmd-refidx-local" class="step-command">
-<pre><code>nextflow run main.nf --exec refidx --reference Reference_Genome/reference.fa</code></pre>
+<pre><code>nextflow run main.nf --stepmode--exec refidx --reference Reference_Genome/reference.fa</code></pre>
 </div>
 
 ---
 
-### iGenomes Reference
+#### iGenomes Reference
 
 ???+ note " 💡**Option 2**: Auto-download with iGenomes"
     Use the `--igenome` parameter to fetch and index a reference genome.  
@@ -159,12 +317,12 @@ or use the `--igenome` parameter to automatically download and index a standard 
 </label>
 
 <div id="cmd-refidx-igenome" class="step-command">
-<pre><code>nextflow run main.nf --exec refidx --igenome Ens.GRCh37</code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec refidx --igenome Ens.GRCh37</code></pre>
 </div>
 
 ---
 
-### Aligner Option
+#### Aligner Option
 
 ???+ note " 💡 **Aligner Customization**"
     The default aligner used is `bwa` for both the **indexing** and **alignment** steps.  
@@ -176,12 +334,12 @@ or use the `--igenome` parameter to automatically download and index a standard 
 </label>
 
 <div id="cmd-refidx-aligner" class="step-command">
-<pre><code>nextflow run main.nf --exec refidx --reference Reference_Genome/reference.fa --aligner bwamem2</code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec refidx --reference Reference_Genome/reference.fa --aligner bwamem2</code></pre>
 </div>
 
 ---
 
-## Step 5: Alignment
+### Step 5: Alignment
 <div align="justify">  
 This step aligns your sequencing reads to the reference genome using the specified aligner (default is `bwa`).  
 You can choose to use `bwamem2` by specifying the `--aligner bwamem2` flag.
@@ -194,12 +352,12 @@ You can choose to use `bwamem2` by specifying the `--aligner bwamem2` flag.
 </label>
 
 <div id="cmd-align" class="step-command">
-<pre><code>nextflow run main.nf --exec align --reference Reference_Genome/reference.fa --tobealigned CSVs/3_samplesheetForAssembly.csv --aligner bwamem2 </code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec align --reference Reference_Genome/reference.fa --tobealigned CSVs/3_samplesheetForAssembly.csv --aligner bwamem2 </code></pre>
 </div>
 
 ---
 
-## Step 6: Base Quality Score Recalibration
+### Step 6: Base Quality Score Recalibration
 
 <div align="justify">
 This step applies GATK's Best Practices for Base Quality Score Recalibration (BQSR).  
@@ -209,7 +367,7 @@ You can either use your own VCF files or download reference sets automatically u
 
 ---
 
-### Local Known Sites (VCF files)
+#### Local Known Sites (VCF files)
 
 ???+ note " 💡 **Option 1**:"
     Use locally downloaded VCF files for known sites.  
@@ -221,7 +379,7 @@ You can either use your own VCF files or download reference sets automatically u
 </label>
 
 <div id="cmd-bqsr-local" class="step-command">
-<pre><code>nextflow run main.nf --exec bqsr \
+<pre><code>nextflow run main.nf --stepmode --exec bqsr \
   --reference Reference_Genome/reference.fa \
   --bam CSVs/4_samplesheetForBamFiles.csv \
   --knownsite1 knownsites/1000g_gold_standard.indels.filtered.vcf \
@@ -230,7 +388,7 @@ You can either use your own VCF files or download reference sets automatically u
 
 ---
 
-### Auto-Download Known Sites
+#### Auto-Download Known Sites
 
 ???+ note " 💡 **Option 2**:"
     Use `--ivcf1` and `--ivcf2` to automatically download public known sites for BQSR.  
@@ -242,7 +400,7 @@ You can either use your own VCF files or download reference sets automatically u
 </label>
 
 <div id="cmd-bqsr-auto" class="step-command">
-<pre><code>nextflow run main.nf --exec bqsr \
+<pre><code>nextflow run main.nf --stepmode --exec bqsr \
     --reference Reference_Genome/reference.fa \
     --bam CSVs/4_samplesheetForBamFiles.csv \
     --ivcf1 GRCh38.mills1000 \
@@ -252,7 +410,7 @@ You can either use your own VCF files or download reference sets automatically u
 
 ---
 
-## Step 7: Variant Calling
+### Step 7: Variant Calling
 
 <div align="justify">
 This step performs variant calling using the final recalibrated BAM files.  
@@ -262,7 +420,7 @@ You can modify the output behavior using the `--generate` flag:
 
 ---
 
-### Default Mode
+#### Default Mode
 
 ???+ note " 💡 **Default Behavior**:"
     - Generates VCF files for each patient  
@@ -277,14 +435,14 @@ You can modify the output behavior using the `--generate` flag:
 </label>
 
 <div id="cmd-call-default" class="step-command">
-<pre><code>nextflow run main.nf --exec callsnp \
+<pre><code>nextflow run main.nf --stepmode --exec callsnp \
   --reference Reference_Genome/reference.fa \
   --tovarcall CSVs/5_samplesheetReclibFiles.csv</code></pre>
 </div>
 
 ---
 
-### Generate Only VCF & SNP Table
+#### Generate Only VCF & SNP Table
 
 ???+ note " 💡 **Option:** `--generate onlyVCF`"
     - Skips GVCF creation  
@@ -296,7 +454,7 @@ You can modify the output behavior using the `--generate` flag:
 </label>
 
 <div id="cmd-call-onlyvcf" class="step-command">
-<pre><code>nextflow run main.nf --exec callsnp \
+<pre><code>nextflow run main.nf --stepmode --exec callsnp \
   --reference Reference_Genome/reference.fa \
   --tovarcall CSVs/5_samplesheetReclibFiles.csv \
   --generate onlyVCF</code></pre>
@@ -304,7 +462,7 @@ You can modify the output behavior using the `--generate` flag:
 
 ---
 
-### Generate Cohort GVCF
+#### Generate Cohort GVCF
 
 ???+ note " 💡 **Option:** `--generate CohorteGVCF`"
     - Produces a single joint cohort `.g.vcf` file  
@@ -316,19 +474,19 @@ You can modify the output behavior using the `--generate` flag:
 </label>
 
 <div id="cmd-call-cohortgvcf" class="step-command">
-<pre><code>nextflow run main.nf --exec callsnp \
+<pre><code>nextflow run main.nf --stepmode --exec callsnp \
   --reference Reference_Genome/reference.fa \
   --tovarcall CSVs/5_samplesheetReclibFiles.csv \
   --generate cohorteGVCF</code></pre>
 </div>
 
-## Step 8: Variant Annotation
+### Step 8: Variant Annotation
 
 This step adds functional information to your variants using **Ensembl VEP (Variant Effect Predictor)**.
 
 ---
 
-### VEP Cache Downloading
+#### VEP Cache Downloading
 
 ???+ note "💡 VEP Cache Notes"
     - VEP requires a local cache for annotation.
@@ -345,7 +503,7 @@ This step adds functional information to your variants using **Ensembl VEP (Vari
 </label>
 
 <div id="cmd-min-vep-cache" class="step-command">
-<pre><code>nextflow run main.nf --exec vepcache --species homo_sapiens</code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec vepcache --species homo_sapiens</code></pre>
 </div>
 
 
@@ -355,12 +513,12 @@ This step adds functional information to your variants using **Ensembl VEP (Vari
 </label>
 
 <div id="cmd-full-vep-cache" class="step-command">
-<pre><code>nextflow run main.nf --exec vepcache --species homo_sapiens --assembly GRCh37 --cachetype refseq --cacheversion 114 -profile docker</code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec vepcache --species homo_sapiens --assembly GRCh37 --cachetype refseq --cacheversion 114 -profile docker</code></pre>
 </div>
 
 ---
 
-### VEP Annotation
+#### VEP Annotation
 
 ???+ note "💡 About VEP Annotation"
     - This step uses **VEP (Variant Effect Predictor)** to annotate VCF files with predicted variant effects.  
@@ -379,7 +537,7 @@ This step adds functional information to your variants using **Ensembl VEP (Vari
 </label>
 
 <div id="cmd-vep-annotate" class="step-command">
-<pre><code>nextflow main.nf --exec vepannotate \
+<pre><code>nextflow main.nf --stepmode --exec vepannotate \
   --toannotate CSVs/6_samplesheetvcfFiles.csv \
   --reference Reference_Genome/reference.fa \
   --species homo_sapiens \
@@ -387,4 +545,17 @@ This step adds functional information to your variants using **Ensembl VEP (Vari
   --cachedir .vepcachedir/</code></pre>
 </div>
 
+### Reporting 
+- This step creates detailed reports from the vep annotated  VCF files. 
 
+<label>
+  <input type="checkbox" onchange="toggleCommand('cmd-repoting', this)">
+  <strong>Run Reporting</strong>
+</label>
+
+<div id="cmd-repoting" class="step-command">
+<pre><code>nextflow main.nf --stepmode --exec reporting \
+  --metaPatients CSVs/7_metaPatients.csv \ 
+  --metaYaml CSVs/7_metaPatients.yml 
+</code></pre>
+</div>

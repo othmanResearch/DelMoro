@@ -19,27 +19,25 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Quickstart: quickstart.md
+  - Quickstart: 1quickstart.md
   - Pipeline Overview:
-      - Workflow Structure: overview.md
-      - Requirements: requirements.md
-      - Inputs & Outputs: io.md
+      - Workflow Structure: 2overview.md
+      - Requirements: 3requirements.md
+      - Inputs & Outputs: 4io.md
   - Configuration:
-      - Parameters: parameters.md
-      - Config Files: config.md
-  - Running the Pipeline: running.md
+      - Parameters: 5parameters.md
+      - Config Files: 6config.md
+  - Running the Pipeline: 7running.md
   - Development:
-      - Testing: testing.md
-      - Troubleshooting: troubleshooting.md
-      - Changelog: changelog.md
-      - About: about.md
+      - Changelog: 8changelog.md
+      - About: 9about.md
 
-repo_url: https://github.com/yourusername/DelMoro
-repo_name: yourusername/DelMoro
+repo_url: https://github.com/othmanResearch/DelMoro.git
+repo_name: othmanResearch/DelMoro
 
 plugins:
   - search
-
+  - glightbox
 markdown_extensions:
   - toc:
       permalink: true

@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install mkdocs-material pillow cairosvg
+          pip install mkdocs-material mkdocs-mermaid2-plugin mkdocs-glightbox pillow cairosvg
 
       - name: Deploy to GitHub Pages (doc branch)
         run: mkdocs gh-deploy --force --remote-branch public
