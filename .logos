@@ -65,11 +65,36 @@ log.info"""
 
 Program : DelMoro (Bioinformatics Tool Used In Clinical Genomics)
 Version : v1.00 
+Github  : https://github.com/othmanResearch/DelMoro
+Documentation : - 
+
 \033[32m
 Usage   : nextflow run main.nf <modality> [--exec <module>] <params>
 
 Modality:\033[37m - \033[32m--fullmode\033[37m  : Executing   full   mode from fastq until vaiant calling.
 	  - \033[32m--stepmode\033[37m  : Executing   different   modules   in   standalone  mode.
+
+
+
+\033[32mExecuting fullmode : \033[37m 
+nextflow run main.nf  
+    --fullmode
+    --input  
+    --reference   | [--igenome ]   
+    [--aligner bwamem2]  
+    [--mode onlyVCF|cohortGVCF]  
+    [--bqsr]  
+    [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
+
+
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
+
+\033[32mExecuting stepmode : \033[37m 
+nextflow run main.nf  
+    --stepmode
+    --exec <module>
+   
+
 \033[32m
 Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of     raw           reads. 
 	  - \033[32mtrim\033[37m 	: Remove low-quality bp and adapters & checks its quality.
@@ -82,7 +107,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
 	  - \033[32mhelp\033[37m 	
 	  - \033[32mversion\033[37m  
 
-
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
 \033[32mRequirements :
   -- Quality Control
      \033[32mrawqc\033[37m 	   Check quality of raw reads. 
@@ -125,6 +150,9 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   		   require : --knownsite1, 2 <path-to-vcf-file> , 2 files 
   		   	   : --ivcf1, 2      <value>  [ optional ]
   		           : --bam	     <path-to-bam-csv)
+  		           : --metrics [ optional ]
+  		           : --mindepth [ optional ] 
+  		           : --saveImg [ optional ] 
 		   output  : .idx of knwons sites <vcf> 
 		   	   : .table
 		   	   : .bam
@@ -155,7 +183,12 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   	            output  : vcf.gz
   	            	    : .vcf.gz.tbi
   	            	    : .html
- 
+   -- Reporting
+      \033[32mreporting\033[37m       Auto Generate PDF of vcf reports
+  	            require : --metaPatients	<path-to-csv>
+			    : --metaYaml 	<path-to-yaml>
+  	            output  : .png
+  	            	    : .pdf
  	   		
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
   To see Defauls params paths:  
