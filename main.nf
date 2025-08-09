@@ -175,7 +175,8 @@ workflow {
 		 	,CacheDir
 		 	,CacheVersion
 		 	,VcfChannel
-		 	,CacheDirANN) 
+		 	,CacheDirANN
+		 	,metaPipeExecYaml) 
     } else if (params.params){
 	DelMoroParams()
     } else if (params.help) {

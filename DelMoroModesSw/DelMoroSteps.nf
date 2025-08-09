@@ -23,6 +23,7 @@ include { BASE_QU_SCO_RECA	} from '../subworkflows/bqsr'
 include { CALL_SNPs_GATK	} from '../subworkflows/variantcalling'
 include { VEP_CACHE		} from '../subworkflows/annotations/vep/vepcache'
 include { VEP_ANNOTATE		} from '../subworkflows/annotations/vep/vepannotate'
+include { REPORTING		} from '../subworkflows/reporting/main.nf' 
 
 
 workflow DelMoroSteps {
@@ -49,6 +50,7 @@ workflow DelMoroSteps {
     CacheVersion
     VcfChannel
     CacheDirANN
+    metaPipeExecYaml
    
     main: 
     
@@ -95,6 +97,10 @@ workflow DelMoroSteps {
               
     VEP_ANNOTATE(VcfChannel,RefGenChannel,SamtIdxRef,CacheDirANN,VepSpecies,Assembly,CacheType)
                
+    } else if (params.exec == 'reporting') {
+  	              
+    REPORTING(metaPipeExecYaml)
+  	              	
     } else if ( params.exec == 'help'){
              
     DelMoroHelp()
