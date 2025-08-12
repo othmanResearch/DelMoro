@@ -1,141 +1,107 @@
-## DelMoro 
+![mainWlcPipeline](./.DelMoroWlc.png)
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.5-23aa62.svg)](https://www.nextflow.io/)
+[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
+[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
+[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
+
+---
+## Introduction 
+
+<div style="text-align: justify;">
+DelMoro is a Nextflow pipeline for genome/exome variant detection across species, offering two modes: (1) stepmode for modular execution of 8 subworkflows and (2) fullmode for automated end-to-end analysis. Built for reproducibility with Conda/Mamba/Docker/Singuilarity and wave support, it enables both granular optimization and high-throughput processing. The dual architecture supports diverse applications from exploratory research with iterative refinement to clinical grade batch analysis,while maintaining GATK best practices.This balance between stepmode and fullmode offers adaptability and standardization which makes DelMoro suitable for both developmental genomics and production-scale variant calling.
+</div>
 ---
 
-**DelMoro** is a workflow designed to detect variants in whole Genome- Exome sequencing data. It is built using Nextflow, a workflow tool to run tasks across multiple compute infrastructures. The pipeline is designed for detecting genetic variants, and it may analyze SNPs for different species. DelMoro uses Conda, Mamba, and Docker which makes installation trivial and results highly reproducible.
+## Pipelines Tools 
+1. Raw Data Quality Control : Ensures input FASTQ files are high quality using tools like:
+- [FastQC]()
+- [MultiQC]()
 
----
+2. Read Trimming : Trims adapters and low-quality bases with your choice of:
+- [Trimmomatic]()
+- [Fastp]()
+- [BBDuk]()
+
+3. Alignment Aligns reads to a reference genome using:
+- [BWA]()
+- [BWA-MEM2]()
+
+Metrics:
+- [CollectAlignmentSummaryMetrics]()
+- [CollectInsertSizeMetrics]()
+- [CollectGcBiasMetrics]()
+- [QualiMap]()
+
+BigWigs:
+- [bamCoverage]()
+
+BigWigs Plotting:
+- [pyBigWig]()
+
+4. Base Recalibration Applies GATK's best practices with:
+- [GATK]()
+- Metrics, BigWigs, and plotting
+
+5. Variant Calling Detects SNPs and indels using:
+- [GATK]() HaplotypeCaller
+
+6. Variant Annotation Annotates variants using:
+- [Variant Effect Predictor]() 
+
+7. Reportin with :
+- [Reportlab]()
+
 ### Workflow
 
 ![Pipeline](./pipelineDelMoro.png)
 
 ---
-1. **To Run DelMoro**, first create the DelMoro environment using conda: 
+##  Usage
+
+> [!NOTE]
+> Please make sure to check help menu with `--help` before running the workflow on actual data.
+
 ~~~bash
-conda env create -f DelMoro.yml && conda activate DelMoro
-~~~
-2. **To check DelMoro commands**:  
-~~~bash
-nextflow main.nf 
-~~~
-- To see the help manual:  
-~~~bash
-nextflow main.nf --exec help
+ nextflow run main.nf --help
 ~~~
 
-3. **Error Handling**: If you type any parameters incorrectly, an error message will appear.
-
-4. **To See Default Params**: 
-~~~bash
-nextflow main.nf --exec params
-~~~
-
-DelMoro offers users the possibility of generating automatically required CSV files for its processes. As an initial step, the USER prepares an input CSV to write downstream CSVs.
-~~~bash
-nextflow main.nf --generate CSV --basedon CSVs/1_samplesheetForRawQC.csv 
-~~~
-The **1_samplesheetForRawQC.csv** must be as below (template):
-~~~csv
-patient_id,R1,R2
-AO22K1,./Data/DEL_1.fastq.gz,./Data/DEL_2.fastq.gz
-TOK2W0,./Data/MORO_1.fastq.gz,./Data/MORO_2.fastq.gz
-3OL51K,./Data/TUN_1.fastq.gz,./Data/TUN_2.fastq.gz
-~~~
-Outputs of the generated CSVs are as follows:
-
-- *2_SamplesheetForTrimming.csv*:
-~~~csv
-patient_id,R1,R2,MINLEN,LEADING,TRAILING,SLIDINGWINDOW
-AO22K1,./Data/DEL_1.fastq.gz,./Data/DEL_2.fastq.gz,36,30,30,'4:20'
-TOK2W0,./Data/MORO_1.fastq.gz,./Data/MORO_2.fastq.gz,36,30,30,'4:20'
-3OL51K,./Data/TUN_1.fastq.gz,./Data/TUN_2.fastq.gz,36,30,30,'4:20'
-~~~
-
-- *3_samplesheetForAssembly.csv*:
-~~~csv
-patient_id,R1,R2
-AO22K1,./outdir/TrimmedREADS/DEL_1.fastq,./outdir/TrimmedREADS/DEL_2.fastq
-TOK2W0,./outdir/TrimmedREADS/MORO_1.fastq,./outdir/TrimmedREADS/MORO_2.fastq
-3OL51K,./outdir/TrimmedREADS/TUN_1.fastq,./outdir/TrimmedREADS/TUN_2.fastq
-~~~
-- *4_samplesheetForBamFiles.csv*:
-~~~csv
-patient_id,BamFile
-AO22K1,./outdir/Mapping/AO22K1_sor@RG@MD.bam
-TOK2W0,./outdir/Mapping/TOK2W0_sor@RG@MD.bam
-3OL51K,./outdir/Mapping/3OL51K_sor@RG@MD.bam
-~~~
-- *5_samplesheetReclibFiles.csv*:
-~~~csv
-patient_id,BamFile
-AO22K1,./outdir/Mapping/AO22K1_sor@RG@MD.bam.recal.bam
-TOK2W0,./outdir/Mapping/TOK2W0_sor@RG@MD.bam.recal.bam
-3OL51K,./outdir/Mapping/3OL51K_sor@RG@MD.bam.recal.bam
-~~~
-
-5. **To Modify any params** (e.g., Threads which refers to CPUs), type:
-~~~bash
-nextflow main.nf --exec trim  --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --cpus 10
-~~~
-
-6. **Call SNPs**: The pipeline generates VCF files by default, select SNP for all inputs and a cohort GVCF. 
-~~~bash
-nextflow main.nf --cpus 8 --exec callsnp --tovarcall <path-to-csv5> --reference <path-to-reference>
-~~~
-  * In case you want to only generate VCF for all input, add the parameter `--generate`:
-~~~bash
-nextflow main.nf --cpus 8 --exec callsnp --tovarcall <path-to-csv5> --reference <path-to-reference> --generate onlyVCF
-~~~
-  * In case you want to generate a cohort GVCF:
-~~~bash
-nextflow main.nf --cpus 8 --exec callsnp --tovarcall <path-to-csv5> --reference <path-to-reference> --generate cohorteGVCF
-~~~
----
-The user has the ability to run each step by specifying parameters (inputs and outputs) or to prepare a **params.json** file as below. To use nextflow.config with its profiles, it is recommended to use **params.json** to specify the desired profile.
-~~~bash
- nextflow main.nf -params-file params.json -profile conda,mamba,docker --exec refidx 
-~~~ 
-- For reference indexing, either you run the refidx on a local reference or use the `--igenome` parameter (check conf/):
-~~~bash
-nextflow main.nf --exec refidx --igenome GATK.GRCh37
-~~~
-- For base quality score recalibration, either you use a local VCF or `--ivcf1`, `--ivcf2` parameters (check conf/):
-~~~bash
-nextflow main.nf --cpus 8 --exec bqsr --reference Reference_Genome/reference.fa --bam CSVs/4_samplesheetForBamFiles.csv --ivcf1 GRCh38.omni --ivcf2 GRCh38.mills1000
-~~~
-
-- **params.json**:
-~~~json
-{	
-	"cpus"		: 8,
-	"outdir"	: "outdir",
-	
-	"basedon"	: "./CSVs/1_samplesheetForRawQC.csv",  	
-	
-	"_comment"	: "for reference indexing use let either reference or igenome",	 
-	
-	"reference"	: "./Reference_Genome/reference.fa",
-	"igenome"	: "EB1",
-	
-	"_comment"	: "aligner eithr null or bwamem2",	 
-	
-	"aligner"	: "bwamem2",		 
-
-	
- 	"rawreads"	: "./CSVs/1_samplesheetForRawQC.csv", 		 
-	"tobetrimmed"	: "./CSVs/2_SamplesheetForTrimming.csv",		 
-	"tobealigned"	: "./CSVs/3_samplesheetForAssembly.csv",		 
-	"bam"		: "./CSVs/4_samplesheetForBamFiles.csv",
-	"tovarcall"	: "./CSVs/5_samplesheetReclibFiles.csv",
-	"toannotate"	: "./CSVs/6_samplesheetvcfFiles.csv",	 		
-	  			 		
-
-	"_comment"	: "for base recalibration let either knownSite1 & knownSite2 or ivcf1 & ivcf2",
-	
-	"knownsite1"	: "./knownsites/1000g_gold_standard.indels.filtered.vcf", 	 
-	"knownsite2"	: "./knownsites/GCF.38.filtered.renamed.vcf",	
-	 	
-	"ivcf1"		: "GRCh38.mills1000", 	 
-	"ivcf2"		: "GRCh38.omni"	
-}
 
 ~~~
+Usage   : nextflow run main.nf <modality> [--exec <module>] <params>
+
+Modality: - --fullmode  : Executing   full   mode from fastq until vaiant calling.
+          - --stepmode  : Executing   different   modules   in   standalone  mode.
+~~~
+
+#### Executing fullmode :  
+~~~
+nextflow run main.nf  
+    --fullmode
+    --input  
+    --reference   | [--igenome ]   
+    [--aligner bwamem2]  
+    [--mode onlyVCF|cohortGVCF]  
+    [--bqsr]  
+    [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
+~~~
+
+### Executing stepmode :  
+
+~~~
+nextflow run main.nf  
+    --stepmode
+    --exec <module>   
+
+Module  : - rawqc       : Check           quality      of     raw           reads. 
+          - trim        : Remove low-quality bp and adapters & checks its quality.
+          - refidx      : Index   the    reference   genome    for      alignment.
+          - align       : Align     reads      to     the     reference    genome.
+          - bqsr        : Base          Quality         Score       recalibration.
+          - callsnp     : Detect           SNPs      from      aligned      reads.
+          - annotate    : annotate                  vfc                      file.
+          - reporting   : Auto          Generate   PDF    of      vcf     reports.                                                                                                                                         
+          - help                                                                                                                                                                                                           
+          - version 
+~~~
+
+
