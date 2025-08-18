@@ -47,21 +47,14 @@ workflow ALIGN_TO_REF_GENOME {
 	    AlignReadsToRef	(ref_gen_channel, indexes.collect(),READS )		   	
 	    AssignReadGroup	(AlignReadsToRef.out.sorted_bam)
 	    MarkDuplicates	(AssignReadGroup.out.sorted_labeled_bam)
-	    IndexBam	(MarkDuplicates.out.sorted_markduplicates_bam)   	
-	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
-
-	    BamCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
-	
-	    if (params.bigwig) {
-	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
-	    
-	        if (params.html) {
-	            BigWigCoveragePlots (BigWig.out, params.mindepth, params.saveImg)
-	        }
-	    }
-	    
-	    if (params.metrics) {
-	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
+	    IndexBam	(MarkDuplicates.out.sorted_markduplicates_bam) 
+	      	
+	    if (params.bamqc) {
+	    	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
+		BamCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+		BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+	    	BigWigCoveragePlots (BigWig.out, params.mindepth, params.saveImg)
+		AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )
 	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
 	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam )
@@ -81,21 +74,16 @@ workflow ALIGN_TO_REF_GENOME {
 	    AssignReadGroup	(AlignReadsToRef.out ) 
 	    MarkDuplicates  	(AssignReadGroup.out ) 
 	    IndexBam	  	(MarkDuplicates.out.sorted_markduplicates_bam	) 
-	    GenerateStat 	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    BamTargetCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out.IDXBAM, target )
 	    
-	    if (params.bigwig) {
-	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
-	    
-	        if (params.html) {
-	        BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-	        }
-	    }
-	    if (params.metrics) {	  	   
-	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
-	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
+	    if (params.bamqc) {
+	    	GenerateStat 		(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
+	   	BamTargetCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out.IDXBAM, target )
+	   	BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+	    	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
+	    	InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
 	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
-	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam	  )
+		Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam	  )
 	    }
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
@@ -114,16 +102,13 @@ workflow ALIGN_TO_REF_GENOME {
 	    IndexBam		(MarkDuplicates.out.sorted_markduplicates_bam 	)  
 	    Extractregion 	(MarkDuplicates.out.sorted_markduplicates_bam, IndexBam.out.IDXBAM )
 	    IndexRegion		(Extractregion.out ) 
-	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
+
 	    
-	    if (params.bigwig) {
-	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)	 
-	        if (params.html) {	 
-	            BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-	        }
-	    }    
-	    if (params.metrics) {
-	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
+	    if (params.bamqc) {
+		GenerateStat		(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
+	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)	 
+	        BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+		AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )
 	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
 	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam )
@@ -157,19 +142,13 @@ workflow ALIGN_TO_REF_GENOME {
 	    AssignReadGroup	(AlignReadsToRefBwaMem2.out )
 	    MarkDuplicates	(AssignReadGroup.out )
 	    IndexBam		(MarkDuplicates.out.sorted_markduplicates_bam )
-	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    BamCoverage		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
 	    
-	    if (params.bigwig) {
-	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
-	    		 
-	        if (params.html) {
-	            BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg )
-	        }
-	    }
-	    
-	    if (params.metrics) {
-	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
+	    if (params.bamqc) { 
+	     	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
+	    	BamCoverage		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
+	    	BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
+	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg )
+	 	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
 	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
 	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam	  )
@@ -190,23 +169,17 @@ workflow ALIGN_TO_REF_GENOME {
 	    AssignReadGroup	(AlignReadsToRefBwaMem2.out ) 
 	    MarkDuplicates	(AssignReadGroup.out )  
 	    IndexBam		(MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    BamTargetCoverage	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out,target	)
 	    
-	    if (params.bigwig) {
-	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)		 
-	    
-	        if (params.html) {
-	            BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-	        }
-	    }
-	    
-	    if (params.metrics) {
-	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
+	    if (params.bamqc) {
+	    	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam ) 
+	    	BamTargetCoverage	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out,target	)
+	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)		 
+	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+	       	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
 	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
 	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam	  )
-	}
+	    }
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
 	    bamIdx = IndexBam.out
@@ -224,18 +197,12 @@ workflow ALIGN_TO_REF_GENOME {
 	    IndexBam		(MarkDuplicates.out.sorted_markduplicates_bam	)  
 	    Extractregion	(MarkDuplicates.out.sorted_markduplicates_bam, IndexBam.out.IDXBAM)
 	    IndexRegion		(Extractregion.out	) 
-	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
-	    
-	    if (params.bigwig) {
-	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
-	    
-	        if (params.html) {
-	            BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-	        }
-	    }
-	    
-	    if (params.metrics) {
-	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
+   
+	    if (params.bamqc) {
+	    	GenerateStat		(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
+	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+	      	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )
 	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
 	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam )

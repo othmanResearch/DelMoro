@@ -109,7 +109,7 @@ process BigWigCoveragePlots {
                 <tr><th>Metric</th><th>Value</th></tr>
                 <tr><td>Mean Coverage</td><td>{stats['mean_coverage']:.2f}</td></tr>
                 <tr><td>Median Coverage</td><td>{stats['median_coverage']:.2f}</td></tr>
-                <tr><td>% Bases Covered (≥${mindepth})</td><td>{stats['pct_covered']:.1f}%</td></tr>
+                <tr><td>% Bases Covered (&#8805;${mindepth})</td><td>{stats['pct_covered']:.1f}%</td></tr>
             </table>
 
             <h2>Per-Chromosome Stats</h2>
@@ -119,7 +119,7 @@ process BigWigCoveragePlots {
                     <th>Length</th>
                     <th>Mean Coverage</th>
                     <th>Median Coverage</th>
-                    <th>% Covered (≥${mindepth})</th>
+                    <th>% Covered (&#8805;${mindepth})</th>
                 </tr>
         '''
         for chrom in stats['chromosomes']:
@@ -178,7 +178,7 @@ process BigWigCoveragePlots {
                 trace_above = go.Scatter(
                     x=[p for p, c in zip(positions, coverage) if c >= min_coverage],
                     y=[c for c in coverage if c >= min_coverage],
-                    mode='lines', name=f"≥ {min_coverage}",
+                    mode='lines', name=f"&#8805; {min_coverage}",
                     line=dict(color='#51d93f'), fill='tozeroy', fillcolor='rgba(0,0,255,0.1)'
                 )
                 trace_below = go.Scatter(

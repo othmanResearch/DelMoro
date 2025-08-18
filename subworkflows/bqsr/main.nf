@@ -56,15 +56,10 @@ workflow BASE_QU_SCO_RECA {
 	ApplyBQSR		(MappedReads,BaseRecalibrator.out.BQSR_Table.collectFile(sort:true))	
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)    
 	
-	if (params.bigwig) {
+	if (params.bamqc) {
 	    BigWig		(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
-	    if (params.html) {
-	         BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-            }
-        }
-        
-        if (params.metrics) {
-	    AlignmentMetrics   	(ApplyBQSR.out.recal_bam, ref_gen_channel)
+	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+            AlignmentMetrics   	(ApplyBQSR.out.recal_bam, ref_gen_channel)
 	    InsertMetrics	(ApplyBQSR.out.recal_bam)
 	    GcBiasMetrics	(ApplyBQSR.out.recal_bam, ref_gen_channel) 
 	    Qualimap		(ApplyBQSR.out.recal_bam)
@@ -96,19 +91,15 @@ workflow BASE_QU_SCO_RECA {
 
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)
 	
-	if (params.bigwig) {
-	    BigWig			(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
-	    if (params.html) {
-	         BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
- 	    }
- 	}
- 	
-	if (params.metrics) {
-	    AlignmentMetrics	(ApplyBQSR.out.recal_bam, ref_gen_channel)
+	if (params.bamqc) {
+	    BigWig		(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
+	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+ 	    AlignmentMetrics	(ApplyBQSR.out.recal_bam, ref_gen_channel)
 	    InsertMetrics	(ApplyBQSR.out.recal_bam)
 	    GcBiasMetrics	(ApplyBQSR.out.recal_bam, ref_gen_channel) 
 	    Qualimap		(ApplyBQSR.out.recal_bam)
 	    }
+	    
 	emit:
 	reaclBam = ApplyBQSR.out.recal_bam   
 	reaclIdx = IndexRecalBam.out
