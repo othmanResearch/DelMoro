@@ -55,9 +55,14 @@ workflow BASE_QU_SCO_RECA {
     	BaseRecalibrator	(ref_gen_channel,dictREF.collect(),samidxREF.collect(),MappedReads,knwonSite1,IndexKNownSite1.out,knwonSite2,IndexKNownSite2.out) 
 	ApplyBQSR		(MappedReads,BaseRecalibrator.out.BQSR_Table.collectFile(sort:true))	
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)    
-	BigWig			(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
-	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-    
+	
+	if (params.bigwig) {
+	    BigWig		(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
+	    if (params.html) {
+	         BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+            }
+        }
+        
         if (params.metrics) {
 	    AlignmentMetrics   	(ApplyBQSR.out.recal_bam, ref_gen_channel)
 	    InsertMetrics	(ApplyBQSR.out.recal_bam)
@@ -90,9 +95,14 @@ workflow BASE_QU_SCO_RECA {
 	ApplyBQSR		(MappedReads,BaseRecalibrator.out.BQSR_Table.collectFile(sort:true))
 
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)
-	BigWig			(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
-	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-
+	
+	if (params.bigwig) {
+	    BigWig			(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
+	    if (params.html) {
+	         BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+ 	    }
+ 	}
+ 	
 	if (params.metrics) {
 	    AlignmentMetrics	(ApplyBQSR.out.recal_bam, ref_gen_channel)
 	    InsertMetrics	(ApplyBQSR.out.recal_bam)

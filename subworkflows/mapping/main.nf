@@ -52,9 +52,14 @@ workflow ALIGN_TO_REF_GENOME {
 
 	    BamCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
 	
-	    BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
-	    BigWigCoveragePlots (BigWig.out, params.mindepth, params.saveImg)
-
+	    if (params.bigwig) {
+	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+	    
+	        if (params.html) {
+	            BigWigCoveragePlots (BigWig.out, params.mindepth, params.saveImg)
+	        }
+	    }
+	    
 	    if (params.metrics) {
 	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )
@@ -78,9 +83,14 @@ workflow ALIGN_TO_REF_GENOME {
 	    IndexBam	  	(MarkDuplicates.out.sorted_markduplicates_bam	) 
 	    GenerateStat 	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
 	    BamTargetCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out.IDXBAM, target )
-	    BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
-	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-
+	    
+	    if (params.bigwig) {
+	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+	    
+	        if (params.html) {
+	        BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+	        }
+	    }
 	    if (params.metrics) {	  	   
 	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
@@ -105,9 +115,13 @@ workflow ALIGN_TO_REF_GENOME {
 	    Extractregion 	(MarkDuplicates.out.sorted_markduplicates_bam, IndexBam.out.IDXBAM )
 	    IndexRegion		(Extractregion.out ) 
 	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
-	    BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)	 	 
-	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-
+	    
+	    if (params.bigwig) {
+	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)	 
+	        if (params.html) {	 
+	            BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+	        }
+	    }    
 	    if (params.metrics) {
 	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )
@@ -145,9 +159,15 @@ workflow ALIGN_TO_REF_GENOME {
 	    IndexBam		(MarkDuplicates.out.sorted_markduplicates_bam )
 	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
 	    BamCoverage		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
-	    BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )		 
-	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg )
-
+	    
+	    if (params.bigwig) {
+	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
+	    		 
+	        if (params.html) {
+	            BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg )
+	        }
+	    }
+	    
 	    if (params.metrics) {
 	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
@@ -172,9 +192,15 @@ workflow ALIGN_TO_REF_GENOME {
 	    IndexBam		(MarkDuplicates.out.sorted_markduplicates_bam ) 
 	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam ) 
 	    BamTargetCoverage	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out,target	)
-	    BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)		 
-	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-
+	    
+	    if (params.bigwig) {
+	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)		 
+	    
+	        if (params.html) {
+	            BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+	        }
+	    }
+	    
 	    if (params.metrics) {
 	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
@@ -199,9 +225,15 @@ workflow ALIGN_TO_REF_GENOME {
 	    Extractregion	(MarkDuplicates.out.sorted_markduplicates_bam, IndexBam.out.IDXBAM)
 	    IndexRegion		(Extractregion.out	) 
 	    GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
-	    BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
-	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-
+	    
+	    if (params.bigwig) {
+	        BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+	    
+	        if (params.html) {
+	            BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
+	        }
+	    }
+	    
 	    if (params.metrics) {
 	        AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
 	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )

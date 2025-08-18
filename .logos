@@ -136,9 +136,11 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
      \033[32malign\033[37m         Align reads to reference genome.
   	           require : --reference   <path-to-ref>
   	         	   : --Tobealigned <path-to-trimmed-csv>
-  		           : --metrics [ optional ]
+  		           : --metrics  [ optional ]
+  		           : --bigwig	[ optional ]
+  		           : --html     [ optional ]
   		           : --mindepth [ optional ] 
-  		           : --saveImg [ optional ] 
+  		           : --saveImg  [ optional ] 
   	           output  : .bam
   	           	   : .bai
   	           	   : .flagstat
@@ -150,9 +152,9 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   		   require : --knownsite1, 2 <path-to-vcf-file> , 2 files 
   		   	   : --ivcf1, 2      <value>  [ optional ]
   		           : --bam	     <path-to-bam-csv)
-  		           : --metrics [ optional ]
+  		           : --metrics  [ optional ]
   		           : --mindepth [ optional ] 
-  		           : --saveImg [ optional ] 
+  		           : --saveImg  [ optional ] 
 		   output  : .idx of knwons sites <vcf> 
 		   	   : .table
 		   	   : .bam
@@ -208,16 +210,16 @@ log.info"""
 \033[32m --cpus         =\033[37m 4									  	=> Default Cpus		
 
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
-\033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM files derived from alignment  
-\033[32m --metrics  	=\033[37m false 									=> Run Metrics for Bam file
 \033[32m --stepmode	=\033[37m null  									=> Step mode for running modules
 \033[32m --fullmode	=\033[37m null									  	=> full mode [ fq to vcf ]
 \033[32m --input 	=\033[37m null										=> input for full mode
 \033[32m --bqsr		=\033[37m null  									=> bqsr enable in full mode
-	
-	
 
-\033[32m --mindepth	= \033[37m 0 										=> Minimum depth in coverage bin plots
+\033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM files derived from alignment  
+\033[32m --metrics  	=\033[37m false 									=> Run Metrics for Bam file
+\033[32m --bigwig 	=\033[37m false 									=> Enable generating bigwigs files 	
+\033[32m --html 	=\033[37m false 									=> Enable html report summary for bigwigs files 	
+\033[32m --mindepth	=\033[37m 0 										=> Minimum depth in coverage bin plots
 \033[32m --saveImg 	= \033[37m false 	 								=> Save images( plots ) from bigwig files
 
 \033[32m --trimmomatic 	=\033[37m false 									=> Trimming with trimmomatic tool
