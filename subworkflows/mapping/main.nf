@@ -49,7 +49,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    MarkDuplicates	(AssignReadGroup.out.sorted_labeled_bam)
 	    IndexBam	(MarkDuplicates.out.sorted_markduplicates_bam) 
 	      	
-	    if (params.bamqc) {
+	    if (params.report) {
 	    	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
 		BamCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
 		BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
@@ -75,7 +75,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    MarkDuplicates  	(AssignReadGroup.out ) 
 	    IndexBam	  	(MarkDuplicates.out.sorted_markduplicates_bam	) 
 	    
-	    if (params.bamqc) {
+	    if (params.report) {
 	    	GenerateStat 		(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
 	   	BamTargetCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out.IDXBAM, target )
 	   	BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
@@ -104,7 +104,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    IndexRegion		(Extractregion.out ) 
 
 	    
-	    if (params.bamqc) {
+	    if (params.report) {
 		GenerateStat		(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
 	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)	 
 	        BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
@@ -143,7 +143,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    MarkDuplicates	(AssignReadGroup.out )
 	    IndexBam		(MarkDuplicates.out.sorted_markduplicates_bam )
 	    
-	    if (params.bamqc) { 
+	    if (params.report) { 
 	     	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
 	    	BamCoverage		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
 	    	BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
@@ -170,7 +170,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    MarkDuplicates	(AssignReadGroup.out )  
 	    IndexBam		(MarkDuplicates.out.sorted_markduplicates_bam ) 
 	    
-	    if (params.bamqc) {
+	    if (params.report) {
 	    	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam ) 
 	    	BamTargetCoverage	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out,target	)
 	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)		 
@@ -198,7 +198,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    Extractregion	(MarkDuplicates.out.sorted_markduplicates_bam, IndexBam.out.IDXBAM)
 	    IndexRegion		(Extractregion.out	) 
    
-	    if (params.bamqc) {
+	    if (params.report) {
 	    	GenerateStat		(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
 	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
 	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)

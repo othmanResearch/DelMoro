@@ -136,7 +136,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
      \033[32malign\033[37m         Align reads to reference genome.
   	           require : --reference   <path-to-ref>
   	         	   : --Tobealigned <path-to-trimmed-csv>
-  		           : --bamqc    [ optional ]
+  		           : --report    [ optional ]
   		           : --mindepth [ optional ] 
   		           : --saveImg  [ optional ] 
   	           output  : .bam
@@ -150,7 +150,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   		   require : --knownsite1, 2 <path-to-vcf-file> , 2 files 
   		   	   : --ivcf1, 2      <value>  [ optional ]
   		           : --bam	     <path-to-bam-csv)
-  		           : --bamqc    [ optional ]
+  		           : --report    [ optional ]
   		           : --mindepth [ optional ] 
   		           : --saveImg  [ optional ] 
 		   output  : .idx of knwons sites <vcf> 
@@ -214,7 +214,7 @@ log.info"""
 \033[32m --bqsr		=\033[37m null  									=> bqsr enable in full mode
 
 \033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM files derived from alignment  
-\033[32m --bamqc  	=\033[37m false 									=> Enables Metrics-bigwigs-html summary for Bam files 
+\033[32m --report  	=\033[37m false 									=> Enables Metrics-bigwigs-html summary for Bam files 
 \033[32m --mindepth	=\033[37m 0 										=> Minimum depth in coverage bin plots
 \033[32m --saveImg 	= \033[37m false 	 								=> Save images( plots ) from bigwig files
 

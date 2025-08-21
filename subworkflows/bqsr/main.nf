@@ -56,7 +56,7 @@ workflow BASE_QU_SCO_RECA {
 	ApplyBQSR		(MappedReads,BaseRecalibrator.out.BQSR_Table.collectFile(sort:true))	
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)    
 	
-	if (params.bamqc) {
+	if (params.report) {
 	    BigWig		(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
 	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
             AlignmentMetrics   	(ApplyBQSR.out.recal_bam, ref_gen_channel)
@@ -91,7 +91,7 @@ workflow BASE_QU_SCO_RECA {
 
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)
 	
-	if (params.bamqc) {
+	if (params.report) {
 	    BigWig		(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
 	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
  	    AlignmentMetrics	(ApplyBQSR.out.recal_bam, ref_gen_channel)
