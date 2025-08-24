@@ -4,72 +4,24 @@
 
 <p><strong>DelMoro</strong> is a comprehensive and user-friendly <strong>Nextflow</strong>-based workflow designed for end-to-end processing of next-generation sequencing (NGS) data — from raw read quality control to annotated variant calls.</p>
 
-<p>Whether you're a researcher, bioinformatician, or lab technician, <strong>DelMoro</strong> simplifies complex bioinformatics analyses into a streamlined and reproducible workflow that adapts easily to different environments and computing infrastructures.</p>
+<p><strong>DelMoro</strong> simplifies complex bioinformatics analyses into a streamlined and reproducible workflow that adapts easily to different environments and computing infrastructures.</p> 
 
-</div>
+  <p>While <strong>DelMoro</strong> can be used for research purposes, its primary objective is to provide users with a reliable bioinformatics pipeline for diagnostic applications, implementing best practices for upstream analysis of Illumina-based short-read sequencing data. </p>
+  </div>
  
 ---
 
-##  What DelMoro Does
-
+##  DelMoro Capabilities
 DelMoro automates the entire genomic variant calling pipeline, including:
 
----
+1. **Raw Data Quality Control**: Ensures input FASTQ files are high quality using tools like:  
+2. **Read Trimming**: Trims adapters and low-quality bases with your choice of:
+3. **Alignment**:Aligns reads to a reference genome using:  
+4. **Base Recalibration**: Applies GATK's best practices for base Recalibration.
+5. **Variant Calling**: Indentify SNPs and short indels.
+6. **Variant Annotation**: Annotates variants.
+7. **Coverage Depth Calculation & Reports**: generate quality assessment and traceability metrics.
 
-**1. Raw Data Quality Control** : Ensures input FASTQ files are high quality using tools like:  
-- `FastQC`  
-- `MultiQC`  
-
----
-
-**2. Read Trimming** : Trims adapters and low-quality bases with your choice of:  
-- `Trimmomatic`  
-- `Fastp`  
-- `BBDuk`  
-
----
-
-**3. Alignment**
-Aligns reads to a reference genome using:  
-- `BWA`  
-- `BWA-MEM2`  
-
-**Metrics:**  
-- `CollectAlignmentSummaryMetrics`  
-- `CollectInsertSizeMetrics`  
-- `CollectGcBiasMetrics`  
-- `QualiMap`  
-
-**BigWigs:**  
-- `bamCoverage`  
-
-**BigWigs Plotting:**  
-- `pyBigWig`  
-
----
-
-**4. Base Recalibration**
-Applies GATK's best practices with:  
-- `BaseRecalibrator`  
-- `ApplyBQSR`  
-- Metrics, BigWigs, and plotting  
-
----
-
-**5. Variant Calling**
-Detects SNPs and indels using:  
-- `GATK HaplotypeCaller`  
-
----
-
-**6. Variant Annotation**
-Annotates variants using:  
-- `Ensembl VEP (Variant Effect Predictor)`  
-
-**7. Coverage Depth Calculation & Reports**
-   Automatically generates coverage depth metrics for your aligned data and creates detailed reports from the VCF files to help assess the quality of your variant calls.
-
-Each stage includes logging and quality reports to help ensure data integrity and reproducibility throughout the workflow.
 
 ---
 
