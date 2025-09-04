@@ -3,8 +3,8 @@ name: DelMoro UI Release
 on:
   push:
     branches: [release]
-    paths: ['DelMoro-UI.py', 'fullParams.py', 'paramsFile.py']
-
+    paths: ['DelMoro-UI.py', 'fullmode/**', 'stepmode/**']
+    
 permissions:
   contents: write
 
