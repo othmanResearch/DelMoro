@@ -65,7 +65,7 @@ class PipelineRunnerThread(QThread):
                 cmd.extend(["--aligner", self.aligner])
 
             if  self.enable_metrics:
-                cmd.append("--metrics")
+                cmd.append("--report")
 
             cmd.extend(["--cpus", str(self.cores)])
 
