@@ -143,8 +143,8 @@ process MultiqcTrimmed {
 
     conda "bioconda::multiqc=1.27"
     container "${workflow.containerEngine == 'singularity'
-        ? "docker://multiqc/multiqc:latest"
-        : "multiqc/multiqc:latest"}"
+        ? "docker://multiqc/multiqc:v1.27"
+        : "multiqc/multiqc:v1.27"}"
 
     input:
     path fastqcFiles
