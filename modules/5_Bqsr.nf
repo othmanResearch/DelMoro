@@ -21,10 +21,6 @@ process DownloadKns1 {
     """
     aws s3 cp --no-sign-request \\
 	--region eu-west-1 ${params.IVCF[params.ivcf1].vcf} ./
-
-    if [[ "${filename}" == *.gz ]]; then
-	gunzip "${filename}"
-    fi
     """
 }
 
@@ -49,10 +45,6 @@ process DownloadKns2 {
     """ 
     aws s3 cp --no-sign-request \\
     --region eu-west-1 ${params.IVCF[params.ivcf2].vcf} ./
-
-    if [[ "${filename}" == *.gz ]]; then
-        gunzip "${filename}"
-    fi
     """
 }
 
