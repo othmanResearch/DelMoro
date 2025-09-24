@@ -71,13 +71,12 @@ process IndexKNownSites {
     path kn_site_File
 
     output:
-    path "${kn_site_File}.idx"
+    path "${kn_site_File}.{tbi,idx}"
 
     script:
     """
     gatk IndexFeatureFile \\
-	--input ${kn_site_File} \\
-	--output ${kn_site_File}.idx
+	--input ${kn_site_File} 
     """
 }
 
