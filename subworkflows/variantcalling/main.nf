@@ -4,9 +4,7 @@ include { DelMoroWelcome	} from '../../.logos'
 include { DelMoroVarCallOutput	} from '../../.logos'
 	
  
-include { CallVariant		} from '../../modules/6_VariantSNPcall.nf'  
-include { VarToTable		} from '../../modules/6_VariantSNPcall.nf'  
-include { SnpFilter		} from '../../modules/6_VariantSNPcall.nf'  
+include { CallVariant		} from '../../modules/6_VariantSNPcall.nf' 
 include { CreateGVCF		} from '../../modules/6_VariantSNPcall.nf'  
 include { IndexGVCF		} from '../../modules/6_VariantSNPcall.nf'  
 include { CombineGvcfs		} from '../../modules/6_VariantSNPcall.nf'  
@@ -41,8 +39,6 @@ workflow CALL_SNPs_GATK {
    	 referFileChannel 	!= null ){
 			
 	CallVariant	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),BamToVarCall,IDXBAM.collect() )
-	VarToTable 	( CallVariant.out.CallVariantvcf, CallVariant.out.CallVariantidx )
-	SnpFilter 	( CallVariant.out.CallVariantvcf, CallVariant.out.CallVariantidx )
 	///// Metrics Extracting from vcfs  
 	GenerateStats	( CallVariant.out.CallVariantvcf, CallVariant.out.CallVariantidx	) 
 	CreateGVCF	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),BamToVarCall,IDXBAM.collect() )
@@ -61,9 +57,6 @@ workflow CALL_SNPs_GATK {
 		params.mode 		== 'onlyVCF' ){	// generate vcf for all inputs 
 
     	CallVariant 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),BamToVarCall,IDXBAM.collect() )
-    	VarToTable 	( CallVariant.out.CallVariantvcf, CallVariant.out.CallVariantidx	)
- 	SnpFilter 	( CallVariant.out.CallVariantvcf, CallVariant.out.CallVariantidx	)
- 			    
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(CallVariant.out.CallVariantvcf, CallVariant.out.CallVariantidx)
     } else if ( referFileChannel 	!= null && 

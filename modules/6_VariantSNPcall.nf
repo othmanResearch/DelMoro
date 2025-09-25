@@ -34,64 +34,6 @@ process CallVariant {
     """
 }
 
-
-// Variant to Table  // to be visiualized with R 
-
-process VarToTable {
-    tag "Collect Variant in a Table using GATK4"
-    publishDir "${params.outdir}/Variants", mode: 'copy'
-
-    conda "bioconda::gatk4=4.4.0.0"
-    container "${workflow.containerEngine == 'singularity'
-        ? "docker://broadinstitute/gatk:latest"
-        : "broadinstitute/gatk:latest"}"
-
-    input:
-    tuple val(patient_id), path(Recalvcf)
-    tuple val(patient_id), path(gzidx)
-    
-    output:
-    tuple val(patient_id), path("${Recalvcf}.table")
-
-    script:
-    """
-    gatk VariantsToTable \\
-	--fields CHROM -F POS -F TYPE -GF GT \\
-	--variant ${Recalvcf} \\
-	--output ${Recalvcf}.table
-    """
-}
-
-// SNP Filtering from Gatk vcf outputs. 
-
-process SnpFilter {
-    tag "Collect SNP in a Table using GATK4"
-    publishDir "${params.outdir}/Variants", mode: 'copy'
-
-    conda "bioconda::gatk4=4.4"
-    container "${workflow.containerEngine == 'singularity'
-        ? "docker://broadinstitute/gatk:latest"
-        : "broadinstitute/gatk:latest"}"
-
-    input:
-    tuple val(patient_id), path(variants)
-    tuple val(patient_id), path(gzidx)
-    
-    output:
-    tuple val(patient_id), path("${variants.baseName}.SNP.vcf.gz")
-    tuple val(patient_id), path("*.gz.tbi") 	, emit: "SnpFilteridx"
-
-    script:
-    """
-    gatk SelectVariants \\
- 	--variant ${variants} \\
-	--select-type-to-include SNP \\
-	--output ${variants.baseName}.SNP.vcf.gz
-	
-    tabix -f -p vcf ${variants.baseName}.SNP.vcf.gz
-    """
-}
-
 // Create GVCF files
 
 process CreateGVCF {
