@@ -6,8 +6,9 @@
 
 process DownloadIgenomes {
     tag "Downloading ${params.igenome} from iGenomes reference ${params.IGENOMES[params.igenome]}"
-    publishDir "./Reference_Genome/", mode: 'copy'
-    storeDir "./Reference_Genome/"
+    publishDir "${file(params.reference).getParent()}/", mode: 'copy'
+    storeDir   "${file(params.reference).getParent()}/"
+
 
     conda "conda-forge::awscli=2.23.6"
     container "${workflow.containerEngine == 'singularity'
@@ -31,8 +32,9 @@ process DownloadIgenomes {
 
 process CreateIndex {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
-    publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
-    storeDir "./Reference_Genome/"
+    publishDir "${file(params.reference).getParent()}/", mode: 'copy', overwrite: false
+    storeDir   "${file(params.reference).getParent()}/"
+
     
     conda "bioconda::bwa=0.7.18"
     container "${workflow.containerEngine == 'singularity'
@@ -53,8 +55,9 @@ process CreateIndex {
 
 process CreateIndexBwaMem2 {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
-    publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
-    storeDir "./Reference_Genome/"
+    publishDir "${file(params.reference).getParent()}/", mode: 'copy', overwrite: false
+    storeDir   "${file(params.reference).getParent()}/"
+
     
     conda "bioconda::bwa-mem2=2.2.1"
     container "${workflow.containerEngine == 'singularity'
@@ -78,8 +81,9 @@ process CreateIndexBwaMem2 {
 
 process CreateDictionary {
     tag "GENERATE DICTIONARY"
-    publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
-    storeDir "./Reference_Genome/"
+    publishDir "${file(params.reference).getParent()}/", mode: 'copy', overwrite: false
+    storeDir   "${file(params.reference).getParent()}/"
+
     
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
@@ -104,8 +108,9 @@ process CreateDictionary {
 
 process CreateIndexSamtools {
     tag "GENERATE INDEX BY SAMTOOLS"
-    publishDir "./Reference_Genome/", mode: 'copy', overwrite: false
-    storeDir "./Reference_Genome/"
+    publishDir "${file(params.reference).getParent()}/", mode: 'copy', overwrite: false
+    storeDir   "${file(params.reference).getParent()}/"
+
     
     conda "bioconda::samtools=1.21"
     container "${workflow.containerEngine == 'singularity'
