@@ -3,7 +3,7 @@ name: Deploy MkDocs site
 on:
   push:
     branches:
-      - docs  # Your working/docs source branch
+      - docs  # working/docs source branch
 
 permissions:
   contents: write
