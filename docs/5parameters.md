@@ -49,7 +49,7 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--generate` = Generate coverage from bed file <span title="[Optional] - Default: null">⊕</span>  
 - `--bedtarget` = BED file for coverage extraction. <span title="[Optional] - Default: null">⊕</span>
 - `--keepinter` =  Keep intermediate BAM files derived from alignment. <span title="[Optional] - Default: false">⊕</span>
-- `--metrics` = Run Metrics Processes for Bam files   . <span title="[Optional] - Default: false">⊕</span>  
+- `--report` = Enables Metrics-bigwigs-html summary for Bam files. <span title="[Optional] - Default: false">⊕</span>   
 - `--depth`	= Minimum depth in coverage bin plots <span title="[Optional] - Default: 0 ">⊕</span>  
 - `--saveImg` = Save images( plots ) from bigwig files <span title="[Optional] - Default: false">⊕</span>  
 
@@ -60,7 +60,7 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--knownsite2` = Second known variants VCF file. <span title="Default: ./knownsites/GCF.38.filtered.renamed.vcf">⊕</span>
 - `--ivcf1` = VCF resource for BQSR (downloaded). <span title="[Optional] - Default: null">⊕</span>  
 - `--ivcf2` = Second VCF resource for BQSR. <span title="[Optional] - Default: null">⊕</span>
-- `--metrics` = Run Metrics Processes for Bam files   . <span title="[Optional] - Default: false">⊕</span>
+- `--report` = Enables Metrics-bigwigs-html summary for Bam files. <span title="[Optional] - Default: false">⊕</span>   
 - `--depth`	= Minimum depth in coverage bin plots <span title="[Optional] - Default: 0 ">⊕</span>  
 - `--saveImg` = Save images( plots ) from bigwig files <span title="[Optional] - Default: false">⊕</span>  
 
