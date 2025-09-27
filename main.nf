@@ -74,15 +74,13 @@ include {DelMoroHelp	} 	from './.logos'
   // Indexes Channels 
 
     // Aligner Indexs Bwa mem2 
-    AlignIdxRef		=  Channel.fromPath("${file(params.reference).getParent()}/*.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}", checkIfExists: false)  
-       	
-   
-       	
+    AlignIdxRef = params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}", checkIfExists: false ) : Channel.empty()
+   	
     //  Dictionary Indexs Bwa mem2 
-    DictIdxRef		= Channel.fromPath("${file(params.reference).getParent()}/*.dict", checkIfExists: false)  
+    DictIdxRef		= params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.dict", checkIfExists: false)				: Channel.empty()
        	
     // SamtoolsIndex
-    SamtIdxRef    	= Channel.fromPath("${file(params.reference).getParent()}/*.fai", checkIfExists: false).first()	 
+    SamtIdxRef    	= params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.fai", checkIfExists: false).first()			: Channel.empty() 
        		
     // Bam Files Index
     IdxBam     		= params.bamindex	? Channel.fromPath(params.bamindex, checkIfExists: false)  			: Channel.empty()
