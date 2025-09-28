@@ -45,7 +45,7 @@ process CreateIndex {
     path ref
 
     output:
-    path "*.{amb,ann,bwt,pac,sa}", emit: "bwaIndex"
+    path "${ref.baseName}*.{amb,ann,bwt,pac,sa}", emit: "bwaIndex"
 
     script:
     """
@@ -68,7 +68,7 @@ process CreateIndexBwaMem2 {
     path ref
 
     output:
-    path "*.{0123,amb,ann,bwt.2bit.64,pac}", emit: "bwaIndex"
+    path "${ref.baseName}*.{0123,amb,ann,bwt.2bit.64,pac}", emit: "bwaIndex"
 
     script:
     """
@@ -94,7 +94,7 @@ process CreateDictionary {
     path ref
 
     output:
-    path "*.dict", emit: "gatkDict"
+    path "${ref.baseName}*.dict", emit: "gatkDict"
 
     script:
     """
@@ -121,7 +121,7 @@ process CreateIndexSamtools {
     path ref
 
     output:
-    path "*.fai", emit: "samtoolsIndex"
+    path "${ref.baseName}*.fai", emit: "samtoolsIndex"
 
     script:
     """
