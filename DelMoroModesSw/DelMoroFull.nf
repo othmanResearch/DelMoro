@@ -14,9 +14,11 @@ workflow DelMoroFullSw {
     take: 
     RefGenChannel
     ReadsToBeAligned
+    ReadsIndexes
     Target
     KnownSite1
     KnownSite2
+    
     
     main: 
         
@@ -69,3 +71,4 @@ workflow DelMoroFullSw {
         )
     }
 }
+

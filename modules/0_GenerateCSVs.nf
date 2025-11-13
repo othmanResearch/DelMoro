@@ -138,11 +138,12 @@ process WriteRecalCSV {
 
         for row in csvreader:
             patient_id = row[0]
-            bam_file = f'{bam_path}{patient_id}.recal.bam'
+            bam_file = f'{bam_path}{patient_id}_delMoro.recal.bam'
             csvwriter_for_recal_files.writerow([patient_id, bam_file])
     EOF
     """
-}
+} 
+
 
 
 process WriteVcfCSV {

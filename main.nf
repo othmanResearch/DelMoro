@@ -65,11 +65,15 @@ include {DelMoroHelp	} 	from './.logos'
 	
   // knwon file 1 channel for BQSR    
 
-  KnownSite1		= params.knownsite1	? Channel.fromPath(params.knownsite1, checkIfExists: false).first()   		: Channel.empty() 
+  KnownSite1		= params.knownsite1	? Channel.fromPath(params.knownsite1, checkIfExists: false)
+  							  .map { vcfile -> tuple(vcfile.baseName, vcfile) }
+							   .first()   								: Channel.empty() 
        			         
   // knwon file 2 channel for BQSR       
          
-  KnownSite2		= params.knownsite2	? Channel.fromPath(params.knownsite2, checkIfExists: false).first()  		: Channel.empty() 
+  KnownSite2		= params.knownsite2	? Channel.fromPath(params.knownsite2, checkIfExists: false)
+							  .map { vcfile -> tuple(vcfile.baseName, vcfile) }
+							   .first()  								: Channel.empty() 
 
   // Indexes Channels 
 
@@ -83,8 +87,12 @@ include {DelMoroHelp	} 	from './.logos'
     SamtIdxRef    	= params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.fai", checkIfExists: false).first()			: Channel.empty() 
        		
     // Bam Files Index
+    
+ 
     IdxBam     		= params.bamindex	? Channel.fromPath(params.bamindex, checkIfExists: false)  			: Channel.empty()
-  
+
+
+ 
   // Vep Annotations Channels
     
  
@@ -102,7 +110,9 @@ include {DelMoroHelp	} 	from './.logos'
     							  .splitCsv(header: true)  
        	      			       		 	   .map { row -> tuple(row.patient_id, file(row.vcFile) ) }		: Channel.empty() 	 
 
-	
+    FilterChannel	= params.tofilter 	? Channel.fromPath(params.tofilter, checkIfExists: false)
+    							  .splitCsv(header: true)  
+       	      			       		 	   .map { row -> tuple(row.patient_id, file(row.vcFile) ) }		: Channel.empty() 	
   // Reporting 
      	// Function to parse YAML file
 	import groovy.yaml.YamlSlurper
@@ -147,15 +157,17 @@ workflow {
         
     if (params.fullmode) {	 
 	 	
-	DelMoroFullSw( RefGenChannel
-		 	 ,ReadsToBeAligned
-		 	 ,Target
-		 	 ,KnownSite1
-		 	 ,KnownSite2  
+	DelMoroFullSw(   RefGenChannel
+		 	,ReadsToBeAligned
+		 	,IdxBam
+		 	,Target
+		 	,KnownSite1
+		 	,KnownSite2  
+		 	 
 		 	)
   } else if (params.stepmode){
 
-          DelMoroSteps( PrepareCsv
+          DelMoroSteps(  PrepareCsv
 			,RawReads
 		 	,ReadsToBeTrimmed
 		 	,RefGenChannel
@@ -175,6 +187,7 @@ workflow {
 		 	,CacheDir
 		 	,CacheVersion
 		 	,VcfChannel
+		 	,FilterChannel
 		 	,CacheDirANN
 		 	,metaPipeExecYaml) 
     } else if (params.params){

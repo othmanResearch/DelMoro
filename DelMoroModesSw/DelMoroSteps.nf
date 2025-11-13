@@ -21,6 +21,7 @@ include { INDEXING_REF_GENOME	} from '../subworkflows/indexingRefGenome'
 include { ALIGN_TO_REF_GENOME	} from '../subworkflows/mapping'
 include { BASE_QU_SCO_RECA	} from '../subworkflows/bqsr'
 include { CALL_SNPs_GATK	} from '../subworkflows/variantcalling'
+include { FILTER_VARIANT	} from '../subworkflows/variantfilter'
 include { VEP_CACHE		} from '../subworkflows/annotations/vep/vepcache'
 include { VEP_ANNOTATE		} from '../subworkflows/annotations/vep/vepannotate'
 include { REPORTING		} from '../subworkflows/reporting/main.nf' 
@@ -49,6 +50,7 @@ workflow DelMoroSteps {
     CacheDir
     CacheVersion
     VcfChannel
+    FilterChannel
     CacheDirANN
     metaPipeExecYaml
    
@@ -85,6 +87,10 @@ workflow DelMoroSteps {
               
     CALL_SNPs_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall,IdxBam) 
           
+    } else if (params.exec == 'filter') {
+    
+    FILTER_VARIANT(FilterChannel)
+    
     } else if ( params.exec == 'annotate' ) {
 
     DelMoroAnnotateHelp()

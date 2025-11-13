@@ -15,8 +15,7 @@ process GenerateStats {
 	: "staphb/bcftools:latest"}"
 	
     input:
-    tuple val(patient_id), path(vcf)
-    tuple val(patient_id), path(gzidx)
+    tuple val(patient_id), path(vcf), path(gzidx)
 
     output:
     tuple val(patient_id), path("*_stats.txt")	, emit: statsCh

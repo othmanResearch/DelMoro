@@ -5,8 +5,8 @@ include { DelMoroBQSROutput	} from '../../.logos'
 
 include { DownloadKns1		} from '../../modules/5_Bqsr.nf'  
 include { DownloadKns2		} from '../../modules/5_Bqsr.nf'  
-include { IndexKNownSites as IndexKNownSite1	} from '../../modules/5_Bqsr.nf'  
-include { IndexKNownSites as IndexKNownSite2	} from '../../modules/5_Bqsr.nf'  
+include { IndexVcf as IndexKNownSite1	} from '../../modules/5_Bqsr.nf'  
+include { IndexVcf as IndexKNownSite2	} from '../../modules/5_Bqsr.nf'  
 include { BaseRecalibrator	} from '../../modules/5_Bqsr.nf'  
 include { ApplyBQSR		} from '../../modules/5_Bqsr.nf'    
 include { IndexRecalBam		} from '../../modules/5_Bqsr.nf'
@@ -80,13 +80,21 @@ workflow BASE_QU_SCO_RECA {
 	DelMoroWelcome()
 	error("The provided genome '${params.ivcf1}' or '${params.ivcf2}' is not available. Available genomes: ${params.IVCF.keySet().join(', ')}")
 	}
-	    
-	DownloadKns1()
-	DownloadKns2()
-	IndexKNownSite1(DownloadKns1.out)
-	IndexKNownSite2(DownloadKns2.out) 	
 
-	BaseRecalibrator	(ref_gen_channel,dictREF.collect(),samidxREF.collect(),MappedReads,DownloadKns1.out,IndexKNownSite1.out,DownloadKns2.out,IndexKNownSite2.out)
+        DownloadKns1()
+	DownloadKns2()
+	IndexKNownSite1(DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) })
+	IndexKNownSite2(DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) }) 
+ 
+	BaseRecalibrator	(ref_gen_channel,
+	                        dictREF.collect(),
+	                        samidxREF.collect(),
+	                        MappedReads,
+	                        DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) },
+	                        IndexKNownSite1.out,
+	                        DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) },
+	                        IndexKNownSite2.out )
+	                        
 	ApplyBQSR		(MappedReads,BaseRecalibrator.out.BQSR_Table.collectFile(sort:true))
 
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)

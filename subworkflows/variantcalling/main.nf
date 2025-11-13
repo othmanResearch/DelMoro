@@ -4,13 +4,11 @@ include { DelMoroWelcome	} from '../../.logos'
 include { DelMoroVarCallOutput	} from '../../.logos'
 	
  
-include { CallVariant		} from '../../modules/6_VariantSNPcall.nf' 
-include { CreateGVCF		} from '../../modules/6_VariantSNPcall.nf'  
-include { IndexGVCF		} from '../../modules/6_VariantSNPcall.nf'  
-include { CombineGvcfs		} from '../../modules/6_VariantSNPcall.nf'  
-include { GenotypeGvcfs		} from '../../modules/6_VariantSNPcall.nf' 
-
-include { GenerateStats 	} from '../../modules/6_VarMetrics.nf' 
+include { CallVariant     } from '../../modules/6_VariantSNPcall.nf' 
+include { CreateGVCF      } from '../../modules/6_VariantSNPcall.nf'  
+include { CombineGvcfs    } from '../../modules/6_VariantSNPcall.nf'  
+include { GenotypeGvcfs   } from '../../modules/6_VariantSNPcall.nf' 
+include { GenerateStats   } from '../../modules/6_VarMetrics.nf' 
  
 workflow CALL_SNPs_GATK {
 
@@ -38,41 +36,62 @@ workflow CALL_SNPs_GATK {
     if  (params.mode 		== null && 
    	 referFileChannel 	!= null ){
 			
-	CallVariant	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),BamToVarCall,IDXBAM.collect() )
+	CallVariant	( ref_gen_channel
+	                 ,dictREF.collect()
+	                 ,samidxREF.collect()
+	                 ,BamToVarCall
+	                 ,IDXBAM.collect() )
+                                      
 	///// Metrics Extracting from vcfs  
-	GenerateStats	( CallVariant.out.CallVariantvcf, CallVariant.out.CallVariantidx	) 
-	CreateGVCF	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),BamToVarCall,IDXBAM.collect() )
-	IndexGVCF	( CreateGVCF.out.g_vcf_Recal, CreateGVCF.out.CreateGVCFidx			)
+	GenerateStats	( CallVariant.out.CallVariantvcf ) 
+	CreateGVCF	( ref_gen_channel
+	                ,dictREF.collect()
+	                ,samidxREF.collect()
+	                ,BamToVarCall
+	                ,IDXBAM.collect() )
 
 	CombineGvcfs	( ref_gen_channel,
 			  dictREF.collect(),
 			  samidxREF.collect(),
-			  CreateGVCF.out.g_vcf_Recal.map { id, file -> file }.collect().map { files -> tuple("cohort", files) },  
-			  IndexGVCF.out.IDXVCFiles.map { id, file -> file }.collect().map { files -> tuple("cohort", files) }  )
- 							
-	GenotypeGvcfs 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),CombineGvcfs.out.CohortVcf,CombineGvcfs.out.CombineGvcfsidx.collect() )  
-			  
+			  CreateGVCF.out.g_vcf_Recal.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
+
+	GenotypeGvcfs 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),CombineGvcfs.out.CohortVcf )  
+
+	
 	
     } else if ( referFileChannel 	!= null && 
 		params.mode 		== 'onlyVCF' ){	// generate vcf for all inputs 
 
-    	CallVariant 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),BamToVarCall,IDXBAM.collect() )
+    	CallVariant 	(  ref_gen_channel
+    	                  ,dictREF.collect()
+    	                  ,samidxREF.collect()
+    	                  ,BamToVarCall
+    	                  ,IDXBAM.collect() ) 
+
+
+
 	///// Metrics Extracting from vcfs 
-	GenerateStats	(CallVariant.out.CallVariantvcf, CallVariant.out.CallVariantidx)
+	GenerateStats	(CallVariant.out.CallVariantvcf)
     } else if ( referFileChannel 	!= null && 
 		params.mode 		== 'cohortGVCF' ){ // Generate one file : the cohort vcf
 
-	CreateGVCF	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),BamToVarCall,IDXBAM.collect() )
-	IndexGVCF	( CreateGVCF.out.g_vcf_Recal, CreateGVCF.out.CreateGVCFidx )
+	CreateGVCF	( ref_gen_channel
+	                 ,dictREF.collect()
+	                 ,samidxREF.collect()
+	                 ,BamToVarCall
+	                 ,IDXBAM.collect() )
+
+    
+    
 	CombineGvcfs	( ref_gen_channel,
 			  dictREF.collect(),
 			  samidxREF.collect(),
-			  CreateGVCF.out.g_vcf_Recal.map { id, file -> file }.collect().map { files -> tuple("cohort", files) },  
-			  IndexGVCF.out.IDXVCFiles.map { id, file -> file }.collect().map { files -> tuple("cohort", files) }	) 
-			
-	GenotypeGvcfs 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),CombineGvcfs.out.CohortVcf,CombineGvcfs.out.CombineGvcfsidx.collect() )
-	GenerateStats	( GenotypeGvcfs.out) 
-			
+			  CreateGVCF.out.g_vcf_Recal.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
+
+	GenotypeGvcfs 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),CombineGvcfs.out.CohortVcf )
+
+	GenerateStats	( GenotypeGvcfs.out ) 
+ 			
     }  else { 
 	DelMoroWelcome() 
 	print("\033[31m Please specify valid parameters:\n" )

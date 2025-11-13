@@ -1,4 +1,4 @@
 patient_id,BamFile
-fatherID,./outdir/Mapping/fatherID.recal.bam
-motherID,./outdir/Mapping/motherID.recal.bam
-sonID,./outdir/Mapping/sonID.recal.bam
+fatherID,./outdir/Mapping/fatherID_delMoro.recal.bam
+motherID,./outdir/Mapping/motherID_delMoro.recal.bam
+sonID,./outdir/Mapping/sonID_delMoro.recal.bam

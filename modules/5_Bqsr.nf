@@ -50,8 +50,8 @@ process DownloadKns2 {
 
 // indexing known sites files 
 
-process IndexKNownSites {
-    tag "CREATING INDEX for known sites vcf"
+process IndexVcf {
+    tag "CREATING INDEX FOR VCF FILES"
     publishDir "./knownsites/", mode: 'copy'
 
     conda "bioconda::gatk4=4.4.0.0"
@@ -60,15 +60,15 @@ process IndexKNownSites {
         : "broadinstitute/gatk:latest"}"
 
     input:
-    path kn_site_File
+    tuple val(fileName), path (vcfFile)
 
     output:
-    path "${kn_site_File}.{tbi,idx}"
+    tuple val(fileName), path ("${vcfFile}.{tbi,idx}")
 
     script:
     """
     gatk IndexFeatureFile \\
-	--input ${kn_site_File} 
+	--input ${vcfFile} 
     """
 }
 
@@ -89,11 +89,11 @@ process BaseRecalibrator {
     path fai
     //path sor_md_bam_file
     tuple val(patient_id), path(sor_md_bam_file)
-    path knownsiteFile1
-    path IDXknsF1
+    tuple val(fileName), path (knownsiteFile1)
+    tuple val(fileName), path (IDXknsF1)
     // index of known site file n° x
-    path knownsiteFile2
-    path IDXknsF2
+    tuple val(fileName), path (knownsiteFile2)
+    tuple val(fileName), path (IDXknsF2)
 
     output:
     //tuple val(patient_id), path("*bqsr.table"), emit: "BQSR_Table"
@@ -134,7 +134,7 @@ process ApplyBQSR {
     gatk ApplyBQSR \\
 	--input ${sor_md_bam_file} \\
 	--bqsr-recal-file ${bqsrTABLE} \\
-	--output ${patient_id}.recal.bam
+	--output ${sor_md_bam_file.baseName}.recal.bam
     """
 }
 
