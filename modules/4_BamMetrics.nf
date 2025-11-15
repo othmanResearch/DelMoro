@@ -5,7 +5,7 @@
 process AlignmentMetrics {
     tag "COLLECTING ALIGNMENT SUMMARY METRICS WITH GATK"
     publishDir "${params.outdir}/Mapping/BamMetrics/AlignmentMetrics/", mode: "copy"
-    cpus "${params.cpus}"
+    cpus "${params.pcpus}"
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -33,7 +33,7 @@ process AlignmentMetrics {
 process InsertMetrics {
     tag "COLLECTING INSERT SIZE METRICS WITH GATK"
     publishDir "${params.outdir}/Mapping/BamMetrics/InsertMetrics/", mode: "copy"
-    cpus "${params.cpus}"
+    cpus "${params.pcpus}"
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -61,7 +61,7 @@ process InsertMetrics {
 process GcBiasMetrics {
     tag "COLLECTING GC BIAS METRICS WITH GATK"
     publishDir "${params.outdir}/Mapping/BamMetrics/GCMetrics/", mode: "copy"
-    cpus "${params.cpus}"
+    cpus "${params.pcpus}"
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -93,7 +93,7 @@ process GcBiasMetrics {
 process Qualimap {
     tag "RUNNING QUALIMAP BAMQC FOR QC REPORT"
     publishDir "${params.outdir}/Mapping/BamMetrics/Qualimap/", mode: "copy"
-    cpus "${params.cpus}"
+    cpus "${params.pcpus}"
 
     conda "bioconda::qualimap==2.3"
     container "${workflow.containerEngine == 'singularity'
