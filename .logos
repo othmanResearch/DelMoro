@@ -205,7 +205,8 @@ log.info"""
 \033[32m                                                               DEFAULT PARAMETERS
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\033[32m --cpus         =\033[37m 4									  	=> Default Cpus		
+\033[32m --mcpus        =\033[37m null									  	=>  Max cpus     : Allocated cpus for the hole pipeline		
+\033[32m --pcpus        =\033[37m null									  	=>  Process cpus : Allocated cpus for each process
 
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
 \033[32m --stepmode	=\033[37m null  									=> Step mode for running modules
@@ -299,9 +300,12 @@ DelMoroWelcome()
 log.info"""
                                                                                
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Raw QC 	=\033[37m ./${params.outdir}/QualityControl/RAW/
-\033[32m ✔ Raw Multi QC	=\033[37m ./${params.outdir}/QualityControl/RAW/multiqc/
-\033[32m ✔ Threads 	=\033[37m ${params.cpus}
+\033[32m ✔ Max Cpus       =\033[37m ${params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus   =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks      =\033[37m ${params.mcpus ? 2 : 1 }
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Raw QC         =\033[37m ./${params.outdir}/QualityControl/RAW/
+\033[32m ✔ Raw Multi QC   =\033[37m ./${params.outdir}/QualityControl/RAW/multiqc/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -311,12 +315,14 @@ log.info"""
 def DelMoroTRimmOutput() { 
 DelMoroWelcome()
 log.info"""
-                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Trimmed Reads 	=\033[37m ./${params.outdir}/TrimmedREADS/
-\033[32m ✔ Trimmed QC		=\033[37m ./${params.outdir}/QualityControl/TRIMMED/
-\033[32m ✔ Trimmed Multi QC	=\033[37m ./${params.outdir}/QualityControl/TRIMMED/multiqc/
-\033[32m ✔ Threads 		=\033[37m ${params.cpus}
+\033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? 2 : 1 }
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Trimmed Reads        =\033[37m ./${params.outdir}/TrimmedREADS/
+\033[32m ✔ Trimmed QC           =\033[37m ./${params.outdir}/QualityControl/TRIMMED/
+\033[32m ✔ Trimmed Multi QC     =\033[37m ./${params.outdir}/QualityControl/TRIMMED/multiqc/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -330,10 +336,13 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ ALIGNER indexes 	=\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Dictionary indexes 	=\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Samtools indexes 	=\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Threads 		=\033[37m ${params.cpus}
+\033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? 2 : 1 }
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ ALIGNER indexes      =\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Dictionary indexes   =\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Samtools indexes     =\033[37m ./${params.outdir}/Indexes/Reference
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -346,10 +355,13 @@ DelMoroWelcome()
 log.info"""
                                                                                
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Mapped reads 		=\033[37m ./${params.outdir}/Mapping
-\033[32m ✔ Mapped reads metrics  	=\033[37m ./${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Indexes/BamFiles
-\033[32m ✔ Threads 		 	=\033[37m ${params.cpus}
+\033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? 2 : 1 }
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Mapped reads         =\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics =\033[37m ./${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes     =\033[37m ./${params.outdir}/Indexes/BamFiles
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -362,14 +374,17 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Known Sites (ivcf 1)  	=\033[37m ./knownsites/${params.ivcf1}
-\033[32m ✔ Known Sites (ivcf 2) 	=\033[37m ./knownsites/${params.ivcf2}
-\033[32m ✔ Known Sites (local vcf 1)  	=\033[37m ./knownsites/${params.knownsite1}
-\033[32m ✔ Known Sites (local vcf 2) 	=\033[37m ./knownsites/${params.knownsite2}
-\033[32m ✔ Known Sites vcf indexes 	=\033[37m ./${params.outdir}/Indexes/knownSites
-\033[32m ✔ Base Recalibration 		=\033[37m ./${params.outdir}/Mapping
-\033[32m ✔ Bam indexes 			=\033[37m ./${params.outdir}/Indexes/BamFiles
-\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m ✔ Max Cpus                     =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? 2 : 1 }
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Known Sites (ivcf 1)         =\033[37m ./knownsites/${params.ivcf1}
+\033[32m ✔ Known Sites (ivcf 2)         =\033[37m ./knownsites/${params.ivcf2}
+\033[32m ✔ Known Sites (local vcf 1)    =\033[37m ./knownsites/${params.knownsite1}
+\033[32m ✔ Known Sites (local vcf 2)    =\033[37m ./knownsites/${params.knownsite2}
+\033[32m ✔ Known Sites vcf indexes      =\033[37m ./${params.outdir}/Indexes/knownSites
+\033[32m ✔ Base Recalibration           =\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Bam indexes                  =\033[37m ./${params.outdir}/Indexes/BamFiles
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -382,8 +397,11 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
-\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? 2 : 1 }
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ VCF Files            =\033[37m ./${params.outdir}/Mapping/Variants
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -470,7 +488,7 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+
 \033[32m ✔ outdir 			=\033[37m ${params.outdir}
 \033[32m ✔ ALIGNER indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
 \033[32m ✔ Dictionary indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
@@ -481,7 +499,10 @@ log.info"""
 \033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Indexes/BamFiles
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
-\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Max Cpus                     =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? 2 : 1 }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  	"""
 }
@@ -493,26 +514,28 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Threads 			=\033[37m ${params.cpus}
-\033[32m ✔ outdir 			=\033[37m ${params.outdir}
-\033[32m ✔ ALIGNER indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Dictionary indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Samtools indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ outdir                       =\033[37m ${params.outdir}
+\033[32m ✔ ALIGNER indexes              =\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Dictionary indexes           =\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Samtools indexes             =\033[37m ./${params.outdir}/Indexes/Reference
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Mapped reads 		=\033[37m ./${params.outdir}/Mapping
-\033[32m ✔ Mapped reads metrics  	=\033[37m ./${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m ✔ Mapped reads                 =\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics         =\033[37m ./${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes             =\033[37m ./${params.outdir}/Indexes/BamFiles
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Known Sites (ivcf 1)  	=\033[37m ./knownsites/${params.ivcf1}
-\033[32m ✔ Known Sites (ivcf 2) 	=\033[37m ./knownsites/${params.ivcf2}
-\033[32m ✔ Known Sites (local vcf 1)  	=\033[37m ./knownsites/${params.knownsite1}
-\033[32m ✔ Known Sites (local vcf 2) 	=\033[37m ./knownsites/${params.knownsite2}
-\033[32m ✔ Known Sites vcf indexes 	=\033[37m ./${params.outdir}/Indexes/knownSites
-\033[32m ✔ Base Recalibration 		=\033[37m ./${params.outdir}/Mapping
-\033[32m ✔ Bam indexes 			=\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m ✔ Known Sites (ivcf 1)         =\033[37m ./knownsites/${params.ivcf1}
+\033[32m ✔ Known Sites (ivcf 2)         =\033[37m ./knownsites/${params.ivcf2}
+\033[32m ✔ Known Sites (local vcf 1)    =\033[37m ./knownsites/${params.knownsite1}
+\033[32m ✔ Known Sites (local vcf 2)    =\033[37m ./knownsites/${params.knownsite2}
+\033[32m ✔ Known Sites vcf indexes      =\033[37m ./${params.outdir}/Indexes/knownSites
+\033[32m ✔ Base Recalibration           =\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Bam indexes                  =\033[37m ./${params.outdir}/Indexes/BamFiles
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
-\033[32m ✔ Threads 			=\033[37m ${params.cpus}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Max Cpus                     =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? 2 : 1 }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  	"""
 }
