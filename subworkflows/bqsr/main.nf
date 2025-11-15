@@ -53,9 +53,9 @@ workflow BASE_QU_SCO_RECA {
 	IndexKNownSite2(knwonSite2) 	
        	
     	BaseRecalibrator	(ref_gen_channel,dictREF.collect(),samidxREF.collect(),MappedReads,knwonSite1,IndexKNownSite1.out,knwonSite2,IndexKNownSite2.out) 
-	ApplyBQSR		(MappedReads,BaseRecalibrator.out.BQSR_Table.collectFile(sort:true))	
+        ApplyBQSR		(MappedReads.join(BaseRecalibrator.out.BQSR_Table) )	
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)    
-	
+
 	if (params.report) {
 	    BigWig		(ApplyBQSR.out.recal_bam, IndexRecalBam.out)
 	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
@@ -95,7 +95,7 @@ workflow BASE_QU_SCO_RECA {
 	                        DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) },
 	                        IndexKNownSite2.out )
 	                        
-	ApplyBQSR		(MappedReads,BaseRecalibrator.out.BQSR_Table.collectFile(sort:true))
+	ApplyBQSR		(MappedReads.join(BaseRecalibrator.out.BQSR_Table) )
 
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)
 	

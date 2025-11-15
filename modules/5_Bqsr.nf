@@ -96,8 +96,8 @@ process BaseRecalibrator {
     tuple val(fileName), path (IDXknsF2)
 
     output:
-    //tuple val(patient_id), path("*bqsr.table"), emit: "BQSR_Table"
-    path "*bqsr.table", emit: "BQSR_Table"
+    tuple val(patient_id), path("*bqsr.table"), emit: "BQSR_Table"
+    //path "*bqsr.table", emit: "BQSR_Table"
 
     script:
     """
@@ -106,7 +106,7 @@ process BaseRecalibrator {
 	--input ${sor_md_bam_file} \\
 	--known-sites ${knownsiteFile1} \\
 	--known-sites ${knownsiteFile2} \\
-	--output ${sor_md_bam_file.baseName.takeWhile { it != '_' }}.bqsr.table
+	--output ${sor_md_bam_file.baseName}.bqsr.table
     """
 }
 
@@ -123,8 +123,7 @@ process ApplyBQSR {
 
     input:
     //path sor_md_bam_file
-    tuple val(patient_id), path(sor_md_bam_file)
-    path bqsrTABLE
+    tuple val(patient_id), path(sor_md_bam_file), path (bqsrTABLE)
 
     output:
     tuple val(patient_id), path("*.recal.bam"), emit: "recal_bam"
