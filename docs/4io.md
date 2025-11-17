@@ -21,8 +21,8 @@
 | **VEP Cache Setup** | Species name to retrieve the appropriate VEP cache. Assembly and cache type may also be specified if needed.                                              |
 | **VEP Annotation**  | A set of VCF files or a list of variant files to be annotated. Requires reference genome, species, and optional cache parameters.                         |
 
-**Configuration and Usage:** 🔗 [Parameter Details](parameters.md) 🔗 [Configuration Files](config.md)
- 🔗 [Running the Pipeline](running.md)
+**Configuration and Usage:** 🔗 [Parameter Details](5parameters.md) 🔗 [Configuration Files](6config.md)
+ 🔗 [Running the Pipeline](7running.md)
  
 
 ---

@@ -6,7 +6,7 @@ This page outlines the software, system, and data requirements needed to success
 
 ## Software Requirements
 
-The following tools must be **available on your system**. Installation instructions are provided in the [Quickstart](quickstart.md).
+The following tools must be **available on your system**. Installation instructions are provided in the [Quickstart](1quickstart.md).
 
 - **Nextflow** (≥ 21.04.0)
 - Either:
@@ -28,7 +28,7 @@ DelMoro expects the following **minimum input data**:
 | Reference genome  | Manually Downloaded Or Retreived with igenome option |
 | Annotation (optional) | Require Reference Fasta file and  vep cache          |
 
-> Input and output details are available in the [Inputs & Outputs](io.md) section.
+> Input and output details are available in the [Inputs & Outputs](4io.md) section.
 
 ---
 
@@ -69,5 +69,5 @@ Make sure the following are in place before running the pipeline:
 - Sufficient compute resources are available
 - Network storage or output directory is writable
 
-Need help? See [Troubleshooting](troubleshooting.md) for common setup issues.
+Need help? See [Parameters](5parameters.md) for common setup issues.
  

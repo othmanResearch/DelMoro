@@ -9,8 +9,15 @@ This section provides a comprehensive overview of all configurable parameters av
 ---
 
 ## General Settings
-- `--cpus`  = Number of CPUs allocated to the pipeline. <span title="Default: 4">⊕</span>  
+- `--mcpus` = Maximum number of CPUs available to the entire pipeline. <span title="Default: 4">⊕</span>
+- `--pcpus` = Number of CPUs allocated per process. <span title="Default: 4">⊕</span>
 - `--outdir` = Directory where all outputs will be saved. <span title="Default: ./outdir">⊕</span>
+
+???+ note "💡 Explanation"
+    - If the user only specifies `--pcpus`, then `mcpus` is set equal to `pcpus`.  
+      This means the pipeline will execute tasks **sequentially**, using the top available CPUs per process.  
+
+    - If `--mcpus` is greater than `2 x pcpus`, the `maxForks` will be set to 2, allowing **up to 2 tasks to run in parallel**.
 
 
 ## Initialize my pipeline 
@@ -67,13 +74,26 @@ This section provides a comprehensive overview of all configurable parameters av
 ## Variant Calling
 - `--reference` = Path to reference genome FASTA file. <span title="Default: ./Reference_Genome/*.fa">⊕</span>  
 - `--tovarcall` = CSV with recalibrated BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">⊕</span>  
-- `--mode` = Output type: onlyVCF  or cohortGVCF <span title="Default: onlyVCF = vcf file / cohorteGCVF = Gvcf file">⊕</span>  
+- `--mode` = Output type: onlyVCF  or cohortGVCF <span title="Default: onlyVCF = vcf file / cohortGCVF = Gvcf file">⊕</span>  
  
 ## Annotation (VEP)
 - `--species` = Species name for VEP cache. <span title="Default: null">⊕</span>  
 - `--cachetype` = VEP cache type (`refseq` or `merged`). <span title="Default: null">⊕</span>  
 - `--assembly` = Genome assembly version. <span title="Default: null">⊕</span>  
 - `--cachedir` = Path to VEP cache directory. <span title="Default: .vepcachedir">⊕</span>
+
+
+## Filtering 
+- `--tofilter` = Path to the CSV file containing variants to filter. <span title="Default: null ">⊕</span>
+- `--QD` = Quality by Depth: variant confidence normalized by depth. <span title="Default: 2.0">⊕</span>
+- `--QUAL` = Overall variant quality score. <span title="Default: 30.0">⊕</span>
+- `--SOR` = Strand Odds Ratio: measures strand bias. <span title="Default: 3.0">⊕</span>
+- `--FSSNP` = Fisher Strand p-value for strand bias (SNPs). <span title="Default: 60.0">⊕</span>
+- `--MQ` = RMS Mapping Quality of reads supporting the variant. <span title="Default: 40.0">⊕</span>
+- `--MQRankSum` = Z-score from Wilcoxon rank sum test of Alt vs Ref read mapping qualities. <span title="Default: -12.5">⊕</span>
+- `--ReadPosRankSumSNP` = Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (SNPs). <span title="Default: -8.0">⊕</span>
+- `--FSINDEL` = Fisher Strand p-value for strand bias (INDELs). <span title="Default: 200.0">⊕</span>
+- `--ReadPosRankSumINDEL` = Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (INDELs). <span title="Default: -20.0">⊕</span>
 
 ## Reporting 
 - `--metaPatients` = Csv of patiens' Metadata + vcf paths <span title="Default: null">⊕</span>

@@ -145,15 +145,16 @@ The **DelMoro full mode** follows a standard workflow, requiring an `--input` CS
 In this mode, the pipeline performs **reference indexing**, **mapping**, and **variant calling**, applying the same sub-options for each step:  
 - **Reference**: `igenome/reference`  
 - **Aligner**: `bwa` or `bwamem2`  
-- **Mode**: `onlyVCF` or `cohort GVCF`  
+- **Mode**: `onlyVCF` or `cohortGVCF`  
 
 You can optionally enable **Base Quality Score Recalibration (BQSR)** by adding the `--bqsr` parameter, which requires either:  
 - Local known sites: `--knownsite1`, `--knownsite2`  
 - retrieval from AWS: `--ivcf1`, `--ivcf2`  
 
-<div id="cmd-qc" class="full-command">
+<div id="fullmode-cmd" class="full-command">
 <pre><code>
 nextflow run main.nf \
+    --fullmode \
     --input <input_csv> \
     --reference <reference_path>  | [--igenome <str>]  \
     [--aligner bwamem2] \
@@ -300,7 +301,7 @@ or use the `--igenome` parameter to automatically download and index a standard 
 </label>
 
 <div id="cmd-refidx-local" class="step-command">
-<pre><code>nextflow run main.nf --stepmode--exec refidx --reference Reference_Genome/reference.fa</code></pre>
+<pre><code>nextflow run main.nf --stepmode --exec refidx --reference Reference_Genome/reference.fa</code></pre>
 </div>
 
 ---
@@ -557,5 +558,22 @@ This step adds functional information to your variants using **Ensembl VEP (Vari
 <pre><code>nextflow main.nf --stepmode --exec reporting \
   --metaPatients CSVs/7_metaPatients.csv \ 
   --metaYaml CSVs/7_metaPatients.yml 
+</code></pre>
+</div>
+
+
+
+### Filtering
+
+- This step applies variant filtering using the specified CSV file.
+
+<label>
+  <input type="checkbox" onchange="toggleCommand('cmd-filtering', this)">
+  <strong>Run Filtering</strong>
+</label>
+
+<div id="cmd-filtering" class="step-command">
+<pre><code>nextflow main.nf --stepmode --exec filter \
+  --tofilter CSVs/tofilter.csv
 </code></pre>
 </div>

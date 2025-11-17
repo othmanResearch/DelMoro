@@ -54,7 +54,7 @@ The following CSV structure templates are integral to the pipeline, defining sta
 <br><br>
 </div>
 
-To automatically generate all required CSV files as part of the setup, consult the 🔗 [How to Initialize the Pipeline](running.md#step-1-initialize-the-pipeline)
+To automatically generate all required CSV files as part of the setup, consult the 🔗 [How to Initialize the Pipeline](7running.md#step-1-initialize-the-pipeline)
 
 
 
@@ -104,9 +104,9 @@ To automatically generate all required CSV files as part of the setup, consult t
 ???+ note "💡 **5_samplesheetReclibFiles.csv**"
     Header: `patient_id,BamFile`
     ```csv
-    41TNS1,./outdir/Mapping/41TNS1.recal.bam
-    2TNS12,./outdir/Mapping/2TNS12.recal.bam
-    3TNS13,./outdir/Mapping/3TNS13.recal.bam
+    41TNS1,./outdir/Mapping/41TNS1_delMoro.recal.bam
+    2TNS12,./outdir/Mapping/2TNS12_delMoro.recal.bam
+    3TNS13,./outdir/Mapping/3TNS13_delMoro.recal.bam
     ```
 
 ### Vcf files csv Template
