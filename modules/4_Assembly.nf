@@ -23,7 +23,7 @@ process AlignReadsToRef {
     """
     bwa mem -t ${task.cpus} ${refGenome} ${R1} ${R2} \\
 	| samtools view -Sb -@ ${task.cpus} \\
-	| samtools sort -@ ${task.cpus}  -o ${patient_id}_sor.bam   
+	| samtools sort -@ ${task.cpus}  -o ${patient_id}_sor.bam
     """
 }
 
@@ -49,8 +49,7 @@ process AlignReadsToRefBwaMem2 {
     """
     bwa-mem2 mem -t ${task.cpus} -M ${refGenome} ${R1} ${R2} \\
 	| samtools view -Sb -@ ${task.cpus} \\
-	| samtools sort -@ ${task.cpus}  -o ${patient_id}_sor.bam           
-               
+	| samtools sort -@ ${task.cpus}  -o ${patient_id}_sor.bam
     """
 }
 

@@ -35,7 +35,7 @@ process CallVariant {
 
 process CreateGVCF {
     tag "CREATE GVCF with Gatk HaplotypeCaller"
-    publishDir "${params.outdir}/Variants", mode: 'copy'
+    publishDir "${params.outdir}/Variants", mode: 'copy', enabled: params.keepinter 
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -51,7 +51,6 @@ process CreateGVCF {
     
     output:
     tuple val(patient_id), path("*.g.vcf.gz"), path("*.{tbi,idx}")	, emit: "g_vcf_Recal"
-    tuple val(patient_id), path("*.phased.bam"), path("*.bai")	, emit: "phased_bam"
 
     script:
     """
@@ -60,7 +59,6 @@ process CreateGVCF {
 	--reference ${ref} \\
 	--input ${ReclBamFile} \\
 	--output ${ReclBamFile.baseName}.g.vcf.gz \\
-	--bam-output ${ReclBamFile.baseName}.phased.bam \\
 	--emit-ref-confidence GVCF
     """
 }
@@ -91,7 +89,7 @@ process CombineGvcfs {
     gatk CombineGVCFs \\
 	--reference ${ref} \\
 	--variant ${GvcfFiles.join(' --variant ')} \\
-	--output Cohort.g.vcf.gz
+	--output cohort_delMoro-g.vcf.gz
     """
 }
 
@@ -120,6 +118,6 @@ process GenotypeGvcfs {
     gatk GenotypeGVCFs \\
 	--reference ${ref} \\
 	--variant ${CombinedFile} \\
-	--output Cohort.g.Genotypes.vcf.gz
+	--output cohort_delMoro.vcf.gz
     """
 }
