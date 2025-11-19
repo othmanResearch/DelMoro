@@ -48,11 +48,16 @@ workflow BASE_QU_SCO_RECA {
  	params.ivcf2 	  == null && 
  	params.knownsite1 != null && 
  	params.knownsite2 != null) {
-    
-	IndexKNownSite1(knwonSite1)
-	IndexKNownSite2(knwonSite2) 	
-       	
-    	BaseRecalibrator	(ref_gen_channel,dictREF.collect(),samidxREF.collect(),MappedReads,knwonSite1,IndexKNownSite1.out,knwonSite2,IndexKNownSite2.out) 
+           	
+    	BaseRecalibrator	( ref_gen_channel
+    	                         ,dictREF.collect()
+    	                         ,samidxREF.collect()
+    	                         ,MappedReads
+    	                         ,knwonSite1  // includes its index
+    	                         ,knwonSite2  // includes its index
+    	                         ) 
+    	                       
+    	                       
         ApplyBQSR		(MappedReads.join(BaseRecalibrator.out.BQSR_Table) )	
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)    
 
@@ -86,14 +91,13 @@ workflow BASE_QU_SCO_RECA {
 	IndexKNownSite1(DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) })
 	IndexKNownSite2(DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) }) 
  
-	BaseRecalibrator	(ref_gen_channel,
-	                        dictREF.collect(),
-	                        samidxREF.collect(),
-	                        MappedReads,
-	                        DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) },
-	                        IndexKNownSite1.out,
-	                        DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) },
-	                        IndexKNownSite2.out )
+	BaseRecalibrator	( ref_gen_channel
+	                         ,dictREF.collect()
+	                         ,samidxREF.collect()
+	                         ,MappedReads
+	                         ,DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) }.join(IndexKNownSite1.out).first()
+	                         ,DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) }.join(IndexKNownSite2.out).first()
+	                        )
 	                        
 	ApplyBQSR		(MappedReads.join(BaseRecalibrator.out.BQSR_Table) )
 

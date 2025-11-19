@@ -66,14 +66,24 @@ include {DelMoroHelp	} 	from './.logos'
   // knwon file 1 channel for BQSR    
 
   KnownSite1		= params.knownsite1	? Channel.fromPath(params.knownsite1, checkIfExists: false)
-  							  .map { vcfile -> tuple(vcfile.baseName, vcfile) }
-							   .first()   								: Channel.empty() 
+							   .map { vcfile ->
+							      def id = vcfile.baseName
+							      def tbi = vcfile.toString() + '.tbi'
+							      def idx = vcfile.toString() + '.idx'
+							      def indexFile = file(tbi).exists() ? file(tbi) : file(idx)
+							      tuple(id, vcfile, indexFile)
+							   }.first()   								: Channel.empty() 
        			         
   // knwon file 2 channel for BQSR       
          
-  KnownSite2		= params.knownsite2	? Channel.fromPath(params.knownsite2, checkIfExists: false)
-							  .map { vcfile -> tuple(vcfile.baseName, vcfile) }
-							   .first()  								: Channel.empty() 
+  KnownSite2 		= params.knownsite2 	? Channel.fromPath(params.knownsite2, checkIfExists: false)
+							  .map { vcfile ->
+							      def id = vcfile.baseName
+							      def tbi = vcfile.toString() + '.tbi'
+							      def idx = vcfile.toString() + '.idx'
+							      def indexFile = file(tbi).exists() ? file(tbi) : file(idx)
+							      tuple(id, vcfile, indexFile)
+							   }.first()								: Channel.empty()
 
   // Indexes Channels 
 
