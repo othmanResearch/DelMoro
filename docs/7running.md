@@ -16,7 +16,7 @@ Documentation : -
 Usage   : nextflow run main.nf <modality> [--exec <module>] <params>
 
 Modality: - --fullmode  : Executing   full   mode from fastq until vaiant calling.
-	      - --stepmode  : Executing   different   modules   in   standalone  mode.
+          - --stepmode  : Executing   different   modules   in   standalone  mode.
 
 
 
@@ -25,10 +25,10 @@ nextflow run main.nf
     --fullmode
     --input  
     --reference   | [--igenome ]   
-    [--aligner bwamem2]  
-    [--mode onlyVCF|cohortGVCF]  
-    [--bqsr]  
+    [--aligner bwamem2 ]  
+    [--bqsr ]  
     [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
+    [--mode onlyvcf ]  
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -37,99 +37,118 @@ Executing stepmode :
 nextflow run main.nf  
     --stepmode
     --exec <module>
+   
 
-Module  : - rawqc 	    : Check quality of raw reads. 
-	      - trim 	    : Remove low-quality bp and adapters & checks its quality.
-	      - refidx 	    : Index the reference genome for alignment.
-	      - align 	    : Align reads to the reference genome.
-	      - bqsr 	    : Base Quality Score recalibration.
-	      - callsnp 	: Detect SNPs from aligned reads.
-	      - annotate 	: annotate vfc file.
-	      - reporting 	: Auto Generate PDF of  vcf reports.
-	      - help 	
-	      - version  
+
+Module  : - rawqc 	: Check           quality      of     raw           reads. 
+          - trim 	: Remove low-quality bp and adapters & checks its quality.
+          - refidx 	: Index   the    reference   genome    for      alignment.
+          - align 	: Align     reads      to     the     reference    genome.
+          - bqsr 	: Base 		Quality 	Score	    recalibration.
+          - callsnp 	: Detect           SNPs      from      aligned      reads.
+          - annotate 	: annotate 	    	    vfc 	             file.
+          - reporting 	: Auto  	Generate   PDF 	  of   	  vcf 	  reports.
+          - filter 	: Filter  	vcfs  	    to     SNP     and     INDELS.
+          - help 	
+          - version  
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Requirements :
   -- Quality Control
      rawqc 	   Check quality of raw reads. 
-                require : --rawreads <path-to-csv>
-                output  : .html reads 
-                   	    : .html multiqc 
+                   require  : --rawreads <path-to-csv>
+                   output   : .html reads 
+                   	        : .html multiqc 
 
   -- Trimming
      trim          Remove low-quality bp and adapters & checks its quality.
-     		    require : --tobetrimmed <path-to-csv>
-     		   	        : --trimmomatic, --fastp, --bbduk 
-     		            : --adapters <path-to-adapter-file> [ optional ]
-     		    output  : .fastq trimmed 
-                   	    : .html trimmed reads 
-                   	    : .html multiqc  
+                   require  : --tobetrimmed <path-to-csv>
+                            : --trimmomatic, --fastp, --bbduk 
+     		                : --adapters <path-to-adapter-file> [ optional ]
+                   output   : .fastq trimmed 
+                   	        : .html trimmed reads 
+                   	        : .html multiqc  
 
   -- Indexing
      refidx 	   Index reference genome for alignment.
-     		    require : --reference <path-to-ref>
-     		   	        : --igenome   <value-from-IGENOMES> [ optional ]
-     		    output  : .dict 
-                        : .fai  
-                        : .{.0123,amb,ann,bwt.2bit.64,pac} 
+                   require  : --reference <path-to-ref>
+     		   	            : --igenome <value-from-IGENOMES> [ optional ]
+                   output   : .dict 
+                   	        : .fai  
+                   	        : .{.0123,amb,ann,bwt.2bit.64,pac} 
    
   -- Mapping	   
      align         Align reads to reference genome.
-  	            require : --reference   <path-to-ref>
-  	            	    : --Tobealigned <path-to-trimmed-csv>
-  		                : --metrics  [ optional ]
-  		                : --mindepth [ optional ] 
-  		                : --saveImg  [ optional ] 
-  	            output  : .bam
-  	           	        : .bai
-  	           	        : .flagstat
-  	           	        : .coverage.bed
-  	                    : .bw
-  
+                   require  : --reference   <path-to-ref>
+                            : --Tobealigned <path-to-trimmed-csv>
+                            : --report    [ optional ]
+                            : --mindepth [ optional ] 
+                            : --saveImg  [ optional ] 
+                   output   : .bam
+                            : .bai
+                            : .flagstat
+                            : .coverage.bed
+                            : .bw
+      
     -- BQSR  
      bqsr	   Base quality score recalibration.
-  		        require : --knownsite1, 2 <path-to-vcf-file> , 2 files 
-  		   	            : --ivcf1, 2      <value>  [ optional ]
-  		                : --bam	     <path-to-bam-csv)
-  		                : --metrics  [ optional ]
-  		                : --mindepth [ optional ] 
-  		                : --saveImg  [ optional ] 
-		        output  : .idx of knwons sites <vcf> 
-		   	            : .table
-		   	            : .bam
-		   	            : .bam
+                   require  : --knownsite1, 2 <path-to-vcf-file> , 2 files 
+                            : --ivcf1, 2      <value>  [ optional ]
+                            : --bam	     <path-to-bam-csv)
+                            : --report    [ optional ]
+                            : --mindepth [ optional ] 
+                            : --saveImg  [ optional ] 
+                   output   : .idx of knwons sites <vcf> 
+                            : .table
+                            : .bam
+                            : .bam
 		   	   	           	   
   -- Variant Calling	  
      callsnp       Detect SNPs from aligned reads.
-  	            require : --reference   <path-to-ref>
-  		   	            : --tovarcall   <path-to-bam-csv)
-  		        output  : .vcf
-  		   	            : .table
+                   require  : --reference   <path-to-ref>
+                            : --tovarcall   <path-to-bam-csv)
+                            : --mode onlyvcf [ optional ]
+                   output   : .vcf
+                            : .table
   -- Annotation	  
      annotate       Print out Annotation manual
      
      vepcache       Download vep cache
-  	            require : --species   <value>
-  	           	        : --cachetype <value> [ optional ]
-  	           	        : --assembly  <value> [ optional ]
-  	           	        : --cacheversion  <value> [ optional ] 
-  	            output  : ./vep_cache directory 
+                   require  : --species   <value>
+  	           	            : --cachetype <value> [ optional ]
+                            : --assembly  <value> [ optional ]
+                            : --cacheversion  <value> [ optional ] 
+                   output   : ./vep_cache directory 
   	            
      vepannotate    Vep annotation
-  	            require : --species    <value>
-  	            	    : --reference  <path-to-ref>
-  	            	    : --toannotate <path-to-csv> 
-  	           	        : --assembly   <value>
-  	           	        : --cachetype  <value> [ optional ]
-  	            output  : vcf.gz
-  	            	    : .vcf.gz.tbi
-  	            	    : .html
+                    require : --species    <value>
+                            : --reference  <path-to-ref>
+                            : --toannotate <path-to-csv> or <path-to-vcf>
+                            : --assembly   <value>
+                            : --cachetype  <value> [ optional ]
+                    output  : vcf.gz
+  	            	        : .vcf.gz.tbi
+  	            	        : .html
    -- Reporting
       reporting       Auto Generate PDF of vcf reports
-  	            require : --metaPatients <path-to-csv>
-			            : --metaYaml 	 <path-to-yaml>
-  	            output  : .png
-  	            	    : .pdf
+                   require  : --metaPatients	<path-to-csv>
+			                : --metaYaml 	<path-to-yaml>
+                   output   : .png
+  	            	        : .pdf
+   -- Filtering
+      filter          Filter vcfs to SNP and INDELS
+                   require  : --tofilter	<path-to-csv>
+                            : --QD              <value> [ optional ] ; Default = 2.0 
+                            : --QUAL            <value> [ optional ] ; Default = 30.0 
+                            : --SOR             <value> [ optional ] ; Default = 3.0
+                            : --FSSNP           <value> [ optional ] ; Default = 60.0
+                            : --MQ              <value> [ optional ] ; Default = 40.0
+                            : --MQRankSum       <value> [ optional ] ; Default = -12.5
+                            : --ReadPosRankSumSNP   <value> [ optional ] ; Default = -8.0	
+                            : --FSINDEL             <value> [ optional ] ; Default = 200.0
+                            : --ReadPosRankSumINDEL <value> [ optional ] ; Default = -20.0 
+                   output   : .vcf.gz
+  	            	        : .tbi  	            	    
  	   		
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   To see Defauls params paths:  
@@ -145,7 +164,7 @@ The **DelMoro full mode** follows a standard workflow, requiring an `--input` CS
 In this mode, the pipeline performs **reference indexing**, **mapping**, and **variant calling**, applying the same sub-options for each step:  
 - **Reference**: `igenome/reference`  
 - **Aligner**: `bwa` or `bwamem2`  
-- **Mode**: `onlyVCF` or `cohortGVCF`  
+- **Mode**: `onlyvcf` or `null` ( By default, DelMoro generates a cohort vcf file)  
 
 You can optionally enable **Base Quality Score Recalibration (BQSR)** by adding the `--bqsr` parameter, which requires either:  
 - Local known sites: `--knownsite1`, `--knownsite2`  
@@ -158,7 +177,7 @@ nextflow run main.nf \
     --input <input_csv> \
     --reference <reference_path>  | [--igenome <str>]  \
     [--aligner bwamem2] \
-    [--mode onlyVCF|cohortGVCF] \
+    [--mode onlyvcf] \
     [--bqsr] \
     [--knownsite1 <path>,--knownsite2 <path>|--ivcf1 <str>,--ivcf2 <str>]
 </code></pre>
@@ -424,12 +443,10 @@ You can modify the output behavior using the `--generate` flag:
 #### Default Mode
 
 ???+ note " 💡 **Default Behavior**:"
-    - Generates VCF files for each patient  
-    - Extracts tabular variant summary  
-    - Filters SNPs  
-    - Generates phased BAM files for each sample  
-    - Automatically produces individual GVCF files
- 
+    - Generates cohort VCF file for all input (patients)  
+    - Produces a single joint cohort .g.vcf file
+    - Useful for population-level variant analysis or joint genotyping 
+
 <label>
   <input type="checkbox" onchange="toggleCommand('cmd-call-default', this)">
   <strong>Run Variant Calling (default)</strong>
@@ -443,43 +460,25 @@ You can modify the output behavior using the `--generate` flag:
 
 ---
 
-#### Generate Only VCF & SNP Table
+#### Generate Only VCFs 
 
 ???+ note " 💡 **Option:** `--generate onlyVCF`"
     - Skips GVCF creation  
-    - Outputs only the main VCF file, variant table, and SNP table
+    - Outputs only the main VCF file, variant for each input
 
 <label>
   <input type="checkbox" onchange="toggleCommand('cmd-call-onlyvcf', this)">
-  <strong>Run Variant Calling (only VCF + SNP)</strong>
+  <strong>Run Variant Calling (only VCF)</strong>
 </label>
 
 <div id="cmd-call-onlyvcf" class="step-command">
 <pre><code>nextflow run main.nf --stepmode --exec callsnp \
   --reference Reference_Genome/reference.fa \
   --tovarcall CSVs/5_samplesheetReclibFiles.csv \
-  --generate onlyVCF</code></pre>
+  --mode onlyvcf</code></pre>
 </div>
 
 ---
-
-#### Generate Cohort GVCF
-
-???+ note " 💡 **Option:** `--generate CohorteGVCF`"
-    - Produces a single joint cohort `.g.vcf` file  
-    - Useful for population-level variant analysis or joint genotyping
-
-<label>
-  <input type="checkbox" onchange="toggleCommand('cmd-call-cohortgvcf', this)">
-  <strong>Run Variant Calling (Cohort GVCF)</strong>
-</label>
-
-<div id="cmd-call-cohortgvcf" class="step-command">
-<pre><code>nextflow run main.nf --stepmode --exec callsnp \
-  --reference Reference_Genome/reference.fa \
-  --tovarcall CSVs/5_samplesheetReclibFiles.csv \
-  --generate cohorteGVCF</code></pre>
-</div>
 
 ### Step 8: Variant Annotation
 

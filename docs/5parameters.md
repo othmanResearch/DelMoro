@@ -74,7 +74,7 @@ This section provides a comprehensive overview of all configurable parameters av
 ## Variant Calling
 - `--reference` = Path to reference genome FASTA file. <span title="Default: ./Reference_Genome/*.fa">⊕</span>  
 - `--tovarcall` = CSV with recalibrated BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">⊕</span>  
-- `--mode` = Output type: onlyVCF  or cohortGVCF <span title="Default: onlyVCF = vcf file / cohortGCVF = Gvcf file">⊕</span>  
+- `--mode` = Output type: onlyvcf to generate a vcf for each input <span title="Default: null : generates a cohort gvcf ">⊕</span>  
  
 ## Annotation (VEP)
 - `--species` = Species name for VEP cache. <span title="Default: null">⊕</span>  

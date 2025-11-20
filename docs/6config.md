@@ -114,9 +114,9 @@ To automatically generate all required CSV files as part of the setup, consult t
 ???+ note "💡 **6_samplesheetvcfFiles.csv**"
     Header: `patient_id,vcFile`
     ```csv
-    41TNS1,./outdir/Mapping/Variants/41TNS1_sor_RG_MD.bam.recal.HC.vcf
-    2TNS12,./outdir/Mapping/Variants/2TNS12_sor_RG_MD.bam.recal.HC.vcf
-    3TNS13,./outdir/Mapping/Variants/3TNS13_sor_RG_MD.bam.recal.HC.vcf
+    41TNS1,./outdir/Mapping/Variants/41TNS1_delMoro.recal.HC.vcf.gz
+    2TNS12,./outdir/Mapping/Variants/2TNS12_delMoro.recal.HC.vcf.gz
+    3TNS13,./outdir/Mapping/Variants/3TNS13_delMoro.recal.HC.vcf.gz
     ```
 ### Patients Metadata csv Template  
 ???+ note "💡 **CSVs/7_metaPatients.csv**"
