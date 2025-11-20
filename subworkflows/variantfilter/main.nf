@@ -4,13 +4,13 @@ include { DelMoroWelcome	} from '../../.logos'
 include { DelMoroVarCallOutput	} from '../../.logos'
 	
 
-include { IndexVcf                    } from '../../modules/11_filter.nf' 
-include { IndexVcf  as IndexSNPVcf    } from '../../modules/11_filter.nf' 
-include { IndexVcf  as IndexINDELVcf  } from '../../modules/11_filter.nf' 
-include { SNPSelect		} from '../../modules/11_filter.nf' 
-include { FilterSNP		} from '../../modules/11_filter.nf' 
-include { INDELSelect		} from '../../modules/11_filter.nf' 
-include { FilterINDEL		} from '../../modules/11_filter.nf' 
+include { IndexVcf                    } from '../../modules/09.0_filter.nf'
+include { IndexVcf  as IndexSNPVcf    } from '../../modules/09.0_filter.nf' 
+include { IndexVcf  as IndexINDELVcf  } from '../../modules/09.0_filter.nf' 
+include { SNPSelect		} from '../../modules/09.0_filter.nf' 
+include { FilterSNP		} from '../../modules/09.0_filter.nf' 
+include { INDELSelect		} from '../../modules/09.0_filter.nf' 
+include { FilterINDEL		} from '../../modules/09.0_filter.nf' 
 
 workflow FILTER_VARIANT {
 

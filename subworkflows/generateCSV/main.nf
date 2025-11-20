@@ -3,11 +3,11 @@
 include { DelMoroWelcome	} from '../../.logos'
 include { PATHTOCSV		} from '../../.logos'	
 	
-include { WriteTrimmingCSV	} from '../../modules/0_GenerateCSVs.nf' 
-include { WriteAssemblyCSV	} from '../../modules/0_GenerateCSVs.nf' 
-include { WriteBamCSV 		} from '../../modules/0_GenerateCSVs.nf' 
-include { WriteRecalCSV		} from '../../modules/0_GenerateCSVs.nf' 
-include { WriteVcfCSV		} from '../../modules/0_GenerateCSVs.nf' 
+include { WriteTrimmingCSV	} from '../../modules/00.0_GenerateCSVs.nf' 
+include { WriteAssemblyCSV	} from '../../modules/00.0_GenerateCSVs.nf' 
+include { WriteBamCSV 		} from '../../modules/00.0_GenerateCSVs.nf' 
+include { WriteRecalCSV		} from '../../modules/00.0_GenerateCSVs.nf' 
+include { WriteVcfCSV		} from '../../modules/00.0_GenerateCSVs.nf' 
 
 workflow GENERATE_CSVS {
     take:

@@ -82,9 +82,9 @@ nextflow run main.nf
     --input  
     --reference   | [--igenome ]   
     [--aligner bwamem2]  
-    [--mode onlyVCF|cohortGVCF]  
     [--bqsr]  
     [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
+    [--mode onlyvcf]  
 
 
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
@@ -104,6 +104,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
 	  - \033[32mcallsnp\033[37m 	: Detect           SNPs      from      aligned      reads.
 	  - \033[32mannotate\033[37m 	: annotate 	    	    vfc 	             file.
 	  - \033[32mreporting\033[37m 	: Auto  	Generate   PDF 	  of   	  vcf 	  reports.
+	  - \033[32mfilter\033[37m 	: Filter  	vcfs  	    to     SNP     and     INDELS.
 	  - \033[32mhelp\033[37m 	
 	  - \033[32mversion\033[37m  
 
@@ -162,6 +163,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
      \033[32mcallsnp\033[37m       Detect SNPs from aligned reads.
   	           require : --reference   <path-to-ref>
   		   	   : --tovarcall   <path-to-bam-csv)
+  		   	   : --mode only [ optional ]
   		   output  : .vcf
   		   	   : .table
   -- Annotation	  
@@ -189,7 +191,21 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
 			    : --metaYaml 	<path-to-yaml>
   	            output  : .png
   	            	    : .pdf
- 	   		
+   -- Filtering
+      \033[32mfilter\033[37m          Filter vcfs to SNP and INDELS
+  	            require : --tofilter	<path-to-csv>
+			    : --QD              <value> [ optional ] ; Default = 2.0 
+			    : --QUAL            <value> [ optional ] ; Default = 30.0 
+			    : --SOR             <value> [ optional ] ; Default = 3.0
+			    : --FSSNP           <value> [ optional ] ; Default = 60.0
+			    : --MQ              <value> [ optional ] ; Default = 40.0
+			    : --MQRankSum       <value> [ optional ] ; Default = -12.5
+			    : --ReadPosRankSumSNP   <value> [ optional ] ; Default = -8.0	
+			    : --FSINDEL             <value> [ optional ] ; Default = 200.0
+			    : --ReadPosRankSumINDEL <value> [ optional ] ; Default = -20.0 
+  	            output  : .vcf.gz
+  	            	    : .tbi  	            	    
+		
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
   To see Defauls params paths:  
    > nextflow main.nf \033[32m--params\033[37m
@@ -255,7 +271,7 @@ log.info"""
                                            exp: "chr1:position1-position2" 
                                            
 
-\033[32m --mode 	=\033[37m null   									=> generate vcf for all inputs "onlyVCF" or "cohortGVCF" , Default generates all						 	
+\033[32m --mode 	=\033[37m null   									=> generate vcf for all inputs "onlyvcf" , Default to null generates all cohortGVCF file 					 	
                                            
 \033[32m --bedtarget 	=\033[37m Target BEDFILE to extract coverage from bam file
                                            Default : null   

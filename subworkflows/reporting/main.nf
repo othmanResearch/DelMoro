@@ -3,7 +3,7 @@
 include { DelMoroWelcome	} from '../../.logos'
 include { DelMoroReporting	} from '../../.logos'
 	
-include { GenerateReports	} from '../../modules/10_Reporting.nf'
+include { GenerateReports	} from '../../modules/08.0_Reporting.nf'
  
 workflow REPORTING {
 

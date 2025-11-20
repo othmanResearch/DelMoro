@@ -3,11 +3,11 @@
 include { DelMoroWelcome	} from '../../.logos'	
 include { DelMoroTRimmOutput	} from '../../.logos'	
 
-include { Trimmomatic		} from '../../modules/2_Trimming.nf' 
-include { Fastp			} from '../../modules/2_Trimming.nf'  
-include { Bbduk			} from '../../modules/2_Trimming.nf' 
-include { TrimmedQC 		} from '../../modules/2_Trimming.nf' 
-include { MultiqcTrimmed	} from '../../modules/2_Trimming.nf' 
+include { Trimmomatic		} from '../../modules/02.0_Trimming.nf' 
+include { Fastp			} from '../../modules/02.0_Trimming.nf'  
+include { Bbduk			} from '../../modules/02.0_Trimming.nf' 
+include { TrimmedQC 		} from '../../modules/02.0_Trimming.nf' 
+include { MultiqcTrimmed	} from '../../modules/02.0_Trimming.nf' 
 
 workflow TRIM_READS {
     take:

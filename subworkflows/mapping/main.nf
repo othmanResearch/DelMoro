@@ -3,25 +3,28 @@
 include { DelMoroWelcome  	  } from '../../.logos'
 include { DelMoroAssemblyOutput	  } from '../../.logos'
 	
-include { AlignReadsToRef	  } from '../../modules/4_Assembly.nf' 
-include { AlignReadsToRefBwaMem2  } from '../../modules/4_Assembly.nf' 
-include { AssignReadGroup	  } from '../../modules/4_Assembly.nf' 
-include { MarkDuplicates	  } from '../../modules/4_Assembly.nf' 
-include { IndexBam		  } from '../../modules/4_Assembly.nf' 
-include { Extractregion	 	  } from '../../modules/4_Assembly.nf' 
-include { GenerateStat	 	  } from '../../modules/4_Assembly.nf' 
-include { IndexBam as IndexRegion } from '../../modules/4_Assembly.nf' 
- 
-include { BamCoverage	 	  } from '../../modules/4_CoverageStat.nf' 
-include { BamTargetCoverage	  } from '../../modules/4_CoverageStat.nf'
+include { AlignReadsToRef	  } from '../../modules/04.0_Assembly.nf' 
+include { AlignReadsToRefBwaMem2  } from '../../modules/04.0_Assembly.nf' 
+include { AssignReadGroup	  } from '../../modules/04.0_Assembly.nf' 
+include { MarkDuplicates	  } from '../../modules/04.0_Assembly.nf' 
+include { IndexBam		  } from '../../modules/04.0_Assembly.nf' 
+include { Extractregion	 	  } from '../../modules/04.0_Assembly.nf' 
+include { GenerateStat	 	  } from '../../modules/04.0_Assembly.nf' 
+include { IndexBam as IndexRegion } from '../../modules/04.0_Assembly.nf' 
 
-include { BigWig   		  } from '../../modules/4_BamToBigWig.nf'
-include { BigWigCoveragePlots	  } from '../../modules/4_BigWigPlotting.nf'
+include { AlignmentMetrics	  } from '../../modules/04.1_BamMetrics.nf' 
+include { InsertMetrics		  } from '../../modules/04.1_BamMetrics.nf' 
+include { GcBiasMetrics 	  } from '../../modules/04.1_BamMetrics.nf' 
+include { Qualimap		  } from '../../modules/04.1_BamMetrics.nf'
 
-include { AlignmentMetrics	  } from '../../modules/4_BamMetrics.nf' 
-include { InsertMetrics		  } from '../../modules/4_BamMetrics.nf' 
-include { GcBiasMetrics 	  } from '../../modules/4_BamMetrics.nf' 
-include { Qualimap		  } from '../../modules/4_BamMetrics.nf'
+include { BigWig   		  } from '../../modules/04.2_BamToBigWig.nf'
+
+include { BigWigCoveragePlots	  } from '../../modules/04.3_BigWigPlotting.nf'
+
+include { BamCoverage	 	  } from '../../modules/04.4_CoverageStat.nf' 
+include { BamTargetCoverage	  } from '../../modules/04.4_CoverageStat.nf'
+
+
 
 workflow ALIGN_TO_REF_GENOME {
      take:

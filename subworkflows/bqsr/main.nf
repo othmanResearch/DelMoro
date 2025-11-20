@@ -3,21 +3,23 @@
 include { DelMoroWelcome	} from '../../.logos'
 include { DelMoroBQSROutput	} from '../../.logos'
 
-include { DownloadKns1		} from '../../modules/5_Bqsr.nf'  
-include { DownloadKns2		} from '../../modules/5_Bqsr.nf'  
-include { IndexVcf as IndexKNownSite1	} from '../../modules/5_Bqsr.nf'  
-include { IndexVcf as IndexKNownSite2	} from '../../modules/5_Bqsr.nf'  
-include { BaseRecalibrator	} from '../../modules/5_Bqsr.nf'  
-include { ApplyBQSR		} from '../../modules/5_Bqsr.nf'    
-include { IndexRecalBam		} from '../../modules/5_Bqsr.nf'
+include { DownloadKns1		} from '../../modules/05.0_Bqsr.nf'  
+include { DownloadKns2		} from '../../modules/05.0_Bqsr.nf'  
+include { IndexVcf as IndexKNownSite1	} from '../../modules/05.0_Bqsr.nf'  
+include { IndexVcf as IndexKNownSite2	} from '../../modules/05.0_Bqsr.nf'  
+include { BaseRecalibrator	} from '../../modules/05.0_Bqsr.nf'  
+include { ApplyBQSR		} from '../../modules/05.0_Bqsr.nf'    
+include { IndexRecalBam		} from '../../modules/05.0_Bqsr.nf'
 
-include { BigWig		} from '../../modules/4_BamToBigWig.nf'
-include { BigWigCoveragePlots	} from '../../modules/4_BigWigPlotting.nf'
+include { AlignmentMetrics	} from '../../modules/04.1_BamMetrics.nf'
+include { InsertMetrics		} from '../../modules/04.1_BamMetrics.nf'
+include { GcBiasMetrics 	} from '../../modules/04.1_BamMetrics.nf'
+include { Qualimap		} from '../../modules/04.1_BamMetrics.nf'
 
-include { AlignmentMetrics	} from '../../modules/4_BamMetrics.nf'
-include { InsertMetrics		} from '../../modules/4_BamMetrics.nf'
-include { GcBiasMetrics 	} from '../../modules/4_BamMetrics.nf'
-include { Qualimap		} from '../../modules/4_BamMetrics.nf'
+include { BigWig		} from '../../modules/04.2_BamToBigWig.nf'
+include { BigWigCoveragePlots	} from '../../modules/04.3_BigWigPlotting.nf'
+
+
 
 
 workflow BASE_QU_SCO_RECA {

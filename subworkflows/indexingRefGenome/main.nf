@@ -3,11 +3,11 @@
 include { DelMoroWelcome 	  } from '../../.logos'    
 include { DelMoroINXRefenceOutput } from '../../.logos'    
 
-include { DownloadIgenomes 	  } from '../../modules/3_ReferenceIndexing.nf' 
-include { CreateIndexBwaMem2 	  } from '../../modules/3_ReferenceIndexing.nf'     
-include { CreateIndex  	   	  } from '../../modules/3_ReferenceIndexing.nf' 
-include { CreateDictionary 	  } from '../../modules/3_ReferenceIndexing.nf' 
-include { CreateIndexSamtools  	  } from '../../modules/3_ReferenceIndexing.nf' 
+include { DownloadIgenomes 	  } from '../../modules/03.0_ReferenceIndexing.nf' 
+include { CreateIndexBwaMem2 	  } from '../../modules/03.0_ReferenceIndexing.nf'     
+include { CreateIndex  	   	  } from '../../modules/03.0_ReferenceIndexing.nf' 
+include { CreateDictionary 	  } from '../../modules/03.0_ReferenceIndexing.nf' 
+include { CreateIndexSamtools  	  } from '../../modules/03.0_ReferenceIndexing.nf' 
 
 workflow INDEXING_REF_GENOME {
     take:

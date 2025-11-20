@@ -3,8 +3,8 @@
 include { DelMoroWelcome	} from '../../.logos'	
 include { DelMoroRAWQCOutput	} from '../../.logos'	
 
-include { FastqQc		} from '../../modules/1_RawReadsQualCtrl.nf' 
-include { ReadsMultiqc		} from '../../modules/1_RawReadsQualCtrl.nf' 
+include { FastqQc		} from '../../modules/01.0_RawReadsQualCtrl.nf' 
+include { ReadsMultiqc		} from '../../modules/01.0_RawReadsQualCtrl.nf' 
 
 workflow QC_RAW_READS {
     take:

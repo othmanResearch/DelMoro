@@ -3,8 +3,8 @@
 include { DelMoroWelcome	} from '../../../../.logos'
 include { DelMoroVepAnnot	} from '../../../../.logos'  
 	
-include { VepAnnotation		} from '../../../../modules/8_VepAnnotate.nf'  
-include { ExtractImpactVariant	} from '../../../../modules/9_SoTerms.nf'  
+include { VepAnnotation		} from '../../../../modules/07.1_VepAnnotate.nf'  
+include { ExtractImpactVariant	} from '../../../../modules/07.2_SoTerms.nf'  
 
     // Map of SO terms to impact level
     def impact_map = [

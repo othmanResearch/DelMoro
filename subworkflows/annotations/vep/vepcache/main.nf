@@ -3,7 +3,7 @@
 include { DelMoroWelcome	} from '../../../../.logos'
 include { DelMoroVepCache	} from '../../../../.logos'
 	
-include { DownloadVepCache	} from '../../../../modules/7_VepCacheDownload.nf'  
+include { DownloadVepCache	} from '../../../../modules/07.0_VepCacheDownload.nf'  
 
 workflow VEP_CACHE {
     take:
