@@ -16,8 +16,7 @@ process BigWig {
         : "mgibio/deeptools:3.5.3"}"
       
     input: 
-    tuple val(patient_id), path(bam)
-    tuple val(patient_id), path(bamIdx)
+    tuple val(patient_id), path(bam), path(bamIdx)
  	
     output: 
     tuple val(patient_id), path("*.bw")

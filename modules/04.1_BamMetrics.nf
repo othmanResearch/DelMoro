@@ -13,7 +13,7 @@ process AlignmentMetrics {
         : "broadinstitute/gatk:latest"}"
 
     input:
-    tuple val(patient_id), path(bam)
+    tuple val(patient_id), path(bam), path(bamidx)
     path ref
 
     output:
@@ -41,7 +41,7 @@ process InsertMetrics {
         : "broadinstitute/gatk:latest"}"
 
     input:
-    tuple val(patient_id), path(bam)
+    tuple val(patient_id), path(bam), path(bamidx)
 
     output:
     tuple val(patient_id), path("*.insert_size_metrics.txt")
@@ -69,7 +69,7 @@ process GcBiasMetrics {
         : "broadinstitute/gatk:latest"}"
 
     input:
-    tuple val(patient_id), path(bam)
+    tuple val(patient_id), path(bam), path(bamidx)
     path ref
 
     output:
@@ -93,23 +93,27 @@ process GcBiasMetrics {
 process Qualimap {
     tag "RUNNING QUALIMAP BAMQC FOR QC REPORT"
     publishDir "${params.outdir}/Mapping/BamMetrics/Qualimap/", mode: "copy"
-    cpus "${params.pcpus}"
-
+    memory { 8.GB }
     conda "bioconda::qualimap==2.3"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://pegi3s/qualimap:latest"
         : "pegi3s/qualimap:latest"}"
 
     input:
-    tuple val(patient_id), path(bam)
+    tuple val(patient_id), path(bam), path(bamidx)
 
     output:
     tuple val(patient_id), path("${bam.baseName}_qualimap_report")
 
     script:
+    def Mmem = (task.memory.mega * 0.7).intValue() + 'M'
+
     """
     mkdir ${bam.baseName}_qualimap_report
-    qualimap bamqc \\
+    qualimap \\
+        --java-mem-size=$Mmem \\
+        bamqc \\
+        -nt ${params.pcpus} \\
         -bam ${bam} \\
         -outdir ${bam.baseName}_qualimap_report \\
         -outformat PDF:HTML

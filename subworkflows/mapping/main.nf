@@ -54,13 +54,13 @@ workflow ALIGN_TO_REF_GENOME {
 	      	
 	    if (params.report) {
 	    	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
-		BamCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
-		BigWig		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+		BamCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
+		BigWig		(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    	BigWigCoveragePlots (BigWig.out, params.mindepth, params.saveImg)
-		AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
-	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )
-	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
-	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam )
+		AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
+	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
+	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
+	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
 	    }
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
@@ -80,13 +80,13 @@ workflow ALIGN_TO_REF_GENOME {
 	    
 	    if (params.report) {
 	    	GenerateStat 		(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
-	   	BamTargetCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out.IDXBAM, target )
-	   	BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+	   	BamTargetCoverage 	(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) .IDXBAM, target )
+	   	BigWig			(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-	    	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
-	    	InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
-	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
-		Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam	  )
+	    	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
+	    	InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) 	  )
+	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
+		Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) 	  )
 	    }
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
@@ -109,12 +109,12 @@ workflow ALIGN_TO_REF_GENOME {
 	    
 	    if (params.report) {
 		GenerateStat		(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
-	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)	 
+	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )	 
 	        BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-		AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
-	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )
-	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
-	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam )
+		AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
+	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
+	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
+	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
 	    }
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
@@ -148,13 +148,13 @@ workflow ALIGN_TO_REF_GENOME {
 	    
 	    if (params.report) { 
 	     	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    	BamCoverage		(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
-	    	BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out )
+	    	BamCoverage		(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
+	    	BigWig			(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg )
-	 	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
-	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
-	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
-	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam	  )
+	 	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
+	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
+	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
+	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    }
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
@@ -175,13 +175,13 @@ workflow ALIGN_TO_REF_GENOME {
 	    
 	    if (params.report) {
 	    	GenerateStat	(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    	BamTargetCoverage	(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out,target	)
-	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)		 
+	    	BamTargetCoverage	(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) ,target	)
+	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )		 
 	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-	       	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
-	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam	  )
-	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
-	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam	  )
+	       	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
+	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
+	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
+	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    }
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
@@ -203,12 +203,12 @@ workflow ALIGN_TO_REF_GENOME {
    
 	    if (params.report) {
 	    	GenerateStat		(AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam )
-	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam,IndexBam.out)
+	        BigWig			(MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    	BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
-	      	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel )
-	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam )
-	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam, ref_gen_channel ) 
-	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam )
+	      	AlignmentMetrics( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
+	        InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
+	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
+	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    }
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }

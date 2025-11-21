@@ -12,8 +12,7 @@ process BamCoverage {
         : "quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2"}"
 
     input:
-    tuple val(patient_id), path(BamFile)
-    tuple val(patient_id), path(bamidx)
+    tuple val(patient_id), path(BamFile), path(bamidx)
 
     output:
     tuple val(patient_id), path("*_coverage.bed")
@@ -37,8 +36,7 @@ process BamTargetCoverage {
         : "quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2"}"
 
     input:
-    tuple val(patient_id), path(BamFile)
-    tuple val(patient_id), path(bamidx)
+    tuple val(patient_id), path(BamFile), path(bamidx)
     path target
 
     output:
