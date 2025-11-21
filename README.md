@@ -80,7 +80,7 @@ nextflow run main.nf
     --input  
     --reference   | [--igenome ]   
     [--aligner bwamem2]  
-    [--mode onlyVCF|cohortGVCF]  
+    [--mode cohort]  
     [--bqsr]  
     [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
 ~~~
