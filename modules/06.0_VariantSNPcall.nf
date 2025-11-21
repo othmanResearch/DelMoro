@@ -82,7 +82,7 @@ process CombineGvcfs {
     tuple val(patient_id), path(GvcfFiles), path(IDXofGvcf)
     
     output:
-    tuple val(patient_id), path("Cohort.g.vcf.gz"), path("*.{tbi,idx}")	, emit: "CohortVcf"
+    tuple val(patient_id), path("cohort_delMoro-g.vcf.gz"), path("*.{tbi,idx}")	, emit: "CohortVcf"
     
     script:
     """
@@ -111,7 +111,7 @@ process GenotypeGvcfs {
     tuple val(patient_id), path(CombinedFile), path(gzidx)
     
     output:
-    tuple val(patient_id), path("Cohort.g.Genotypes.vcf.gz"), path("*.{tbi,idx}")	, emit: "CombinedGENOTYPES"
+    tuple val(patient_id), path("cohort_delMoro.vcf.gz"), path("*.{tbi,idx}")	, emit: "CombinedGENOTYPES"
     
     script:
     """
