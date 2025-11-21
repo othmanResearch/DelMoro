@@ -50,15 +50,34 @@ include {DelMoroHelp	} 	from './.logos'
     // used for base recalibration
     MappedReads 	= params.bam 		? Channel.fromPath(params.bam, checkIfExists: false)
                                    			  .splitCsv(header: true)
-                                    		  	   .map { row -> tuple(row.patient_id, file(row.BamFile)) }
-                               	     		  	    .toSortedList { a, b -> a[0] <=> b[0] }   	 
-                                      		   	     .flatMap { it } 							: Channel.empty()
+							   .map { row ->
+							       def bam       = file(row.BamFile)
+							       def indexPath = bam.toString() + '.bai'
+							       def indexFile = file(indexPath)
+
+								  if (!indexFile.exists()) {
+								      log.warn "Index file missing for BAM: ${bam}. Expected: ${indexPath}"
+								      indexFile = null
+								      }
+							       tuple(row.patient_id, bam, indexFile)
+							       
+							   }.toSortedList { a, b -> a[0] <=> b[0] }   	 
+                                      		   	    .flatMap { it } 							: Channel.empty()
     // used for variant calling
     ToVarCall		= params.tovarcall      ? Channel.fromPath(params.tovarcall, checkIfExists: false)
                                    			  .splitCsv(header: true)
-                                    		  	   .map { row -> tuple(row.patient_id, file(row.BamFile)) }
-                               	     		  	    .toSortedList { a, b -> a[0] <=> b[0] }   	 
-                                      		   	     .flatMap { it } 							: Channel.empty()
+							   .map { row ->
+							       def bam       = file(row.BamFile)
+							       def indexPath = bam.toString() + '.bai'
+							       def indexFile = file(indexPath)
+
+								  if (!indexFile.exists()) {
+								      log.warn "Index file missing for BAM: ${bam}. Expected: ${indexPath}"
+								      indexFile = null
+								      }
+							       tuple(row.patient_id, bam, indexFile)
+							   }.toSortedList { a, b -> a[0] <=> b[0] }   	 
+                                      		   	    .flatMap { it } 							: Channel.empty()
     						
   // target bed file to extract coverage 
   Target		= params.bedtarget	? Channel.fromPath(params.bedtarget, checkIfExists: false).first()		: Channel.empty()      
@@ -96,11 +115,6 @@ include {DelMoroHelp	} 	from './.logos'
     // SamtoolsIndex
     SamtIdxRef    	= params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.fai", checkIfExists: false).first()			: Channel.empty() 
        		
-    // Bam Files Index
-    
- 
-    IdxBam     		= params.bamindex	? Channel.fromPath(params.bamindex, checkIfExists: false)  			: Channel.empty()
-
 
  
   // Vep Annotations Channels
@@ -169,7 +183,6 @@ workflow {
 	 	
 	DelMoroFullSw(   RefGenChannel
 		 	,ReadsToBeAligned
-		 	,IdxBam
 		 	,Target
 		 	,KnownSite1
 		 	,KnownSite2  
@@ -187,7 +200,6 @@ workflow {
 		 	,DictIdxRef
 		 	,SamtIdxRef
 		 	,MappedReads
-		 	,IdxBam
 		 	,KnownSite1
 		 	,KnownSite2
 		 	,ToVarCall

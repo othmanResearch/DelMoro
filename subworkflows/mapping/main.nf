@@ -62,9 +62,11 @@ workflow ALIGN_TO_REF_GENOME {
 	        GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
 	        Qualimap	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
 	    }
+	    
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
-	    bamIdx = IndexBam.out   
+	    bamIdx = IndexBam.out  
+	    bamWithIdx = bams.join(bamIdx)
 	// Case: CHECK COVERAGE IN TARGETD REGION FROM BED FILE 
 
 	} else if ( referFileChannel 	!= null && 
@@ -91,7 +93,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
 	    bamIdx = IndexBam.out
-	
+            bamWithIdx = bams.join(bamIdx)
 	// Case: Region specified Extract BAM REGION FILE
 	
 	} else if ( referFileChannel 	!= null && 
@@ -119,7 +121,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
 	    bamIdx = IndexBam.out
-
+	    bamWithIdx = bams.join(bamIdx)
 	} else {  
 	    DelMoroWelcome()
 	    print("\033[31m Please specify valid parameters:\n"	)
@@ -130,8 +132,9 @@ workflow ALIGN_TO_REF_GENOME {
 	    print("  --aligner bwamem2 , Default bwa ( not to be mentionned ) \n"	)
 	    print("For details, run: nextflow main.nf --exec params\n\033[37m"	)
 	}
- bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
+    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
     bamIdx = IndexBam.out
+    bamWithIdx = bams.join(bamIdx)
     } else  if ( params.aligner == "bwamem2" ) {
  
 	if ( referFileChannel 	!= null && 
@@ -159,7 +162,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
 	    bamIdx = IndexBam.out
-
+	    bamWithIdx = bams.join(bamIdx)
 	// Case: CHECK COVERAGE IN TARGETD REGION FROM BED FILE 
 
 	} else if ( referFileChannel 	!= null && 
@@ -186,7 +189,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
 	    bamIdx = IndexBam.out
-
+	    bamWithIdx = bams.join(bamIdx)
 	// Case: Region specified Extract BAM REGION FILE
 	
     } else if ( referFileChannel 	!= null && 
@@ -213,7 +216,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    emit : 
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
 	    bamIdx = IndexBam.out
-
+	    bamWithIdx = bams.join(bamIdx)
 	    } else {  
 		
 	    DelMoroWelcome()
@@ -227,6 +230,7 @@ workflow ALIGN_TO_REF_GENOME {
 	}
     bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
     bamIdx = IndexBam.out
+    bamWithIdx = bams.join(bamIdx)    
     } else {  
 	DelMoroWelcome()
 	print("\033[31m Please specify valid parameters:\n")
@@ -242,6 +246,7 @@ workflow ALIGN_TO_REF_GENOME {
     emit : 
     bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
     bamIdx = IndexBam.out
+    bamWithIdx = bams.join(bamIdx)
   
 }
 

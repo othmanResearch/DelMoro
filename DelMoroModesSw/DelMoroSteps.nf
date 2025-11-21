@@ -40,7 +40,6 @@ workflow DelMoroSteps {
     DictIdxRef
     SamtIdxRef
     MappedReads
-    IdxBam
     KnownSite1
     KnownSite2
     ToVarCall
@@ -81,11 +80,11 @@ workflow DelMoroSteps {
      
     } else if (params.exec == 'bqsr') {
            
-    BASE_QU_SCO_RECA(RefGenChannel,DictIdxRef,SamtIdxRef,MappedReads,IdxBam,KnownSite1,KnownSite2 )
+    BASE_QU_SCO_RECA(RefGenChannel,DictIdxRef,SamtIdxRef,MappedReads,KnownSite1,KnownSite2 )
                
     } else if (params.exec == 'callsnp') {    // Call snp
               
-    CALL_SNPs_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall,IdxBam) 
+    CALL_SNPs_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall) 
           
     } else if (params.exec == 'filter') {
     

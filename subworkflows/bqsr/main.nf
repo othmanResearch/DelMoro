@@ -3,21 +3,21 @@
 include { DelMoroWelcome	} from '../../.logos'
 include { DelMoroBQSROutput	} from '../../.logos'
 
-include { DownloadKns1		} from '../../modules/05.0_Bqsr.nf'  
-include { DownloadKns2		} from '../../modules/05.0_Bqsr.nf'  
+include { DownloadKns1                  } from '../../modules/05.0_Bqsr.nf'  
+include { DownloadKns2                  } from '../../modules/05.0_Bqsr.nf'  
 include { IndexVcf as IndexKNownSite1	} from '../../modules/05.0_Bqsr.nf'  
 include { IndexVcf as IndexKNownSite2	} from '../../modules/05.0_Bqsr.nf'  
-include { BaseRecalibrator	} from '../../modules/05.0_Bqsr.nf'  
-include { ApplyBQSR		} from '../../modules/05.0_Bqsr.nf'    
-include { IndexRecalBam		} from '../../modules/05.0_Bqsr.nf'
+include { BaseRecalibrator              } from '../../modules/05.0_Bqsr.nf'  
+include { ApplyBQSR                     } from '../../modules/05.0_Bqsr.nf'    
+include { IndexRecalBam                 } from '../../modules/05.0_Bqsr.nf'
 
-include { AlignmentMetrics	} from '../../modules/04.1_BamMetrics.nf'
-include { InsertMetrics		} from '../../modules/04.1_BamMetrics.nf'
-include { GcBiasMetrics 	} from '../../modules/04.1_BamMetrics.nf'
-include { Qualimap		} from '../../modules/04.1_BamMetrics.nf'
+include { AlignmentMetrics              } from '../../modules/04.1_BamMetrics.nf'
+include { InsertMetrics                 } from '../../modules/04.1_BamMetrics.nf'
+include { GcBiasMetrics                 } from '../../modules/04.1_BamMetrics.nf'
+include { Qualimap                      } from '../../modules/04.1_BamMetrics.nf'
 
-include { BigWig		} from '../../modules/04.2_BamToBigWig.nf'
-include { BigWigCoveragePlots	} from '../../modules/04.3_BigWigPlotting.nf'
+include { BigWig                        } from '../../modules/04.2_BamToBigWig.nf'
+include { BigWigCoveragePlots           } from '../../modules/04.3_BigWigPlotting.nf'
 
 
 
@@ -28,7 +28,6 @@ workflow BASE_QU_SCO_RECA {
     dictREF
     samidxREF
     MappedReads  
-    IDXBAM
     knwonSite1
     knwonSite2
    
@@ -50,7 +49,7 @@ workflow BASE_QU_SCO_RECA {
  	params.ivcf2 	  == null && 
  	params.knownsite1 != null && 
  	params.knownsite2 != null) {
-           	
+
     	BaseRecalibrator	( ref_gen_channel
     	                         ,dictREF.collect()
     	                         ,samidxREF.collect()
@@ -58,8 +57,7 @@ workflow BASE_QU_SCO_RECA {
     	                         ,knwonSite1  // includes its index
     	                         ,knwonSite2  // includes its index
     	                         ) 
-    	                       
-    	                       
+    	           
         ApplyBQSR		(MappedReads.join(BaseRecalibrator.out.BQSR_Table) )	
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)    
 
@@ -75,7 +73,7 @@ workflow BASE_QU_SCO_RECA {
     emit:
     reaclBam = ApplyBQSR.out.recal_bam   
     reaclIdx = IndexRecalBam.out
-    
+    reaclBamWithIdx = reaclBam.join(reaclIdx)
     } else if ( params.ivcf1		!= null && 
     		params.ivcf2 		!= null && 
       		params.knownsite1 	== null && 
@@ -117,6 +115,7 @@ workflow BASE_QU_SCO_RECA {
 	emit:
 	reaclBam = ApplyBQSR.out.recal_bam   
 	reaclIdx = IndexRecalBam.out
+        reaclBamWithIdx = reaclBam.join(reaclIdx)
     } else { 
  
     error("\033[31m Please specify valid parameters:\n   --reference option (--reference reference)\n   ${params.fullmode ? '' : '--bam option (--bam CSVs/4_samplesheetForBamFiles.csv)'}\n Either:\n   --knownsite1 and --knownsite2 options\n OR   \n   --ivcf1 and --ivcf2 options\nFor details, run: nextflow main.nf --exec params\033[0m\n")
@@ -125,5 +124,6 @@ workflow BASE_QU_SCO_RECA {
     emit:
     reaclBam = ApplyBQSR.out.recal_bam   
     reaclIdx = IndexRecalBam.out  
+    reaclBamWithIdx = reaclBam.join(reaclIdx)
 }
 

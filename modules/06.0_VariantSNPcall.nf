@@ -15,8 +15,7 @@ process CallVariant {
     path ref
     path dic
     path fai
-    tuple val(patient_id), path(ReclBamFile) 
-    path ReclBamBai
+    tuple val(patient_id), path(ReclBamFile), path(Bamidx)
 
     output:
     tuple val(patient_id), path("${ReclBamFile.baseName}.HC.vcf.gz"), path("*.{tbi,idx}") , emit: "CallVariantvcf"
@@ -46,8 +45,7 @@ process CreateGVCF {
     path ref
     path dic
     path fai
-    tuple val(patient_id), path(ReclBamFile)
-    path ReclBamBai
+    tuple val(patient_id), path(ReclBamFile), path(Bamidx)
     
     output:
     tuple val(patient_id), path("*.g.vcf.gz"), path("*.{tbi,idx}")	, emit: "g_vcf_Recal"

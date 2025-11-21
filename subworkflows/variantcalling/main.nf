@@ -17,7 +17,6 @@ workflow CALL_SNPs_GATK {
     dictREF
     samidxREF
     BamToVarCall
-    IDXBAM
  
     main: 
     if (params.stepmode && params.exec == "callsnp" ) { DelMoroVarCallOutput() }
@@ -36,11 +35,21 @@ workflow CALL_SNPs_GATK {
     if  (params.mode 		== null && 
    	 referFileChannel 	!= null ){
 	
+	CallVariant 	(  ref_gen_channel
+    	                  ,dictREF.collect()
+    	                  ,samidxREF.collect()
+    	                  ,BamToVarCall ) 
+ 
+	///// Metrics Extracting from vcfs 
+	GenerateStats	(CallVariant.out.CallVariantvcf)
+
+    } else if ( referFileChannel 	!= null && 
+		params.mode 		== 'cohort' ){	// generate vcf for all inputs 
+	
 	CreateGVCF	( ref_gen_channel
 	                 ,dictREF.collect()
 	                 ,samidxREF.collect()
-	                 ,BamToVarCall
-	                 ,IDXBAM.collect() )
+	                 ,BamToVarCall )
 
     
     
@@ -52,25 +61,14 @@ workflow CALL_SNPs_GATK {
 	GenotypeGvcfs 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),CombineGvcfs.out.CohortVcf )
 
 	GenerateStats	( GenotypeGvcfs.out )  
-	
-    } else if ( referFileChannel 	!= null && 
-		params.mode 		== 'onlyvcf' ){	// generate vcf for all inputs 
 
-    	CallVariant 	(  ref_gen_channel
-    	                  ,dictREF.collect()
-    	                  ,samidxREF.collect()
-    	                  ,BamToVarCall
-    	                  ,IDXBAM.collect() ) 
- 
-	///// Metrics Extracting from vcfs 
-	GenerateStats	(CallVariant.out.CallVariantvcf)
  			
     }  else { 
 	DelMoroWelcome() 
 	print("\033[31m Please specify valid parameters:\n" )
 	print(" --reference option (--reference reference ) \n" )
 	print(" --tovarcall option (--tovarcall CSVs/5_samplesheetReclibFiles.csv )\n "	)
-	print("optional : --mode onlyvcf  ( Default : null --> will generate a cohortGVCF file )\n " )  
+	print("optional : --mode cohort  ( Default : null --> will generate a single vcfs )\n " )  
 	print("For details, run: nextflow main.nf --exec params\n\033[37m" )
     } 
 }

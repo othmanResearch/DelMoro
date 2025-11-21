@@ -14,7 +14,6 @@ workflow DelMoroFullSw {
     take: 
     RefGenChannel
     ReadsToBeAligned
-    ReadsIndexes
     Target
     KnownSite1
     KnownSite2
@@ -37,8 +36,7 @@ workflow DelMoroFullSw {
             INDEXING_REF_GENOME.out.reference_fasta,
             INDEXING_REF_GENOME.out.gatkDict,
             INDEXING_REF_GENOME.out.samtoolsIndex,
-            ALIGN_TO_REF_GENOME.out.bams,
-            ALIGN_TO_REF_GENOME.out.bamIdx,
+            ALIGN_TO_REF_GENOME.out.bamWithIdx,
             KnownSite1,
             KnownSite2
         )
@@ -47,8 +45,7 @@ workflow DelMoroFullSw {
             INDEXING_REF_GENOME.out.reference_fasta,
             INDEXING_REF_GENOME.out.gatkDict,
             INDEXING_REF_GENOME.out.samtoolsIndex,
-            BASE_QU_SCO_RECA.out.reaclBam,
-            BASE_QU_SCO_RECA.out.reaclIdx.map { id, file -> file }
+            BASE_QU_SCO_RECA.out.reaclBamWithIdx
         )
 
     } else {
@@ -66,8 +63,7 @@ workflow DelMoroFullSw {
             INDEXING_REF_GENOME.out.reference_fasta,
             INDEXING_REF_GENOME.out.gatkDict,
             INDEXING_REF_GENOME.out.samtoolsIndex,
-            ALIGN_TO_REF_GENOME.out.bams,
-            ALIGN_TO_REF_GENOME.out.bamIdx.map { id, file -> file }
+            ALIGN_TO_REF_GENOME.out.bamWithIdx
         )
     }
 }
