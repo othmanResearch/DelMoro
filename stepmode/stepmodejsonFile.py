@@ -55,7 +55,7 @@ class DelMoroRunnerThread(QThread):
                 return
 
             # Build BASE Nextflow command
-            cmd = ["nextflow", "run", self.workflow, "-profile", self.profile, "--cpus", str(self.cores), "--stepmode"]
+            cmd = ["nextflow", "run", self.workflow, "-profile", self.profile, "--pcpus", str(self.cores), "--stepmode"]
 
             # Add params file if not in test profile and exists
             if not isTestProfile and self.paramsFile:
@@ -345,8 +345,7 @@ class sMJsonFilesPage(QWidget):
         self.callsnpDropdown = QComboBox()              # Dropdown for SNP calling modes
         self.callsnpDropdown.addItems([
             "Defaults",     # Default, no special option
-            "onlyVCF",      # Output only final VCF
-            "cohortGVCF"    # Generate cohort GVCFs
+            "cohort"    # Generate cohort GVCFs
         ])
         sidebarLayout.addWidget(self.callsnpDropdown)  # Add dropdown to layout
 

@@ -64,7 +64,7 @@ class FullParamsRunnerThread(QThread):
                 return
 
             # Base Nextflow command components
-            cmd = ["nextflow", "run", self.workflow, "-profile", self.profile, "--cpus", str(self.cores), "--stepmode"]
+            cmd = ["nextflow", "run", self.workflow, "-profile", self.profile, "--pcpus", str(self.cores), "--stepmode"]
 
             # Check if test profile is selected (simplified execution)
             if "test" in self.profile.split(","):
@@ -517,7 +517,7 @@ class sMFullParamsPage(QWidget):
         self.callsnpLabel = QLabel("Callsnp Option:")
         sidebarLayout.addWidget(self.callsnpLabel)
         self.callsnpDropdown = QComboBox()
-        self.callsnpDropdown.addItems(["Defaults", "onlyVCF", "cohortGVCF"])
+        self.callsnpDropdown.addItems(["Defaults", "cohort"])
         self.callsnpDropdown.setToolTip("Variant calling output mode")
         sidebarLayout.addWidget(self.callsnpDropdown)
 

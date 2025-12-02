@@ -67,7 +67,7 @@ class PipelineRunnerThread(QThread):
             if  self.enable_metrics:
                 cmd.append("--report")
 
-            cmd.extend(["--cpus", str(self.cores)])
+            cmd.extend(["--pcpus", str(self.cores)])
 
             self.logSignal.emit(f"Running command: {' '.join(cmd)}\n")
 
@@ -368,7 +368,7 @@ class fMFullParamsPage(QWidget):
 
         self.variantModeLabel = QLabel("Select variant calling mode:")
         self.variantModeCombo = QComboBox()
-        self.variantModeCombo.addItems(["defaults", "onlyVCF", "cohortGVCF"])
+        self.variantModeCombo.addItems(["defaults", "cohort"])
 
         self.variantModeLayout.addWidget(self.variantModeLabel)
         self.variantModeLayout.addWidget(self.variantModeCombo)
