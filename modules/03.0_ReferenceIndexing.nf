@@ -94,8 +94,8 @@ process CreateDictionary {
     path ref
 
     output:
-    path "${ref.simpleName.replaceAll(/\.fa(sta)?$/, '')}.dict", emit: gatkDict
-
+    path "${ref.getBaseName(ref.name.endsWith('.gz')? 2: 1)}.dict", emit: gatkDict
+    
     script:
     """
     gatk CreateSequenceDictionary --REFERENCE ${ref}   
