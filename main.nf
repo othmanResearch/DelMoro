@@ -107,16 +107,15 @@ include {DelMoroHelp	} 	from './.logos'
   // Indexes Channels 
 
     // Aligner Indexs Bwa mem2 
-    AlignIdxRef = params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}", checkIfExists: false ) : Channel.empty()
+    AlignIdxRef = params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}", checkIfExists: false )	: Channel.empty()
    	
     //  Dictionary Indexs Bwa mem2 
-    DictIdxRef		= params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.dict", checkIfExists: false)				: Channel.empty()
+    DictIdxRef		= params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.dict", checkIfExists: false)			      	: Channel.empty()
        	
     // SamtoolsIndex
-    SamtIdxRef    	= params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.fai", checkIfExists: false).first()			: Channel.empty() 
-       		
+    SamtIdxRef = params.reference ? Channel.fromPath("${file(params.reference).parent}/${file(params.reference).name}.{fai,gzi}",checkIfExists: false )       	: Channel.empty()
 
- 
+       		 
   // Vep Annotations Channels
     
  

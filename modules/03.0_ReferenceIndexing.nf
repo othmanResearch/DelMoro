@@ -94,11 +94,11 @@ process CreateDictionary {
     path ref
 
     output:
-    path "${ref.baseName}*.dict", emit: "gatkDict"
+    path "${ref.simpleName.replaceAll(/\.fa(sta)?$/, '')}.dict", emit: gatkDict
 
     script:
     """
-    gatk CreateSequenceDictionary --REFERENCE ${ref}
+    gatk CreateSequenceDictionary --REFERENCE ${ref}   
     """
 }
 
@@ -121,10 +121,10 @@ process CreateIndexSamtools {
     path ref
 
     output:
-    path "${ref.baseName}*.fai", emit: "samtoolsIndex"
+    path "${ref}*.{fai,gzi}", emit: "samtoolsIndex"
 
     script:
     """
-    samtools faidx ${ref}  --output ${ref}.fai                         
+    samtools faidx ${ref}                           
     """
 }
