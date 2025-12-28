@@ -18,15 +18,23 @@ process CallVariant {
     tuple val(patient_id), path(ReclBamFile), path(Bamidx)
 
     output:
-    tuple val(patient_id), path("${ReclBamFile.baseName}.HC.vcf.gz"), path("*.{tbi,idx}") , emit: "CallVariantvcf"
+    tuple val(patient_id), path("${ReclBamFile.baseName}.*.HC.vcf.gz"), path("*.{tbi,idx}") , emit: "CallVariantvcf"
 
     script:
-    """
+    // Ternary-based interval selection
+    def intervals = params.bedtarget ? params.bedtarget :
+                    params.region    ? params.region    : ""
+
+    // Output label
+    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
+                     params.region    ? params.region.split(':')[0]         : "full"
+    """                              
     gatk HaplotypeCaller \\
         --native-pair-hmm-threads ${task.cpus} \\
         --reference ${ref} \\
         --input ${ReclBamFile} \\
-        --output ${ReclBamFile.baseName}.HC.vcf.gz
+        --output ${ReclBamFile.baseName}.${region_tag}.HC.vcf.gz \\
+        ${intervals ? "-L ${intervals}" : ""}
     """
 }
 
@@ -51,15 +59,25 @@ process CreateGVCF {
     tuple val(patient_id), path("*.g.vcf.gz"), path("*.{tbi,idx}")	, emit: "g_vcf_Recal"
 
     script:
+    // Ternary-based interval selection
+    def intervals = params.bedtarget ? params.bedtarget :
+                    params.region    ? params.region    : ""
+
+    // Output label
+    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
+                     params.region    ? params.region.split(':')[0]         : "full"
+       
     """
     gatk HaplotypeCaller \\
-	--native-pair-hmm-threads ${task.cpus} \\
-	--reference ${ref} \\
-	--input ${ReclBamFile} \\
-	--output ${ReclBamFile.baseName}.g.vcf.gz \\
-	--emit-ref-confidence GVCF
+        --native-pair-hmm-threads ${task.cpus} \\
+        --reference ${ref} \\
+        --input ${ReclBamFile} \\
+        --output ${ReclBamFile.baseName}.${region_tag}.g.vcf.gz \\
+        --emit-ref-confidence GVCF \\
+        ${intervals ? "-L ${intervals}" : ""}
     """
 }
+
 
  
 // Combining GVCFs 
@@ -80,16 +98,25 @@ process CombineGvcfs {
     tuple val(patient_id), path(GvcfFiles), path(IDXofGvcf)
     
     output:
-    tuple val(patient_id), path("cohort_delMoro-g.vcf.gz"), path("*.{tbi,idx}")	, emit: "CohortVcf"
+    tuple val(patient_id), path("cohort_delMoro-*.g.vcf.gz"), path("*.{tbi,idx}"), emit: "CohortVcf"
     
     script:
+    // Determine region tag (match previous logic)
+    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
+                     params.region    ? params.region.split(':')[0] :
+                                         "full"
+
     """
     gatk CombineGVCFs \\
 	--reference ${ref} \\
 	--variant ${GvcfFiles.join(' --variant ')} \\
-	--output cohort_delMoro-g.vcf.gz
+        --output cohort_delMoro-${region_tag}.g.vcf.gz
     """
 }
+ 
+
+
+
 
 // Generating Genotypes of GVCFs
 
@@ -109,13 +136,19 @@ process GenotypeGvcfs {
     tuple val(patient_id), path(CombinedFile), path(gzidx)
     
     output:
-    tuple val(patient_id), path("cohort_delMoro.vcf.gz"), path("*.{tbi,idx}")	, emit: "CombinedGENOTYPES"
+    tuple val(patient_id), path("cohort_delMoro-*.vcf.gz"), path("*.{tbi,idx}")	, emit: "CombinedGENOTYPES"
     
     script:
+    // Determine region tag (same as previous processes)
+    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
+                     params.region    ? params.region.split(':')[0] :
+                                         "full"
+
     """
     gatk GenotypeGVCFs \\
 	--reference ${ref} \\
 	--variant ${CombinedFile} \\
-	--output cohort_delMoro.vcf.gz
+        --output cohort_delMoro-${region_tag}.vcf.gz
     """
 }
+
