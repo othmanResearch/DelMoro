@@ -9,8 +9,8 @@ This section provides a comprehensive overview of all configurable parameters av
 ---
 
 ## General Settings
-- `--mcpus` = Maximum number of CPUs available to the entire pipeline. <span title="Default: 4">⊕</span>
-- `--pcpus` = Number of CPUs allocated per process. <span title="Default: 4">⊕</span>
+- `--mcpus` = Maximum number of CPUs available to the entire pipeline. <span title="Default: 1">⊕</span>
+- `--pcpus` = Number of CPUs allocated per process. <span title="Default: 1">⊕</span>
 - `--outdir` = Directory where all outputs will be saved. <span title="Default: ./outdir">⊕</span>
 
 ???+ note "💡 Explanation"
@@ -76,13 +76,6 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--tovarcall` = CSV with recalibrated BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">⊕</span>  
 - `--mode` = Output type: onlyvcf to generate a vcf for each input <span title="Default: null : generates a cohort gvcf ">⊕</span>  
  
-## Annotation (VEP)
-- `--species` = Species name for VEP cache. <span title="Default: null">⊕</span>  
-- `--cachetype` = VEP cache type (`refseq` or `merged`). <span title="Default: null">⊕</span>  
-- `--assembly` = Genome assembly version. <span title="Default: null">⊕</span>  
-- `--cachedir` = Path to VEP cache directory. <span title="Default: .vepcachedir">⊕</span>
-
-
 ## Filtering 
 - `--tofilter` = Path to the CSV file containing variants to filter. <span title="Default: null ">⊕</span>
 - `--QD` = Quality by Depth: variant confidence normalized by depth. <span title="Default: 2.0">⊕</span>
@@ -94,6 +87,12 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--ReadPosRankSumSNP` = Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (SNPs). <span title="Default: -8.0">⊕</span>
 - `--FSINDEL` = Fisher Strand p-value for strand bias (INDELs). <span title="Default: 200.0">⊕</span>
 - `--ReadPosRankSumINDEL` = Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (INDELs). <span title="Default: -20.0">⊕</span>
+
+## Annotation (VEP)
+- `--species` = Species name for VEP cache. <span title="Default: null">⊕</span>  
+- `--cachetype` = VEP cache type (`refseq` or `merged`). <span title="Default: null">⊕</span>  
+- `--assembly` = Genome assembly version. <span title="Default: null">⊕</span>  
+- `--cachedir` = Path to VEP cache directory. <span title="Default: .vepcachedir">⊕</span>
 
 ## Reporting 
 - `--metaPatients` = Csv of patiens' Metadata + vcf paths <span title="Default: null">⊕</span>

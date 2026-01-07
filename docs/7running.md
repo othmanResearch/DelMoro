@@ -433,9 +433,9 @@ You can either use your own VCF files or download reference sets automatically u
 ### Step 7: Variant Calling
 
 <div align="justify">
-This step performs variant calling using the final recalibrated BAM files.  
-By default, it generates a VCF file for each patient, extracts a variant table, filters SNPs, and automatically creates per-sample GVCF files.  
-You can modify the output behavior using the `--generate` flag:
+This step performs variant calling using the final raw/recalibrated BAM files.  
+By default, it generates a VCF file for each patient, extracts a variant metrics.  
+You can modify the output behavior using the `--mode` flag:
 </div>
 
 ---
@@ -443,44 +443,75 @@ You can modify the output behavior using the `--generate` flag:
 #### Default Mode
 
 ???+ note " 💡 **Default Behavior**:"
-    - Generates cohort VCF file for all input (patients)  
-    - Produces a single joint cohort .g.vcf file
-    - Useful for population-level variant analysis or joint genotyping 
+    - Skips GVCF creation  
+    - Outputs only the main VCF file, variant for each input
 
 <label>
-  <input type="checkbox" onchange="toggleCommand('cmd-call-default', this)">
+  <input type="checkbox" onchange="toggleCommand('cmd-varCall-Default', this)">
   <strong>Run Variant Calling (default)</strong>
 </label>
 
-<div id="cmd-call-default" class="step-command">
+<div id="cmd-varCall-Default" class="step-command">
 <pre><code>nextflow run main.nf --stepmode --exec callsnp \
   --reference Reference_Genome/reference.fa \
   --tovarcall CSVs/5_samplesheetReclibFiles.csv</code></pre>
 </div>
 
+ 
 ---
 
-#### Generate Only VCFs 
+#### Generate cohort VCF 
 
-???+ note " 💡 **Option:** `--generate onlyVCF`"
-    - Skips GVCF creation  
-    - Outputs only the main VCF file, variant for each input
+???+ note " 💡 **Option:** `--mode cohort`"
+    - Generates cohort VCF file for all input (patients)  
+    - Produces a single joint cohort .g.vcf file
+    - Useful for population-level variant analysis or joint genotyping 
 
 <label>
-  <input type="checkbox" onchange="toggleCommand('cmd-call-onlyvcf', this)">
-  <strong>Run Variant Calling (only VCF)</strong>
+  <input type="checkbox" onchange="toggleCommand('cmd-call-cohortvcf', this)">
+  <strong>Run cohort Variant Calling</strong>
 </label>
 
-<div id="cmd-call-onlyvcf" class="step-command">
+<div id="cmd-call-cohortvcf" class="step-command">
 <pre><code>nextflow run main.nf --stepmode --exec callsnp \
   --reference Reference_Genome/reference.fa \
   --tovarcall CSVs/5_samplesheetReclibFiles.csv \
-  --mode onlyvcf</code></pre>
+  --mode cohort</code></pre>
 </div>
 
 ---
+#### Targeted chromosome variant Calling 
 
-### Step 8: Variant Annotation
+???+ note " 💡 **Option:** `Targeted regions`"
+    - To target a chromosome or specific region `--region` option can be added
+        - e.g. --region chr20  
+        - e.g. --region chr20:start-end
+    - Use a bed file with `--bedtarget` option 
+        - e.g. --bedtarget my-bed-file.bed
+
+---
+
+### Step 8: Filtering
+
+???+ note "💡 VEP Cache Notes"
+    - This step applies variant filtering using the specified CSV file.
+    - Filtering option may be modified , to check default filtering parameters please [click on me](5parameters.md#filtering )
+
+<label>
+  <input type="checkbox" onchange="toggleCommand('cmd-filtering', this)">
+  <strong>Run Filtering</strong>
+</label>
+
+<div id="cmd-filtering" class="step-command">
+<pre><code>nextflow main.nf --stepmode --exec filter \
+  --tofilter CSVs/tofilter.csv [ `--QUAL 50` ]
+</code></pre>
+</div>
+
+
+---
+
+### Step 9: Variant Annotation
 
 This step adds functional information to your variants using **Ensembl VEP (Variant Effect Predictor)**.
 
@@ -545,7 +576,7 @@ This step adds functional information to your variants using **Ensembl VEP (Vari
   --cachedir .vepcachedir/</code></pre>
 </div>
 
-### Reporting 
+### Step 10: Reporting 
 - This step creates detailed reports from the vep annotated  VCF files. 
 
 <label>
@@ -560,19 +591,3 @@ This step adds functional information to your variants using **Ensembl VEP (Vari
 </code></pre>
 </div>
 
-
-
-### Filtering
-
-- This step applies variant filtering using the specified CSV file.
-
-<label>
-  <input type="checkbox" onchange="toggleCommand('cmd-filtering', this)">
-  <strong>Run Filtering</strong>
-</label>
-
-<div id="cmd-filtering" class="step-command">
-<pre><code>nextflow main.nf --stepmode --exec filter \
-  --tofilter CSVs/tofilter.csv
-</code></pre>
-</div>

@@ -10,16 +10,17 @@
 
 ## Inputs
 
-| Module              | Description                                                                                                                                               |
-|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Quality Control** | A CSV file listing the raw FASTQ files to be assessed. Supports only paired-end reads.                                                                    |
-| **Trimming**        | A CSV of reads to be trimmed. Includes optional adapter sequence file. Users may choose from various trimming tools such as Trimmomatic, fastp, or bbduk. |
-| **Reference Indexing** | A reference genome in FASTA format. Optionally, a preconfigured iGenomes identifier may be used.                                                          |
-| **Read Alignment**  | A reference genome and a set of trimmed FASTQ files. Alignment is performed per sample.                                                                   |
-| **BQSR**            | Two known-site VCF files used for recalibration, along with a list of BAM files to be processed.                                                          |
-| **Variant Calling** | Aligned BAM files and corresponding reference genome. Used to identify SNPs and other variants.                                                           |
-| **VEP Cache Setup** | Species name to retrieve the appropriate VEP cache. Assembly and cache type may also be specified if needed.                                              |
-| **VEP Annotation**  | A set of VCF files or a list of variant files to be annotated. Requires reference genome, species, and optional cache parameters.                         |
+| Module                 | Description                                                                                                                                              |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Quality Control**    | A CSV file listing the raw FASTQ files to be assessed. Supports only paired-end reads.                                                                   |
+| **Trimming**           | A CSV of reads to be trimmed. Includes optional adapter sequence file. Users may choose from various trimming tools such as Trimmomatic, fastp, or bbduk. |
+| **Reference Indexing** | A reference genome in FASTA format. Optionally, a preconfigured iGenomes identifier may be used.                                                         |
+| **Read Alignment**     | A reference genome and a set of trimmed FASTQ files. Alignment is performed per sample.                                                                  |
+| **BQSR**               | Two known-site VCF files used for recalibration, along with a list of BAM files to be processed.                                                         |
+| **Variant Calling**    | Aligned BAM files and corresponding reference genome. Used to identify SNPs and other variants.                                                          |
+| **Variant Filtering**  | Variants calling format files to be filtered based on SNP and INDEL thresholds.                                                                |
+| **VEP Cache Setup**    | Species name to retrieve the appropriate VEP cache. Assembly and cache type may also be specified if needed.                                             |
+| **VEP Annotation**     | A set of VCF files or a list of variant files to be annotated. Requires reference genome, species, and optional cache parameters.                        |
 
 **Configuration and Usage:** 🔗 [Parameter Details](5parameters.md) 🔗 [Configuration Files](6config.md)
  🔗 [Running the Pipeline](7running.md)
