@@ -1,32 +1,10 @@
 // Module files for DelMoro pipeline
  
-process IndexVcf {
-    tag "CREATING INDEX FOR VCF FILES"
-    publishDir "${params.outdir}/Variants/", mode: 'copy'
-
-    conda "bioconda::gatk4=4.4.0.0"
-    container "${workflow.containerEngine == 'singularity'
-        ? "docker://broadinstitute/gatk:latest"
-        : "broadinstitute/gatk:latest"}"
-
-    input:
-    tuple val(fileName), path (vcfFile)
-
-    output:
-    tuple val(fileName), path ("${vcfFile}.{tbi,idx}")
-
-    script:
-    """
-    gatk IndexFeatureFile \\
-	--input ${vcfFile} 
-    """
-}
-
 // Extract SNPs FROM RAW VCFs. 
 
 process SNPSelect {
     tag "EXTRACT SNP "
-    publishDir "${params.outdir}/Variants/", mode: 'copy'
+    publishDir "${params.outdir}/Variants/filtered", mode: 'copy', enabled: params.keepinter 
 
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
@@ -53,8 +31,7 @@ process SNPSelect {
 
 process FilterSNP {
     tag "FILTER SNP for sample: ${variants}"
-
-    publishDir "${params.outdir}/Variants/", mode: 'copy'
+    publishDir "${params.outdir}/Variants/filtered", mode: 'copy', enabled: params.keepinter 
 
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
@@ -90,7 +67,7 @@ process FilterSNP {
 
 process INDELSelect {
     tag "EXTRACT INDEL"
-    publishDir "${params.outdir}/Variants/", mode: 'copy'
+    publishDir "${params.outdir}/Variants/filtered", mode: 'copy', enabled: params.keepinter 
 
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
@@ -116,8 +93,7 @@ process INDELSelect {
 
 process FilterINDEL {
     tag "FILTER INDEL for sample: ${variants}"
-
-    publishDir "${params.outdir}/Variants/", mode: 'copy'
+    publishDir "${params.outdir}/Variants/filtered", mode: 'copy', enabled: params.keepinter 
 
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
@@ -141,4 +117,58 @@ process FilterINDEL {
         --output ${variants.getSimpleName()}.INDEL.filtered.vcf.gz
     """
 }
+
+process SortVCF {
+    tag "SORT ${vcf}."
+    publishDir "${params.outdir}/Variants/filtered", mode: 'copy', enabled: params.keepinter 
+
+    conda "bioconda::bcftools=1.21"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://firaszemzem/bcftools:1.21"
+        : "firaszemzem/bcftools:1.21"}"
+        
+    input:
+    tuple val(patient_id), path(vcf), path(vcfIdx)
+
+    output:
+    tuple val(patient_id), path("${vcf.getBaseName(vcf.name.endsWith('.gz')? 2: 1)}.sorted.vcf.gz"), path("${vcf.getBaseName(vcf.name.endsWith('.gz')? 2: 1)}.sorted.vcf.gz.{tbi,idx}")
+
+    script:
+    """
+    bcftools sort -Oz -o ${vcf.getBaseName(vcf.name.endsWith('.gz')? 2: 1)}.sorted.vcf.gz $vcf  
+    tabix -p vcf ${vcf.getBaseName(vcf.name.endsWith('.gz')? 2: 1)}.sorted.vcf.gz
+    """
+}
+
+
+
+// Merge Filtered VCF
+
+process mergeVCFs {
+    tag "MERGE FILTERED VCFS"
+    publishDir "${params.outdir}/Variants/filtered", mode: 'copy'
+    
+    conda "bioconda::bcftools=1.21"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://firaszemzem/bcftools:1.21"
+        : "firaszemzem/bcftools:1.21"}"
+
+    input:
+    tuple val(patient_id), path(snpsVcf), path(snpsIdx), path(indelsVcf), path(indelIdx)
+
+    output:
+    tuple val(patient_id), path("${patient_id}.filtered-merged.vcf.gz"), path("${patient_id}.filtered-merged.vcf.gz.{tbi,idx}")
+
+    script:
+    """
+    bcftools concat -a -Oz \\
+    -o ${patient_id}.filtered-merged.vcf.gz \\
+    ${snpsVcf} ${indelsVcf}
+
+    tabix -p vcf ${patient_id}.filtered-merged.vcf.gz
+    """
+}
+
+
+
 

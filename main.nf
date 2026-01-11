@@ -121,7 +121,7 @@ include {DelMoroHelp	} 	from './.logos'
  
     VepSpecies		= params.species	?: ''     	 
     Assembly		= params.assembly 	?: ''	 
-    CacheType 		= params.cachetype  	?: ''
+    CacheType 		= params.cachetype	?: ''
     CacheDir 		= params.cachedir 	?: ''
     CacheVersion	= params.cacheversion 	?: ''
     
@@ -130,12 +130,17 @@ include {DelMoroHelp	} 	from './.logos'
   // vcf channels
   
     VcfChannel      	= params.toannotate 	? Channel.fromPath(params.toannotate, checkIfExists: false)
-    							  .splitCsv(header: true)  
-       	      			       		 	   .map { row -> tuple(row.patient_id, file(row.vcFile) ) }		: Channel.empty() 	 
+    							  						  .splitCsv(header: true)  
+       	      			       		 	   				   .map { row -> tuple(row.patient_id, file(row.vcFile) ) }		: Channel.empty() 	 
 
-    FilterChannel	= params.tofilter 	? Channel.fromPath(params.tofilter, checkIfExists: false)
-    							  .splitCsv(header: true)  
-       	      			       		 	   .map { row -> tuple(row.patient_id, file(row.vcFile) ) }		: Channel.empty() 	
+    FilterChannel 		= params.tofilter 		? Channel.fromPath(params.tofilter, checkIfExists: false)
+    							  						  .splitCsv(header: true)
+    							  						   .map { row ->
+    							  						   		def vcFile = file(row.vcFile)
+    							  						   		def tbi = file("${vcFile}.tbi")
+    							  						   		def idx = file("${vcFile}.idx")
+    							  						   		def indexFile = tbi.exists() ? tbi : idx.exists() ? idx : null
+    							  						   		tuple(row.patient_id, vcFile, indexFile) } 				: Channel.empty()
   // Reporting 
      	// Function to parse YAML file
 	import groovy.yaml.YamlSlurper

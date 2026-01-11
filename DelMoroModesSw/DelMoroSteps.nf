@@ -20,11 +20,12 @@ include { TRIM_READS		} from '../subworkflows/trimming'
 include { INDEXING_REF_GENOME	} from '../subworkflows/indexingRefGenome'
 include { ALIGN_TO_REF_GENOME	} from '../subworkflows/mapping'
 include { BASE_QU_SCO_RECA	} from '../subworkflows/bqsr'
-include { CALL_SNPs_GATK	} from '../subworkflows/variantcalling'
+include { CALL_VARIANT_GATK	} from '../subworkflows/variantcalling/gatk-hc'
+include { CALL_VARIANT_DEEPVARIANT	} from '../subworkflows/variantcalling/deepvariant'
 include { FILTER_VARIANT	} from '../subworkflows/variantfilter'
-include { VEP_CACHE		} from '../subworkflows/annotations/vep/vepcache'
+include { VEP_CACHE			} from '../subworkflows/annotations/vep/vepcache'
 include { VEP_ANNOTATE		} from '../subworkflows/annotations/vep/vepannotate'
-include { REPORTING		} from '../subworkflows/reporting/main.nf' 
+include { REPORTING			} from '../subworkflows/reporting/main.nf' 
 
 
 workflow DelMoroSteps {
@@ -82,9 +83,13 @@ workflow DelMoroSteps {
            
     BASE_QU_SCO_RECA(RefGenChannel,DictIdxRef,SamtIdxRef,MappedReads,KnownSite1,KnownSite2 )
                
-    } else if (params.exec == 'callsnp') {    // Call snp
+    } else if (params.exec == 'callvar' && !params.caller ) {    // Call snp
               
-    CALL_SNPs_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall) 
+    CALL_VARIANT_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall) 
+          
+    } else if (params.exec == 'callvar' && params.caller == 'deepvariant') {    // Call snp
+              
+    CALL_VARIANT_DEEPVARIANT(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall) 
           
     } else if (params.exec == 'filter') {
     

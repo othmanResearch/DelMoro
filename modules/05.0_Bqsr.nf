@@ -13,7 +13,7 @@ process DownloadKns1 {
         : "xueshanf/awscli:alpine-3.16"}"
 
     output:
-    path "*", emit: igenome_ch
+    path "*.{vcf,vcf.gz}", emit: igenome_ch
 
     script:
     def filename = "${params.IVCF[params.ivcf1].vcf.tokenize('/').last()}"
@@ -37,7 +37,7 @@ process DownloadKns2 {
         : "xueshanf/awscli:alpine-3.16"}"
 
     output:
-    path "*", emit: igenome_ch
+    path "*.{vcf,vcf.gz}", emit: igenome_ch
 
     script:
     def filename = "${params.IVCF[params.ivcf2].vcf.tokenize('/').last()}"
@@ -50,10 +50,11 @@ process DownloadKns2 {
 
 // indexing known sites files 
 
-process IndexVcf {
+process IndexIvcf1 {
     tag "CREATING INDEX FOR VCF FILES"
-    publishDir "./knownsites/", mode: 'copy'
-
+    publishDir "./knownsites/${params.ivcf1}", mode: 'copy'
+    storeDir "./knownsites/${params.ivcf1}"
+    
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://broadinstitute/gatk:latest"
@@ -72,6 +73,28 @@ process IndexVcf {
     """
 }
 
+process IndexIvcf2 {
+    tag "CREATING INDEX FOR VCF FILES"
+    publishDir "./knownsites/${params.ivcf2}", mode: 'copy'
+    storeDir "./knownsites/${params.ivcf2}"
+    
+    conda "bioconda::gatk4=4.4.0.0"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://broadinstitute/gatk:latest"
+        : "broadinstitute/gatk:latest"}"
+
+    input:
+    tuple val(fileName), path (vcfFile)
+
+    output:
+    tuple val(fileName), path ("${vcfFile}.{tbi,idx}")
+
+    script:
+    """
+    gatk IndexFeatureFile \\
+	--input ${vcfFile} 
+    """
+}
 // BaseRecalibration 
 
 process BaseRecalibrator {

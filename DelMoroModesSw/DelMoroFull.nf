@@ -1,14 +1,14 @@
 #!/usr/bin/env nextflow
 
-include { FullModeOutput 	} from '../.logos' 
+include { FullModeOutput 		} from '../.logos' 
 include { FullModeBqsrOutput 	} from '../.logos'  
 
 // Subworkflows
 include { INDEXING_REF_GENOME 	} from '../subworkflows/indexingRefGenome'
 include { ALIGN_TO_REF_GENOME 	} from '../subworkflows/mapping'
-include { BASE_QU_SCO_RECA 	} from '../subworkflows/bqsr'
-include { CALL_SNPs_GATK 	} from '../subworkflows/variantcalling'
-
+include { BASE_QU_SCO_RECA 		} from '../subworkflows/bqsr'
+include { CALL_VARIANT_GATK 	} from '../subworkflows/variantcalling/gatk-hc'
+include { CALL_VARIANT_DEEPVARIANT 	} from '../subworkflows/variantcalling/deepvariant'
 
 workflow DelMoroFullSw {
     take: 
@@ -20,51 +20,114 @@ workflow DelMoroFullSw {
     
     
     main: 
-        
-    if (params.bqsr) {
-        FullModeBqsrOutput()
-	INDEXING_REF_GENOME(RefGenChannel)
+	if ( params.input && ( params.reference || params.igenome ) && !params.caller ) {    
+		if (params.bqsr) {
+			FullModeBqsrOutput()
+			INDEXING_REF_GENOME(RefGenChannel)
 
-        ALIGN_TO_REF_GENOME(
-            INDEXING_REF_GENOME.out.reference_fasta,
-            INDEXING_REF_GENOME.out.combinedIdx.collect(),
-            ReadsToBeAligned,
-            Target
-        ) 
-        
-        BASE_QU_SCO_RECA(
-            INDEXING_REF_GENOME.out.reference_fasta,
-            INDEXING_REF_GENOME.out.gatkDict,
-            INDEXING_REF_GENOME.out.samtoolsIndex,
-            ALIGN_TO_REF_GENOME.out.bamWithIdx,
-            KnownSite1,
-            KnownSite2
-        )
-        
-        CALL_SNPs_GATK(
-            INDEXING_REF_GENOME.out.reference_fasta,
-            INDEXING_REF_GENOME.out.gatkDict,
-            INDEXING_REF_GENOME.out.samtoolsIndex,
-            BASE_QU_SCO_RECA.out.reaclBamWithIdx
-        )
+		    ALIGN_TO_REF_GENOME(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
+		        ReadsToBeAligned,
+		        Target
+		    ) 
+		    
+		    BASE_QU_SCO_RECA(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.gatkDict,
+		        INDEXING_REF_GENOME.out.samtoolsIndex,
+		        ALIGN_TO_REF_GENOME.out.bamWithIdx,
+		        KnownSite1,
+		        KnownSite2
+		    )
+		    
+		    CALL_VARIANT_GATK(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.gatkDict,
+		        INDEXING_REF_GENOME.out.samtoolsIndex,
+		        BASE_QU_SCO_RECA.out.reaclBamWithIdx
+		    )
 
-    } else {
-        FullModeOutput()
-	INDEXING_REF_GENOME(RefGenChannel)
-	
-        ALIGN_TO_REF_GENOME(
-            INDEXING_REF_GENOME.out.reference_fasta,
-            INDEXING_REF_GENOME.out.combinedIdx.collect(),
-            ReadsToBeAligned,
-            Target
-        )
+		} else {
+			FullModeOutput()
+			INDEXING_REF_GENOME(RefGenChannel)
+		
+		    ALIGN_TO_REF_GENOME(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
+		        ReadsToBeAligned,
+		        Target
+		    )
+			 
+		    CALL_VARIANT_GATK(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.gatkDict,
+		        INDEXING_REF_GENOME.out.samtoolsIndex,
+		        ALIGN_TO_REF_GENOME.out.bamWithIdx
+		    ) 
+		}
+	} else if ( params.input && ( params.reference || params.igenome ) && params.caller	== "deepvariant" && params.modelType    != null ) {
+		if (params.bqsr) {
+			FullModeBqsrOutput()
+			INDEXING_REF_GENOME(RefGenChannel)
 
-        CALL_SNPs_GATK(
-            INDEXING_REF_GENOME.out.reference_fasta,
-            INDEXING_REF_GENOME.out.gatkDict,
-            INDEXING_REF_GENOME.out.samtoolsIndex,
-            ALIGN_TO_REF_GENOME.out.bamWithIdx
-        )
-    }
+		    ALIGN_TO_REF_GENOME(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
+		        ReadsToBeAligned,
+		        Target
+		    ) 
+		    
+		    BASE_QU_SCO_RECA(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.gatkDict,
+		        INDEXING_REF_GENOME.out.samtoolsIndex,
+		        ALIGN_TO_REF_GENOME.out.bamWithIdx,
+		        KnownSite1,
+		        KnownSite2
+		    )
+		    
+		    CALL_VARIANT_DEEPVARIANT(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.gatkDict,
+		        INDEXING_REF_GENOME.out.samtoolsIndex,
+		        BASE_QU_SCO_RECA.out.reaclBamWithIdx
+		    )
+
+		} else {
+			FullModeOutput()
+			INDEXING_REF_GENOME(RefGenChannel)
+		
+		    ALIGN_TO_REF_GENOME(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
+		        ReadsToBeAligned,
+		        Target
+		    )
+			 
+		    CALL_VARIANT_DEEPVARIANT(
+		        INDEXING_REF_GENOME.out.reference_fasta,
+		        INDEXING_REF_GENOME.out.gatkDict,
+		        INDEXING_REF_GENOME.out.samtoolsIndex,
+		        ALIGN_TO_REF_GENOME.out.bamWithIdx
+		    ) 
+		}
+	} else {
+	FullModeBqsrOutput()
+	print("\033[31m Please specify valid parameters:\n" )
+	print("	--input <path-to-csv> \n")
+	print("	--refernce <path-to-reference>\n")
+	print("	---------------------------------------------------------\n")
+	print("	If depvariant is preferred as a variant caller please add : \n")
+	print("	-- caller deepvariant --modelType <WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ> \n")
+	print("	--------------------------------------------------------------------------------------------\n")
+	print("	optional : --mode cohort  \n\033[37m" )  
+	}
 }
+
+
+
+
+
+
 

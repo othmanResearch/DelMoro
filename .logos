@@ -101,7 +101,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
 	  - \033[32mrefidx\033[37m 	: Index   the    reference   genome    for      alignment.
 	  - \033[32malign\033[37m 	: Align     reads      to     the     reference    genome.
 	  - \033[32mbqsr\033[37m 	: Base 		Quality 	Score	    recalibration.
-	  - \033[32mcallsnp\033[37m 	: Detect           SNPs      from      aligned      reads.
+	  - \033[32mcallvar\033[37m 	: Detect           SNPs      from      aligned      reads.
 	  - \033[32mannotate\033[37m 	: annotate 	    	    vfc 	             file.
 	  - \033[32mreporting\033[37m 	: Auto  	Generate   PDF 	  of   	  vcf 	  reports.
 	  - \033[32mfilter\033[37m 	: Filter  	vcfs  	    to     SNP     and     INDELS.
@@ -160,10 +160,11 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
 		   	   : .bam
 		   	   	           	   
   -- Variant Calling	  
-     \033[32mcallsnp\033[37m       Detect SNPs from aligned reads.
+     \033[32mcallvar\033[37m       Detect SNPs from aligned reads.
   	           require : --reference   <path-to-ref>
   		   	   : --tovarcall   <path-to-bam-csv)
   		   	   : --mode only [ optional ]
+  		   	   : --caller deepvariant [ optional ]
   		   output  : .vcf
   		   	   : .table
   -- Annotation	  
@@ -418,6 +419,7 @@ log.info"""
 \033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Caller               =\033[37m ${params.caller ? "Deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ VCF Files            =\033[37m ./${params.outdir}/Mapping/Variants
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

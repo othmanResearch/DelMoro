@@ -3,21 +3,21 @@
 include { DelMoroWelcome	} from '../../.logos'
 include { DelMoroBQSROutput	} from '../../.logos'
 
-include { DownloadKns1                  } from '../../modules/05.0_Bqsr.nf'  
-include { DownloadKns2                  } from '../../modules/05.0_Bqsr.nf'  
-include { IndexVcf as IndexKNownSite1	} from '../../modules/05.0_Bqsr.nf'  
-include { IndexVcf as IndexKNownSite2	} from '../../modules/05.0_Bqsr.nf'  
-include { BaseRecalibrator              } from '../../modules/05.0_Bqsr.nf'  
-include { ApplyBQSR                     } from '../../modules/05.0_Bqsr.nf'    
-include { IndexRecalBam                 } from '../../modules/05.0_Bqsr.nf'
+include { DownloadKns1        } from '../../modules/05.0_Bqsr.nf'  
+include { DownloadKns2        } from '../../modules/05.0_Bqsr.nf'  
+include { IndexIvcf1	      } from '../../modules/05.0_Bqsr.nf'  
+include { IndexIvcf2          } from '../../modules/05.0_Bqsr.nf'  
+include { BaseRecalibrator    } from '../../modules/05.0_Bqsr.nf'  
+include { ApplyBQSR           } from '../../modules/05.0_Bqsr.nf'    
+include { IndexRecalBam       } from '../../modules/05.0_Bqsr.nf'
 
-include { AlignmentMetrics              } from '../../modules/04.1_BamMetrics.nf'
-include { InsertMetrics                 } from '../../modules/04.1_BamMetrics.nf'
-include { GcBiasMetrics                 } from '../../modules/04.1_BamMetrics.nf'
-include { Qualimap                      } from '../../modules/04.1_BamMetrics.nf'
+include { AlignmentMetrics    } from '../../modules/04.1_BamMetrics.nf'
+include { InsertMetrics       } from '../../modules/04.1_BamMetrics.nf'
+include { GcBiasMetrics       } from '../../modules/04.1_BamMetrics.nf'
+include { Qualimap            } from '../../modules/04.1_BamMetrics.nf'
 
-include { BigWig                        } from '../../modules/04.2_BamToBigWig.nf'
-include { BigWigCoveragePlots           } from '../../modules/04.3_BigWigPlotting.nf'
+include { BigWig              } from '../../modules/04.2_BamToBigWig.nf'
+include { BigWigCoveragePlots } from '../../modules/04.3_BigWigPlotting.nf'
 
 
 
@@ -88,15 +88,15 @@ workflow BASE_QU_SCO_RECA {
 
         DownloadKns1()
 	DownloadKns2()
-	IndexKNownSite1(DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) })
-	IndexKNownSite2(DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) }) 
+	IndexIvcf1(DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) })
+	IndexIvcf2(DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) }) 
  
 	BaseRecalibrator	( ref_gen_channel
 	                         ,dictREF.collect()
 	                         ,samidxREF.collect()
 	                         ,MappedReads
-	                         ,DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) }.join(IndexKNownSite1.out).first()
-	                         ,DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) }.join(IndexKNownSite2.out).first()
+	                         ,DownloadKns1.out.igenome_ch.map { file -> tuple(file.baseName, file) }.join(IndexIvcf1.out).first()
+	                         ,DownloadKns2.out.igenome_ch.map { file -> tuple(file.baseName, file) }.join(IndexIvcf2.out).first()
 	                        )
 	                        
 	ApplyBQSR		(MappedReads.join(BaseRecalibrator.out.BQSR_Table) )
