@@ -6,9 +6,8 @@
 
 process DownloadIgenomes {
     tag "Downloading ${params.igenome} from iGenomes reference ${params.IGENOMES[params.igenome]}"
-    publishDir "${file(params.reference).getParent()}/", mode: 'copy'
-    storeDir   "${file(params.reference).getParent()}/"
-
+    publishDir "${file(params.igenome).getParent()}/Reference_Genome", mode: 'copy'
+    storeDir   "${file(params.igenome).getParent()}/Reference_Genome"
 
     conda "conda-forge::awscli=2.23.6"
     container "${workflow.containerEngine == 'singularity'
@@ -30,12 +29,12 @@ process DownloadIgenomes {
 // 	CREATING INDEX FOR ALINGER
 ////////////////////////////////////////////////////
 
+
 process CreateIndex {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
-    publishDir "${file(params.reference).getParent()}/", mode: 'copy', overwrite: false
-    storeDir   "${file(params.reference).getParent()}/"
+    publishDir {params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" }, mode: 'copy', overwrite: false
+    storeDir { params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" } 
 
-    
     conda "bioconda::bwa=0.7.18"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://firaszemzem/bwa-samtools:latest"
@@ -55,8 +54,8 @@ process CreateIndex {
 
 process CreateIndexBwaMem2 {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
-    publishDir "${file(params.reference).getParent()}/", mode: 'copy', overwrite: false
-    storeDir   "${file(params.reference).getParent()}/"
+    publishDir {params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" }, mode: 'copy', overwrite: false
+    storeDir { params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" } 
 
     
     conda "bioconda::bwa-mem2=2.2.1"
@@ -81,8 +80,8 @@ process CreateIndexBwaMem2 {
 
 process CreateDictionary {
     tag "GENERATE DICTIONARY"
-    publishDir "${file(params.reference).getParent()}/", mode: 'copy', overwrite: false
-    storeDir   "${file(params.reference).getParent()}/"
+    publishDir {params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" }, mode: 'copy', overwrite: false
+    storeDir { params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" } 
 
     
     conda "bioconda::gatk4=4.4"
@@ -108,8 +107,8 @@ process CreateDictionary {
 
 process CreateIndexSamtools {
     tag "GENERATE INDEX BY SAMTOOLS"
-    publishDir "${file(params.reference).getParent()}/", mode: 'copy', overwrite: false
-    storeDir   "${file(params.reference).getParent()}/"
+    publishDir {params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" }, mode: 'copy', overwrite: false
+    storeDir { params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" } 
 
     
     conda "bioconda::samtools=1.21"
