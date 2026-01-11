@@ -29,10 +29,13 @@ process DownloadIgenomes {
 // 	CREATING INDEX FOR ALINGER
 ////////////////////////////////////////////////////
 
-
 process CreateIndex {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
-    publishDir {params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" }, mode: 'copy', overwrite: false
+    publishDir(
+        path:  params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome",
+        mode: 'copy',
+        overwrite: false
+    )
     storeDir { params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" } 
 
     conda "bioconda::bwa=0.7.18"
@@ -54,7 +57,11 @@ process CreateIndex {
 
 process CreateIndexBwaMem2 {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
-    publishDir {params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" }, mode: 'copy', overwrite: false
+    publishDir(
+        path:  params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome",
+        mode: 'copy',
+        overwrite: false
+    )
     storeDir { params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" } 
 
     
@@ -80,7 +87,11 @@ process CreateIndexBwaMem2 {
 
 process CreateDictionary {
     tag "GENERATE DICTIONARY"
-    publishDir {params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" }, mode: 'copy', overwrite: false
+    publishDir(
+        path:  params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome",
+        mode: 'copy',
+        overwrite: false
+    )
     storeDir { params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" } 
 
     
@@ -107,7 +118,11 @@ process CreateDictionary {
 
 process CreateIndexSamtools {
     tag "GENERATE INDEX BY SAMTOOLS"
-    publishDir {params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" }, mode: 'copy', overwrite: false
+    publishDir(
+        path:  params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome",
+        mode: 'copy',
+        overwrite: false
+    )
     storeDir { params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" } 
 
     

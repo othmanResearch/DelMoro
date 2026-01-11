@@ -6,8 +6,11 @@
     
 process GenerateStats {
     tag "GENERATE BCFTOOLS STATS FROM VCF"
-    publishDir { params.caller ? "${params.outdir}/Variants/deepvariant/Metrics/" : "${params.outdir}/Variants/gatk/Metrics/" }, mode: 'copy'
-
+    publishDir (
+        path : params.caller ? "${params.outdir}/Variants/deepvariant/Metrics/" : "${params.outdir}/Variants/gatk/Metrics/",
+        mode: 'copy'
+    )    
+    
     conda "bioconda::bcftools=1.21"
     container "${workflow.containerEngine == 'singularity'
 	? "docker://staphb/bcftools:latest"
