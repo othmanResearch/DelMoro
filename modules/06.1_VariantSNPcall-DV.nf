@@ -3,8 +3,8 @@
 // Variant Calling with DeepVariant 
 
 process deepVariant {
-	tag "Variant Calling with Gatk DEEPVARIANT"
-	publishDir "${params.outdir}/Variants/deepvariant", mode: 'copy'
+    tag "Variant Calling with Gatk DEEPVARIANT"
+    publishDir "${params.outdir}/Variants/deepvariant", mode: 'copy'
 
     container "${workflow.containerEngine == 'singularity'
         ? "docker://google/deepvariant:1.9.0"
@@ -17,37 +17,37 @@ process deepVariant {
     tuple val(patient_id), path(bamFile), path(Bamidx)
     
     output:
-    tuple val(patient_id), path("${patient_id}.*.DV.vcf.gz"), path("${patient_id}.*.DV.vcf.gz.{tbi,idx}")	, emit: "CallVariantvcf"
-	tuple val(patient_id), path("${patient_id}.*.DV.visual_report.html") 
-    tuple val(patient_id), path("${patient_id}.*.DV.g.vcf.gz"), path("${patient_id}.*.DV.g.vcf.gz.{tbi,idx}")	, optional: true	, emit: "deepGvcf" 
+    tuple val(patient_id), path("${bamFile.baseName}.*.DV.vcf.gz"), path("${bamFile.baseName}.*.DV.vcf.gz.{tbi,idx}") , emit: "CallVariantvcf"
+    tuple val(patient_id), path("${bamFile.baseName}.*.DV.visual_report.html") 
+    tuple val(patient_id), path("${bamFile.baseName}.*.DV.g.vcf.gz"), path("${bamFile.baseName}.*.DV.g.vcf.gz.{tbi,idx}") , optional: true  , emit: "deepGvcf" 
     
     script:
-	def intervals = params.region ?: ""
+    def intervals = params.region ?: ""
     def regionTag = params.region ? params.region.split(':')[0] : "full"
-	def gvcfArg = (params.mode == 'cohort')	? "--output_gvcf=${patient_id}.${regionTag}.DV.g.vcf.gz" : ""
+    def gvcfArg = (params.mode == 'cohort') ? "--output_gvcf=${bamFile.baseName}.${regionTag}.DV.g.vcf.gz" : ""
 	
-	"""
-	/opt/deepvariant/bin/run_deepvariant \\
-	--model_type=${params.modelType} \\
-	--vcf_stats_report=true \\
-	--ref=${ref} \\
-	--reads=${bamFile} \\
-	--output_vcf=${patient_id}.${regionTag}.DV.vcf.gz \\
-	${gvcfArg} \\
-	--num_shards=${task.cpus} \\
-	${intervals ? "--regions ${intervals}" : ""}
-	"""
+    """
+    /opt/deepvariant/bin/run_deepvariant \\
+    --model_type=${params.modelType} \\
+    --vcf_stats_report=true \\
+    --ref=${ref} \\
+    --reads=${bamFile} \\
+    --output_vcf=${bamFile.baseName}.${regionTag}.DV.vcf.gz \\
+    ${gvcfArg} \\
+    --num_shards=${task.cpus} \\
+    ${intervals ? "--regions ${intervals}" : ""}
+    """
 }
 
 
 process glnexus {
-	tag "COMBINE GVCF files with GLNEXUS"
+    tag "COMBINE GVCF files with GLNEXUS"
     publishDir "${params.outdir}/Variants/deepvariant", mode: 'copy'
 	
-	conda "bioconda::glnexus=1.4.1"
+    conda "bioconda::glnexus=1.4.1"
     container "${workflow.containerEngine == 'singularity'
-        ? 'docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1'
-        : 'ghcr.io/dnanexus-rnd/glnexus:v1.4.1'}"
+        ? "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
+        : "ghcr.io/dnanexus-rnd/glnexus:v1.4.1"}"
 
 
     input:
@@ -59,12 +59,12 @@ process glnexus {
     script:
     def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
                      params.region    ? params.region.split(':')[0] :
-                                         "full"
+                                        "full"
 
     """
     glnexus_cli --threads ${task.cpus} \\
-	--config DeepVariant \\
-	${gvcfs} \\
+    --config DeepVariant \\
+    ${gvcfs} \\
     | bcftools view -Oz -o  cohort_delMoro-${region_tag}.vcf.gz
 
     tabix -p vcf  cohort_delMoro-${region_tag}.vcf.gz

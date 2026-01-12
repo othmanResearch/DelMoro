@@ -44,11 +44,15 @@ BigWigs Plotting:
 
 5. Variant Calling Detects SNPs and indels using:
 - [GATK]() HaplotypeCaller
+- [DEEPVARIANT]() HaplotypeCaller
 
-6. Variant Annotation Annotates variants using:
+6. Variant Filtering 
+- [GATK]() HaplotypeCaller
+
+7. Variant Annotation Annotates variants using:
 - [Variant Effect Predictor]() 
 
-7. Reportin with :
+8. Reportin with :
 - [Reportlab]()
 
 ### Workflow
@@ -80,9 +84,11 @@ nextflow run main.nf
     --input  
     --reference   | [--igenome ]   
     [--aligner bwamem2]  
-    [--mode cohort]  
     [--bqsr]  
     [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
+    [--caller deepvariant ]
+    [--mode cohort]  
+
 ~~~
 
 ### Executing stepmode :  
@@ -97,9 +103,10 @@ Module  : - rawqc       : Check           quality      of     raw           read
           - refidx      : Index   the    reference   genome    for      alignment.
           - align       : Align     reads      to     the     reference    genome.
           - bqsr        : Base          Quality         Score       recalibration.
-          - callsnp     : Detect           SNPs      from      aligned      reads.
+          - callvar     : Detect          Variants   from      aligned      reads.
           - annotate    : annotate                  vfc                      file.
-          - reporting   : Auto          Generate   PDF    of      vcf     reports.                                                                                                                                         
+          - reporting   : Auto          Generate   PDF    of      vcf     reports.   
+          - filter 	    : Filter  	vcfs  	     to      SNP      and      INDELS.                                                                                                                                      
           - help                                                                                                                                                                                                           
           - version 
 ~~~
