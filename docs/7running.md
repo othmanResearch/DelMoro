@@ -28,6 +28,7 @@ nextflow run main.nf
     [--aligner bwamem2 ]  
     [--bqsr ]  
     [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
+    [ --caller deepvariant --modelType <WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ> ]
     [--mode onlyvcf ]  
 
 
@@ -40,15 +41,15 @@ nextflow run main.nf
    
 
 
-Module  : - rawqc 	: Check           quality      of     raw           reads. 
-          - trim 	: Remove low-quality bp and adapters & checks its quality.
-          - refidx 	: Index   the    reference   genome    for      alignment.
-          - align 	: Align     reads      to     the     reference    genome.
-          - bqsr 	: Base 		Quality 	Score	    recalibration.
-          - callsnp 	: Detect           SNPs      from      aligned      reads.
-          - annotate 	: annotate 	    	    vfc 	             file.
-          - reporting 	: Auto  	Generate   PDF 	  of   	  vcf 	  reports.
-          - filter 	: Filter  	vcfs  	    to     SNP     and     INDELS.
+Module  : - rawqc 	    : Check           quality      of     raw           reads. 
+          - trim 	    : Remove low-quality bp and adapters & checks its quality.
+          - refidx 	    : Index   the    reference   genome    for      alignment.
+          - align 	    : Align     reads      to     the     reference    genome.
+          - bqsr 	    : Base 		   Quality      	Score	    recalibration.
+          - callvar 	: Detect           SNPs      from      aligned      reads.
+          - annotate 	: annotate 	    	          vfc 	                 file.
+          - reporting 	: Auto  	Generate   PDF 	  of    	  vcf 	  reports.
+          - filter 	    : Filter  	vcfs   	      to      SNP      and     INDELS.
           - help 	
           - version  
 
@@ -104,10 +105,11 @@ Requirements :
                             : .bam
 		   	   	           	   
   -- Variant Calling	  
-     callsnp       Detect SNPs from aligned reads.
+     callvar       Detect SNPs from aligned reads.
                    require  : --reference   <path-to-ref>
                             : --tovarcall   <path-to-bam-csv)
                             : --mode onlyvcf [ optional ]
+                            : --caller deepvariant [ optional ]
                    output   : .vcf
                             : .table
   -- Annotation	  
@@ -177,9 +179,11 @@ nextflow run main.nf \
     --input <input_csv> \
     --reference <reference_path>  | [--igenome <str>]  \
     [--aligner bwamem2] \
-    [--mode onlyvcf] \
     [--bqsr] \
-    [--knownsite1 <path>,--knownsite2 <path>|--ivcf1 <str>,--ivcf2 <str>]
+    [--knownsite1 <path>,--knownsite2 <path>|--ivcf1 <str>,--ivcf2 <str>] \ 
+    [ --caller deepvariant --modelType <WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ> ] \
+    [--mode onlyvcf] 
+
 </code></pre>
 </div>
 
@@ -452,7 +456,7 @@ You can modify the output behavior using the `--mode` flag:
 </label>
 
 <div id="cmd-varCall-Default" class="step-command">
-<pre><code>nextflow run main.nf --stepmode --exec callsnp \
+<pre><code>nextflow run main.nf --stepmode --exec callvar \
   --reference Reference_Genome/reference.fa \
   --tovarcall CSVs/5_samplesheetReclibFiles.csv</code></pre>
 </div>
@@ -473,11 +477,17 @@ You can modify the output behavior using the `--mode` flag:
 </label>
 
 <div id="cmd-call-cohortvcf" class="step-command">
-<pre><code>nextflow run main.nf --stepmode --exec callsnp \
+<pre><code>nextflow run main.nf --stepmode --exec callvar \
   --reference Reference_Genome/reference.fa \
   --tovarcall CSVs/5_samplesheetReclibFiles.csv \
   --mode cohort</code></pre>
 </div>
+
+???+ note " 💡 **Caller Option:** `--caller deepvariant`"
+    - To use Deepvariant Caller , specify `--caller` deepvariant and `--modelType` parameters   
+    - To check required option please refer to [parameters page](5parameters.md#filtering ) 
+    - <span style="color:red ;">Deepvariant caller only available with `-profile docker`</span>
+
 
 ---
 #### Targeted chromosome variant Calling 

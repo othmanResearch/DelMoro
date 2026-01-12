@@ -30,16 +30,17 @@
 
 ## Outputs
 
-| Module              | Output Files                                                                                          | Description                                                               |
-|---------------------|--------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| **Quality Control** | HTML QC reports for individual samples, and a combined MultiQC summary                                 | Visual quality summaries of raw sequencing reads                          |
-| **Trimming**        | Trimmed FASTQ files, per-sample trimming reports, and an updated MultiQC report                        | Cleaned reads with adapter and quality trimming results                   |
-| **Reference Indexing** | Dictionary, FASTA index, and algorithm-specific index files (`.dict`, `.fai`, `.bwt`, etc.)         | Files required for efficient sequence alignment and downstream analysis   |
-| **Read Alignment**  | Sorted BAM files, index files (`.bai`), alignment QC metrics, and genome coverage data                 | Aligned reads with statistics for coverage and mapping quality            |
-| **BQSR**            | Indexed known-site VCFs, recalibration table, and recalibrated BAM files                               | Improves accuracy of base quality scores used in variant calling          |
-| **Variant Calling** | Raw VCF files containing variant calls, and a summary table                                            | Identified SNPs and indels per sample                                     |
-| **VEP Cache Setup** | Directory containing locally stored VEP cache                                                          | Enables fast, offline variant annotation                                  |
-| **VEP Annotation**  | Annotated VCF files (`.vcf.gz`), index files, and an HTML annotation report                            | Functionally annotated variants with summaries accessible via browser     |
+| Module              | Output Files                                                                                | Description                                                             |
+|---------------------|---------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| **Quality Control** | HTML QC reports for individual samples, and a combined MultiQC summary                      | Visual quality summaries of raw sequencing reads                        |
+| **Trimming**        | Trimmed FASTQ files, per-sample trimming reports, and an updated MultiQC report             | Cleaned reads with adapter and quality trimming results                 |
+| **Reference Indexing** | Dictionary, FASTA index, and algorithm-specific index files (`.dict`, `.fai`, `.bwt`, etc.) | Files required for efficient sequence alignment and downstream analysis |
+| **Read Alignment**  | Sorted BAM files, index files (`.bai`), alignment QC metrics, and genome coverage data      | Aligned reads with statistics for coverage and mapping quality          |
+| **BQSR**            | Indexed known-site VCFs, recalibration table, and recalibrated BAM files                    | Improves accuracy of base quality scores used in variant calling        |
+| **Variant Calling** | Raw VCF files containing variant calls, and a summary table                                 | Identified SNPs and indels per sample                                   |
+| **Variant Filtering**  | One merged sorted filtered vcf file , or SNP and INDEL filtered separated files          | Filtered VCFs including all or SNPs or INDELs                           |
+| **VEP Cache Setup** | Directory containing locally stored VEP cache                                               | Enables fast, offline variant annotation                                |
+| **VEP Annotation**  | Annotated VCF files (`.vcf.gz`), index files, and an HTML annotation report                 | Functionally annotated variants with summaries accessible via browser   |
 
 ---
 

@@ -19,8 +19,9 @@ DelMoro automates the entire genomic variant calling pipeline, including:
 3. **Alignment**:Aligns reads to a reference genome using:  
 4. **Base Recalibration**: Applies GATK's best practices for base Recalibration.
 5. **Variant Calling**: Indentify SNPs and short indels.
-6. **Variant Annotation**: Annotates variants.
-7. **Coverage Depth Calculation & Reports**: generate quality assessment and traceability metrics.
+6. **Variant Filtering**: Filter Variants following GATK Best practices.
+7. **Variant Annotation**: Annotates variants.
+8. **Coverage Depth Calculation & Reports**: generate quality assessment and traceability metrics.
 
 
 ---

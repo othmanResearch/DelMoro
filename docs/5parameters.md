@@ -75,7 +75,8 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--reference` = Path to reference genome FASTA file. <span title="Default: ./Reference_Genome/*.fa">⊕</span>  
 - `--tovarcall` = CSV with recalibrated BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">⊕</span>  
 - `--mode` = Output type: onlyvcf to generate a vcf for each input <span title="Default: null : generates a cohort gvcf ">⊕</span>  
- 
+- `--caller` = Specify deepvariant caller which also requires `--modelType` <span title="Default: null : only for deepvariant caller ">⊕</span>
+
 ## Filtering 
 - `--tofilter` = Path to the CSV file containing variants to filter. <span title="Default: null ">⊕</span>
 - `--QD` = Quality by Depth: variant confidence normalized by depth. <span title="Default: 2.0">⊕</span>

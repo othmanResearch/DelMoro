@@ -18,10 +18,11 @@
 4. **Read Alignment** – Map reads to the reference genome using **BWA** or **BWA-MEM2**.
 5. **Base Quality Score Recalibration (BQSR)** – Adjust quality scores for improved variant calling accuracy.
 6. **Variant Calling** – Identify genomic variants from aligned reads.
-7. **Functional Annotation** – Interpret variants with an annotation process split into:
+7. **Variant Filtering** – Filter Variant ( SNP and INDEL ) with a hard filter and dynamic options.  
+8. **Functional Annotation** – Interpret variants with an annotation process split into:
    - **Cache Preparation** (for reproducibility and offline use)
    - **Variant Annotation** (functional characterization of variants)
-8. **Report Generation** – Produce summaries, metrics, and optional **depth-coverage visualizations**.
+9. **Report Generation** – Produce summaries, metrics, and optional **depth-coverage visualizations**.
 
 ### Key Features
 - **Fine-grained control** over each step.
