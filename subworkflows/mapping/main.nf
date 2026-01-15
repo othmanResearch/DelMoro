@@ -99,7 +99,7 @@ workflow ALIGN_TO_REF_GENOME {
 	} else if ( referFileChannel 	!= null && 
 		    params.tobealigned	!= null && 
 		    params.generate 	== null && 
-		    (params.region	==~ /^[a-zA-Z0-9]+:\d+-\d+$/) ){  
+		    params.region	){  
 
 	    AlignReadsToRef	(ref_gen_channel, indexes.collect(),READS ) 
 	    AssignReadGroup	(AlignReadsToRef.out) 
@@ -132,6 +132,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    print("  --aligner bwamem2 , Default bwa ( not to be mentionned ) \n"	)
 	    print("For details, run: nextflow main.nf --exec params\n\033[37m"	)
 	}
+    emit: 	
     bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
     bamIdx = IndexBam.out
     bamWithIdx = bams.join(bamIdx)
@@ -195,7 +196,7 @@ workflow ALIGN_TO_REF_GENOME {
     } else if ( referFileChannel 	!= null && 
 		inputFileChannel 	!= null && 
 		params.generate 	== null && 
-		(params.region 	==~ /^[a-zA-Z0-9]+:\d+-\d+$/) ){  
+		params.region ){  
 
 	    AlignReadsToRefBwaMem2	(ref_gen_channel, indexes.collect(),READS ) 
 	    AssignReadGroup	(AlignReadsToRefBwaMem2.out ) 
@@ -228,6 +229,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    print("  --aligner bwamem2 , Default bwa ( not to be mentionned ) \n")
 	    print("For details, run: nextflow main.nf --exec params\n\033[37m")
 	}
+    emit:	
     bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
     bamIdx = IndexBam.out
     bamWithIdx = bams.join(bamIdx)    
