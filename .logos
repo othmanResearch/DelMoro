@@ -222,7 +222,7 @@ log.info"""
 \033[32m                                                               DEFAULT PARAMETERS
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\033[32m --mcpus        =\033[37m null									  	=>  Max cpus     : Allocated cpus for the hole pipeline		
+\033[32m --mcpus        =\033[37m null									  	=>  Max Used Cpus : Allocated cpus for the hole pipeline		
 \033[32m --pcpus        =\033[37m null									  	=>  Process cpus : Allocated cpus for each process
 
 \033[32m --outdir       =\033[37m ./outdir  								  	=> ouptuts directory
@@ -317,7 +317,8 @@ DelMoroWelcome()
 log.info"""
                                                                                
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Max Cpus       =\033[37m ${params.mcpus ?: params.pcpus}
+\033[32m ✔ Available Cpus =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus  =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus   =\033[37m ${params.pcpus}
 \033[32m ✔ Max Forks      =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -333,7 +334,8 @@ def DelMoroTRimmOutput() {
 DelMoroWelcome()
 log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -353,7 +355,8 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -372,7 +375,8 @@ DelMoroWelcome()
 log.info"""
                                                                                
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
 \033[32m ✔ Mapping Max Forks    =\033[37m 2
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
@@ -392,7 +396,8 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Max Cpus                     =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus                =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
 \033[32m ✔ Mapping Max Forks            =\033[37m 2
 \033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
@@ -416,7 +421,8 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Max Cpus             =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
 \033[32m ✔ Caller               =\033[37m ${params.caller ? "Deepvariant" : "gatk" }
@@ -508,7 +514,6 @@ DelMoroWelcome()
 log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 \033[32m ✔ outdir 			=\033[37m ${params.outdir}
 \033[32m ✔ ALIGNER indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
 \033[32m ✔ Dictionary indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
@@ -520,7 +525,8 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Max Cpus                     =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus                =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
 \033[32m ✔ Mapping Max Forks            =\033[37m 2
 \033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
@@ -554,7 +560,8 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Max Cpus                     =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus                =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
 \033[32m ✔ Mapping Max Forks            =\033[37m 2
 \033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
