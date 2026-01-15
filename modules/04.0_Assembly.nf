@@ -139,31 +139,6 @@ process IndexBam {
     """
 }
 
-process Extractregion {
-    tag "EXTRACT REGION"
-    publishDir "${params.outdir}/Mapping/", mode: 'copy'
-
-    conda "bioconda::samtools=1.21"
-    container "${workflow.containerEngine == 'singularity'
-        ? "docker://firaszemzem/bwa-samtools:latest"
-        : "firaszemzem/bwa-samtools:latest"}"
-
-    input:
-    tuple val(patient_id), path (BamFile)
-    // Bam file from sorted_markduplicates_bam
-    tuple val(patient_id), path (BamIdx)
-
-    output:
-    tuple val(patient_id), path ("*.bam")
-
-    script:
-    """
-    samtools view \\
-    -@ ${task.cpus} \\
-    -bh ${BamFile} ${params.region} > ${BamFile.baseName}_region_${params.region}.bam
-    """
-}
-
 // Generate Statictics before & after Marking Duplicates
 
 process GenerateStat {

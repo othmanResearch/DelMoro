@@ -57,17 +57,15 @@ process glnexus {
     tuple val(patient_id), path("cohort_delMoro-*.vcf.gz"), path("*.{tbi,idx}")	, emit: "cohortDeepVcf"
     
     script:
-    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
-                     params.region    ? params.region.split(':')[0] :
-                                        "full"
+    def regionTag = params.region ? params.region.split(':')[0] : "full"
 
     """
     glnexus_cli --threads ${task.cpus} \\
     --config DeepVariant \\
     ${gvcfs} \\
-    | bcftools view -Oz -o  cohort_delMoro-${region_tag}.vcf.gz
+    | bcftools view -Oz -o  cohort_delMoro-${regionTag}.vcf.gz
 
-    tabix -p vcf  cohort_delMoro-${region_tag}.vcf.gz
+    tabix -p vcf  cohort_delMoro-${regionTag}.vcf.gz
     """
 }
 

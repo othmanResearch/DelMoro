@@ -22,12 +22,10 @@ process CallVariant {
 
     script:
     // Ternary-based interval selection
-    def intervals = params.bedtarget ? params.bedtarget :
-                    params.region    ? params.region    : ""
+    def intervals = params.region ? params.region : ""
 
     // Output label
-    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
-                     params.region    ? params.region.split(':')[0]         : "full"
+    def region_tag = params.region ? params.region.split(':')[0] : "full"
     """                              
     gatk HaplotypeCaller \\
         --native-pair-hmm-threads ${task.cpus} \\
@@ -60,12 +58,10 @@ process CreateGVCF {
 
     script:
     // Ternary-based interval selection
-    def intervals = params.bedtarget ? params.bedtarget :
-                    params.region    ? params.region    : ""
+    def intervals = params.region ? params.region : ""
 
     // Output label
-    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
-                     params.region    ? params.region.split(':')[0]         : "full"
+    def region_tag = params.region ? params.region.split(':')[0] : "full"
        
     """
     gatk HaplotypeCaller \\
@@ -102,9 +98,7 @@ process CombineGvcfs {
     
     script:
     // Determine region tag (match previous logic)
-    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
-                     params.region    ? params.region.split(':')[0] :
-                                         "full"
+    def region_tag = params.region ? params.region.split(':')[0] : "full"
 
     """
     gatk CombineGVCFs \\
@@ -140,9 +134,7 @@ process GenotypeGvcfs {
     
     script:
     // Determine region tag (same as previous processes)
-    def region_tag = params.bedtarget ? new File(params.bedtarget).baseName :
-                     params.region    ? params.region.split(':')[0] :
-                                         "full"
+    def region_tag = params.region ? params.region.split(':')[0] : "full"
 
     """
     gatk GenotypeGVCFs \\
