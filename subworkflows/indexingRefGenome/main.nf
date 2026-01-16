@@ -45,10 +45,10 @@ workflow INDEXING_REF_GENOME {
             
         } else {
             DelMoroWelcome()
-            print("\033[31m Please specify valid parameters:\n")
-            print("  --reference option (--reference <reference-path>)\n") 
-            print("  --aligner bwamem2, Default bwa (not to be mentioned)\n")
-            print("For details, run: nextflow main.nf --exec params\n\033[37m")
+            error("\033[31m Please specify valid parameters:\n\n" +
+                  "  --reference option (--reference <reference-path>)\n\n" + 
+                  "  --aligner bwamem2, Default bwa (not to be mentioned)\n\n" +
+                  " For details, run: nextflow main.nf --exec params\n\033[37m")
         }
     } else if (params.igenome && !params.reference) { 
         if (params.IGENOMES && !params.IGENOMES.containsKey(params.igenome)) {
@@ -86,19 +86,22 @@ workflow INDEXING_REF_GENOME {
             
         } else { 
             DelMoroWelcome()
-            print("\033[31m Please specify valid parameters:\n")                
-            print("  --igenome option (e.g., --igenome EB1)\n")
-            print("  --aligner bwamem2, Default bwa (not to be mentioned)\n")
-            print("For details, run: nextflow main.nf --exec params\n\033[37m")
+            error("\033[31m Please specify valid parameters:\n\n" +               
+                  "  --igenome option (e.g., --igenome EB1)\n\n" +
+                  "  --aligner bwamem2, Default bwa (not to be mentioned)\n\n" +
+                  " For details, run: nextflow main.nf --exec params\n\n\033[37m")
         }
     } else {
-        DelMoroWelcome()
-        print("\033[31m Please specify valid parameters:\n")
-        print("  --reference option (--reference <reference-path>)\n")
-        print("  or\n")
-        print("  --igenome option (e.g., --igenome EB1)\n")
-        print("  --aligner bwamem2, Default bwa (not to be mentioned)\n")
-        print("For details, run: nextflow main.nf --exec params\n\033[37m")
+	error("\033[31m Error: Invalid or missing parameters.\n\n"              +
+              " Please specify valid parameters:\n\n"                   +
+              "  --reference option (--reference <reference-path>)\n\n"         +
+              "  or\n\n"                                                        +
+              "  --igenome option (e.g., --igenome EB1)\n\n"                    +
+              "  --aligner bwamem2, Default bwa (not to be mentioned)\n\n"      +
+              " ----------------------------------------------------\n\n"       +
+	      " For more information:\n\n"                                      +
+              "   >>  View the help menu: nextflow main.nf --help\n\n"	      +
+	      "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m"  )
     }
     
     emit:

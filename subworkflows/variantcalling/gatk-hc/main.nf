@@ -20,18 +20,10 @@ workflow CALL_VARIANT_GATK {
  
     main: 
     if (params.stepmode && params.exec == "callvar" ) { DelMoroVarCallOutput() }
-    // Determine if we have valid BAM inputs
-    def hasBamTovarInput = params.fullmode ? true : (params.tovarcall != null)
+        
     // Determine if we are using local reference or igenome fasta retrieving
     def referFileChannel = params.reference ?: params.igenome
-    
-    if (!hasBamTovarInput) {
-	DelMoroWelcome()
-	error("\n\033[31mERROR: Missing required BAM input.\n" +
-	    "In --fullmode, BAMs should come from alignment step.\n" +
-            "Without --fullmode, please specify --tovarcall parameter.\033[0m")
-        }
-        
+       
     if  (params.mode 		== null && 
    	 referFileChannel 	!= null ){
 	
@@ -64,12 +56,16 @@ workflow CALL_VARIANT_GATK {
 
  			
     }  else { 
-	DelMoroWelcome() 
-	print("\033[31m Please specify valid parameters:\n" )
+	print("\033[31m Error: Invalid or missing parameters.\n" )
+	print(" Please specify valid parameters:\n"              )
 	print(" --reference option (--reference reference ) \n" )
-	print(" --tovarcall option (--tovarcall CSVs/5_samplesheetReclibFiles.csv )\n "	)
-	print("optional : --mode cohort  ( Default : null --> will generate a single vcfs )\n " )  
-	print("For details, run: nextflow main.nf --exec params\n\033[37m" )
+	print(" --tovarcall option (--tovarcall CSVs/5_samplesheetReclibFiles.csv )\n "  )
+	print(" --mode cohort  ( Default : null --> will generate a single vcfs )\n "    ) 
+        print(" --caller deepvariant ( Default : no caller --> variant calling with gatk )\n " ) 
+        print(" ---------------------------------------------------------------------------\n"  )
+        print(" For more information:\n"                                        )
+        print("   >>  View the help menu: nextflow main.nf --help\n"            )
+        print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"    ) 
     } 
 }
 

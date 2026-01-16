@@ -33,17 +33,22 @@ workflow BASE_QU_SCO_RECA {
    
     main: 
     if (params.stepmode && params.exec == "bqsr") { DelMoroBQSROutput() }
-
+    
     // Determine if we have valid BAM inputs
     def hasBamInput = params.fullmode ? true : (params.bam != null)
     
-    if (!hasBamInput) {
-    DelMoroWelcome()
-    error("\n\033[31mERROR: Missing required BAM input.\n" +
-      "In --fullmode, BAMs should come from alignment step.\n" +
-      "Without --fullmode, please specify --bam parameter.\033[0m")
-    }
+    if (hasBamInput) {
 
+    error("\033[31mERROR: Your Are trying to execute --bqsr in fullmode and you just missed.\n\n" +
+          " --knownsite1 and --knownsite2 options\n\n" +
+          "    OR\n\n" +
+          " --ivcf1 and --ivcf2 options\n\n" +
+          "------------------------------------------------------------\n\n" + 
+          " For more information:\n\n" +
+          "   >> View the help menu: nextflow main.nf --help\n\n" +
+          "   >> Check parameters: nextflow main.nf --params\033[37m ")
+    }
+    
     // Main processing logic
     if (params.ivcf1 	  == null && 
  	params.ivcf2 	  == null && 
@@ -117,10 +122,18 @@ workflow BASE_QU_SCO_RECA {
 	reaclIdx = IndexRecalBam.out
         reaclBamWithIdx = reaclBam.join(reaclIdx)
     } else { 
- 
-    error("\033[31m Please specify valid parameters:\n   --reference option (--reference reference)\n   ${params.fullmode ? '' : '--bam option (--bam CSVs/4_samplesheetForBamFiles.csv)'}\n Either:\n   --knownsite1 and --knownsite2 options\n OR   \n   --ivcf1 and --ivcf2 options\nFor details, run: nextflow main.nf --exec params\033[0m\n")
-    
-    }
+          error("\033[31m ERROR: Missing required BAM input.\n\n Please specify valid parameters:\n\n " +
+                " --reference option (--reference reference)\n\n" +
+                " --bam option (--bam CSVs/4_samplesheetForBamFiles.csv)\n\n" +
+                " For required VCF files please specify either:\n\n" +
+                "   --knownsite1 and --knownsite2 options\n\n" +
+                "     OR\n\n"+
+                "   --ivcf1 and --ivcf2 options\n\n" +
+                "------------------------------------------------------------\n\n" + 
+                " For more information:\n\n" +
+                "   >> View the help menu: nextflow main.nf --help\n\n" +
+                "   >> Check parameters: nextflow main.nf --params\n\n \033[37m ")
+}
     emit:
     reaclBam = ApplyBQSR.out.recal_bam   
     reaclIdx = IndexRecalBam.out  

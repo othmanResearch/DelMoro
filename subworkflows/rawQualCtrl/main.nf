@@ -18,10 +18,13 @@ workflow QC_RAW_READS {
 	ReadsMultiqc( FastqQc.out.collect()  )
      
     } else { 
-	  
-	DelMoroWelcome() 	  
-	print("\033[31m Please specify valid parameters:\n"					)
-	print("\033[31m  --rawreads option (--rawreads CSVs/1_samplesheetForRawQC.csv ) \n"	)  
-	print("For details, run: nextflow main.nf --exec params\n\033[37m"			)
+        print("\033[31m Error: Invalid or missing parameters.\n"                        )
+        print(" Please specify valid parameters:\n"					)
+	print(" --rawreads option (--rawreads CSVs/1_samplesheetForRawQC.csv ) \n"	)
+	print(" --------------------------------------------------------------\n"       )
+	print(" For more information:\n"                                                )
+        print("   >>  View the help menu: nextflow main.nf --help\n"			)
+	print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"		)
    }  
 }
+

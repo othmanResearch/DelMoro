@@ -94,14 +94,18 @@ workflow ALIGN_TO_REF_GENOME {
 	// Case: Region specified Extract BAM REGION FILE
 	
                 }  else {  
-	            DelMoroWelcome()
-	            print("\033[31m Please specify valid parameters:\n"	)
-	            print("  --reference option ( --reference <reference-path> )\n"		)
-	            print("  --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n"	)
-	            print("  --generate coverage --bedtarget (bedfile)\n"	)
-	            print("  --aligner bwamem2 , Default bwa ( not to be mentionned ) \n"	)
-	            print("For details, run: nextflow main.nf --exec params\n\033[37m"	)
-                }
+	            error("\033[31m Error: Invalid or missing parameters.\n\n" +
+	                  " Please specify valid parameters:\n\n" +
+	                  " --reference option ( --reference <reference-path> )\n\n" +
+	                  " --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n\n" +
+	                  " --generate coverage  --bedtarget (bedfile)\n\n" +
+	                  " --aligner bwamem2 , Default bwa ( not to be mentionned ) \n\n" +
+	                  "------------------------------------------------------------\n\n" +
+	                  " For more information:\n\n" +
+	                  "   >>  View the help menu: nextflow main.nf --help\n\n" +
+	                  "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m ") 
+                }       
+       
         emit: 	
         bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
         bamIdx = IndexBam.out
@@ -164,13 +168,16 @@ workflow ALIGN_TO_REF_GENOME {
 	// Case: Region specified Extract BAM REGION FILE
 	
 	    } else {        
-	        DelMoroWelcome()
-	        print("\033[31m Please specify valid parameters:\n")
-	        print("  --reference option ( --reference <reference-path> )\n")
-	        print("  --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n")
-	        print("  --generate coverage --bedtarget (bedfile)\n")
-	        print("  --aligner bwamem2 , Default bwa ( not to be mentionned ) \n")
-	        print("For details, run: nextflow main.nf --exec params\n\033[37m")
+	    	error("\033[31m Error: Invalid or missing parameters.\n\n" +
+	    	      "\033[31m Please specify valid parameters:\n\n" +
+	    	      " --reference option ( --reference <reference-path> )\n\n" +
+	    	      " --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n\n" +
+	    	      " --generate coverage --bedtarget (bedfile)\n\n" +
+	    	      " --aligner bwamem2 , Default bwa ( not to be mentionned )\n\n" +
+	    	      "------------------------------------------------------------\n\n" +
+	    	      " For more information:\n\n" +
+	    	      "   >>  View the help menu: nextflow main.nf --help\n\n" +
+	    	      "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m")  
 	    }
 	    emit:	
 	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
@@ -178,14 +185,17 @@ workflow ALIGN_TO_REF_GENOME {
             bamWithIdx = bams.join(bamIdx)    
     
     } else {  
-	DelMoroWelcome()
-	print("\033[31m Please specify valid parameters:\n")
-	print("  --reference option ( --reference <reference-path> )\n")
-	print("  --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n")
-	print("  --generate coverage --bedtarget (bedfile)\n")
-	print("  --aligner bwamem2 , Default bwa ( not to be mentionned ) \n")
-	print("  --metrics , To Generate Bam Metrics \n")
-	print("For details, run: nextflow main.nf --exec params\n\033[37m")
+        error("\033[31m Error: Invalid or missing parameters.\n\n" +
+              " Please specify valid parameters:\n\n" +
+              " --reference option ( --reference <reference-path> )\n\n" +
+              " --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n\n" +
+              " --generate coverage --bedtarget (bedfile)\n\n" +
+              " --aligner bwamem2 , Default bwa ( not to be mentionned )\n\n" +
+              " --metrics , To Generate Bam Metrics \n\n"+
+              "------------------------------------------------------------\n\n" +
+              " For more information:\n\n" +
+              "   >>  View the help menu: nextflow main.nf --help\n\n" +
+              "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m") 
     }
 	
     emit : 

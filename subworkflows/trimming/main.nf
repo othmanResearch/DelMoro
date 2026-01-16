@@ -48,12 +48,19 @@ workflow TRIM_READS {
 	multiQcccc   = MultiqcTrimmed.out.multiqcHtml.collect()
     
     }else { 
-	DelMoroWelcome() 
+	print("\033[31m Error: Invalid or missing parameters.\n"                                        )
 	print("\033[31m Please specify valid parameters:\n"					  	)
 	print("\033[31m  --tobetrimmed option (--tobetrimmed CSVs/2_SamplesheetForTrimming.csv )\n"	) 
 	print("\033[31m Please specify Trimming parameters: --trimmomatic , --fastp or --bbduk \n"	)				   
-	print(" For details, run: nextflow main.nf --exec params\n\033[37m"			  	)
+        print(" ----------------------------------------------------------------------\n"               )
+	print(" For more information:\n"                                                )
+        print("   >>  View the help menu: nextflow main.nf --help\n"			)
+	print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"		)  
     }
 } 
 
 
+
+
+
+        

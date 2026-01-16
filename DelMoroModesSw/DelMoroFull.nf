@@ -115,13 +115,23 @@ workflow DelMoroFullSw {
 	} else {
 	FullModeBqsrOutput()
 	print("\033[31m Please specify valid parameters:\n" )
-	print("	--input <path-to-csv> \n")
-	print("	--refernce <path-to-reference>\n")
-	print("	---------------------------------------------------------\n")
-	print("	If depvariant is preferred as a variant caller please add : \n")
-	print("	-- caller deepvariant --modelType <WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ> \n")
-	print("	--------------------------------------------------------------------------------------------\n")
-	print("	optional : --mode cohort  \n\033[37m" )  
+	print(" --input <path-to-csv> \n"			)
+	print(" --refernce <path-to-reference>\n"	)
+	print(" --------------------------------------------------------------------------------------------\n"	)
+	print(" If igenomes are preferred please use --igenome <value> instead of --reference : \n"	)
+	print(" --------------------------------------------------------------------------------------------\n"	)
+	print(" If Base quality score recalibration is preferred please add : \n"	)
+	print(" --bqsr >>> Check help menu for full details \n"	)
+	print(" --------------------------------------------------------------------------------------------\n"	)
+	print(" If depvariant is preferred as a variant caller please add : \n"	)
+	print(" --caller deepvariant --modelType <WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ> \n"	)
+	print(" --------------------------------------------------------------------------------------------\n"	)
+	print(" optional : --mode cohort  \n" 																  	)  
+	print(" --------------------------------------------------------------------------------------------\n"	)
+	print(" For more information:\n"                                    )	
+    print("   >>  View the help menu: nextflow main.nf --help\n"		)
+	print("   >>  Check parameters: nextflow main.nf --params\n\033[37m")
+
 	}
 }
 

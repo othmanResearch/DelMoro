@@ -240,24 +240,23 @@ log.info"""
 \033[32m --fastp	=\033[37m false 									=> Trimming with fastp tool
 \033[32m --bbduk	=\033[37m false 									=> Trimming with bbduk tool
 \033[32m --adapters	=\033[37m null										=> Path for adapter file
-	
+\033[32m --caller       =\033[37m null                                                                          => --caller deepvariant ; only with deepvariant
+\033[32m --modelType    =\033[37m null                                                                          => model_type parameter required for deepvariant caller 
+\033[32m --mode 	=\033[37m null   									=> cohort , Default to null generates all single VCFs			
 
-\033[32m --reference 	=\033[37m ./Reference_Genome/*.fa						  	=> Reference file path
-\033[32m --rawreads 	=\033[37m ./CSVs/1_samplesheetForRawQC.csv 					  	=> Raw reads paths 
-\033[32m --tobetrimmed 	=\033[37m ./CSVs/2_SamplesheetForTrimming.csv					  	=> Raw reads paths + trimmomatic parameters
-\033[32m --tobealigned 	=\033[37m ./CSVs/3_samplesheetForAssembly.csv					  	=> Trimmed read paths 
-\033[32m --bam		=\033[37m ./CSVs/4_samplesheetForBamFiles.csv  					  	=> Bam files paths 
-\033[32m --tovarcall	=\033[37m ./CSVs/5_samplesheetReclibFiles.csv 					  	=> Recalibrated Bam files paths 
-\033[32m --toannotate	=\033[37m ./CSVs/6_samplesheetvcfFiles.csv 						=> Vcf files paths 
+\033[32m --reference 	=\033[37m null                                                                          => Reference file path
+\033[32m --igenome 	=\033[37m null                                                                          => Reference name to be retrieved using AWS
+\033[32m --rawreads 	=\033[37m e.g. ./CSVs/1_samplesheetForRawQC.csv 					=> Raw reads paths 
+\033[32m --tobetrimmed 	=\033[37m e.g. ./CSVs/2_SamplesheetForTrimming.csv					=> Raw reads paths + trimmomatic parameters
+\033[32m --tobealigned 	=\033[37m e.g. ./CSVs/3_samplesheetForAssembly.csv					=> Trimmed read paths 
+\033[32m --bam		=\033[37m e.g. ./CSVs/4_samplesheetForBamFiles.csv  					=> Bam files paths 
+\033[32m --tovarcall	=\033[37m e.g. ./CSVs/5_samplesheetReclibFiles.csv 					=> Recalibrated Bam files paths 
+\033[32m --toannotate	=\033[37m e.g. ./CSVs/6_samplesheetvcfFiles.csv 					=> Vcf files paths 
+\033[32m --tofilter	=\033[37m e.g. ./CSVs/6_samplesheetvcfFiles.csv 					=> Vcf files paths 
 
-\033[32m --knownsite1	=\033[37m ./knownsites/1000g_gold_standard.indels.filtered.vcf 			  	=> knownsites should be .vcf  
-\033[32m --knownsite2 	=\033[37m ./knownsites/GCF.38.filtered.renamed.vcf			
+\033[32m --knownsite1	=\033[37m e.g. ./knownsites/1000g_gold_standard.indels.filtered.vcf 			=> vcf file 1 required for bqsr 
+\033[32m --knownsite2 	=\033[37m e.g. ./knownsites/GCF.38.filtered.renamed.vcf			                => vcf file 2 required for bqsr
 
-\033[32m --bamindex	=\033[37m ./outdir/Mapping/*.bai			       			  	=> Bam Files Indexes
-
-\033[32m --alignerindex	=\033[37m ./Reference_Genome/*.fa.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}			=> Bwa			Reference Indexes
-\033[32m --dictgatk	=\033[37m ./Reference_Genome/*.dict					  		=> GATK Dictionary 	Reference Index
-\033[32m --samtoolsindex=\033[37m ./Reference_Genome/*.fa.fai 	 			  	  		=> Samtools fai 	Reference Index
 \033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
 \033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    
 
@@ -272,8 +271,8 @@ log.info"""
                                            exp: "chr1:position1-position2" 
                                            
 
-\033[32m --mode 	=\033[37m null   									=> generate vcf for all inputs "onlyvcf" , Default to null generates all cohortGVCF file 					 	
-                                           
+
+\033[32m --region       =\033[37m null                                                                          => To extract specific region while variant calling                            
 \033[32m --bedtarget 	=\033[37m Target BEDFILE to extract coverage from bam file
                                            Default : null   
 \033[32m --igenome     	=\033[37m null  									=> key Value from IGENOMES to download Reference 
@@ -283,9 +282,22 @@ log.info"""
 \033[32m --species    	=\033[37m null  									=> Vep Cache specie
 \033[32m --cachetype 	=\033[37m null 										=> Vep Cache type , Must be refseq or merged 
 \033[32m --assembly	=\033[37m null										=> Assembly version to use 
-\033[32m --cacheversion	=\033[37m null		  								=> Vep Cache version -113.4 on conda not yet updated     
+\033[32m --cacheversion	=\033[37m null		  								=> Vep Cache version      
 \033[32m --cachedir  	=\033[37m .vepcachedir  								=> Vep Cache Directory     
-                                
+
+\033[32m --metaPatients =\033[37m null   								        => Csv of Metadata of patiens +vcf paths
+\033[32m --metaYaml  	=\033[37m null     								        => Yaml file of Physician metadata + executions steps info 
+
+\033[32m --QD           =\033[37m 2.0        								        => Quality by Depth: variant confidence normalized by depth
+\033[32m --QUAL         =\033[37m 30.0      								        => Overall variant quality score
+\033[32m --SOR          =\033[37m 3.0       								        => Strand Odds Ratio: measures strand bias
+\033[32m --FSSNP        =\033[37m 60.0      								        => Fisher Strand (SNPs): p-value for strand bias
+\033[32m --MQ           =\033[37m 40.0      								        => RMS Mapping Quality of reads supporting the variant
+\033[32m --MQRankSum    =\033[37m -12.5     								        => Z-score from Wilcoxon rank sum test of Alt vs Ref read mapping qualities
+\033[32m --ReadPosRankSumSNP    =\033[37m -8.0   							        => Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (SNPs)
+\033[32m --FSINDEL              =\033[37m 200.0                                                                 => Fisher Strand (INDELs): p-value for strand bias for indels
+\033[32m --ReadPosRankSumINDEL  =\033[37m -20.0                                                                 => Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (INDELs)
+ 
 \033[37m
                                            
 """}
@@ -298,16 +310,33 @@ log.info"""
 \033[31m DelMoro version :\033[37m v1.00 	   
 """		}
 
- 
+// Execution steps
+def DelMoroSmExec(){ 
+log.info"""
+\033[31m Module :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of     raw           reads. 
+	  - \033[32mtrim\033[37m 	: Remove low-quality bp and adapters & checks its quality.
+	  - \033[32mrefidx\033[37m 	: Index   the    reference   genome    for      alignment.
+	  - \033[32malign\033[37m 	: Align     reads      to     the     reference    genome.
+	  - \033[32mbqsr\033[37m 	: Base 		Quality 	Score	    recalibration.
+	  - \033[32mcallvar\033[37m 	: Detect           SNPs      from      aligned      reads.
+	  - \033[32mannotate\033[37m 	: annotate 	    	    vfc 	             file.
+	  - \033[32mreporting\033[37m 	: Auto  	Generate   PDF 	  of   	  vcf 	  reports.
+	  - \033[32mfilter\033[37m 	: Filter  	vcfs  	    to     SNP     and     INDELS.
+	  - \033[32mhelp\033[37m 	
+	  - \033[32mversion\033[37m 
+"""
+}
 
-// Version 
+// stepmode Error
 
 def DelMoroError(){   
 
 DelMoroWelcome()
 log.info"""
-\033[31m ⚠︎  Please Verify The Typed command \033[37m 
-"""		}
+\033[31m Please Verify The Typed command 
+"""
+DelMoroSmExec()
+}
 
 
 // DelMoro Raw QC Output Paths 
@@ -359,10 +388,6 @@ log.info"""
 \033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
-\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ ALIGNER indexes      =\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Dictionary indexes   =\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Samtools indexes     =\033[37m ./${params.outdir}/Indexes/Reference
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -515,15 +540,15 @@ log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ outdir 			=\033[37m ${params.outdir}
-\033[32m ✔ ALIGNER indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Dictionary indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Samtools indexes 		=\033[37m ./${params.outdir}/Indexes/Reference
+\033[32m ✔ Input 		        =\033[37m ${params.input}
+\033[32m ✔ Reference 		        =\033[37m ${params.refernce ? params.refernce : params.igenome} 
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Mapped reads 		=\033[37m ./${params.outdir}/Mapping
 \033[32m ✔ Mapped reads metrics  	=\033[37m ./${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Mapping/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
+\033[32m ✔ Caller                       =\033[37m ${params.caller ? "Deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus                =\033[37m ${ params.mcpus ?: params.pcpus}
@@ -542,13 +567,10 @@ log.info"""
                                                                               
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ outdir                       =\033[37m ${params.outdir}
-\033[32m ✔ ALIGNER indexes              =\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Dictionary indexes           =\033[37m ./${params.outdir}/Indexes/Reference
-\033[32m ✔ Samtools indexes             =\033[37m ./${params.outdir}/Indexes/Reference
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Mapped reads                 =\033[37m ./${params.outdir}/Mapping
 \033[32m ✔ Mapped reads metrics         =\033[37m ./${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes             =\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m ✔ Bam file indexes             =\033[37m ./${params.outdir}/Mapping/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Known Sites (ivcf 1)         =\033[37m ./knownsites/${params.ivcf1}
 \033[32m ✔ Known Sites (ivcf 2)         =\033[37m ./knownsites/${params.ivcf2}
@@ -556,9 +578,9 @@ log.info"""
 \033[32m ✔ Known Sites (local vcf 2)    =\033[37m ./knownsites/${params.knownsite2}
 \033[32m ✔ Known Sites vcf indexes      =\033[37m ./${params.outdir}/Indexes/knownSites
 \033[32m ✔ Base Recalibration           =\033[37m ./${params.outdir}/Mapping
-\033[32m ✔ Bam indexes                  =\033[37m ./${params.outdir}/Indexes/BamFiles
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Mapping/Variants
+\033[32m ✔ Caller                       =\033[37m ${params.caller ? "Deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus                =\033[37m ${ params.mcpus ?: params.pcpus}
@@ -568,6 +590,5 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  	"""
 }
-
 
 

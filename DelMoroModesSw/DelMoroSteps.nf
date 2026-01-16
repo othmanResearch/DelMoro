@@ -7,6 +7,7 @@ nextflow.enable.dsl = 2
 // Interactive Design while Running DelMoro
 
 include {DelMoroWelcome		}    from '../.logos' 
+include {DelMoroSmExec		}    from '../.logos'
 include {DelMoroParams		}    from '../.logos' 
 include {DelMoroVersion		}    from '../.logos' 
 include {DelMoroHelp		}    from '../.logos' 
@@ -60,7 +61,9 @@ workflow DelMoroSteps {
   
     if (params.exec == null ){
     
-    DelMoroWelcome()   
+    DelMoroWelcome() 
+    DelMoroSmExec()
+
     GENERATE_CSVS(PrepareCsv)
   
     } else if (params.exec == 'rawqc') {    // check quality of raw reads
