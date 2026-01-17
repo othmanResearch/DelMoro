@@ -116,7 +116,7 @@ workflow DelMoroFullSw {
 	FullModeBqsrOutput()
 	print("\033[31m Please specify valid parameters:\n" )
 	print(" --input <path-to-csv> \n"			)
-	print(" --refernce <path-to-reference>\n"	)
+	print(" --reference <path-to-reference>\n"	)
 	print(" --------------------------------------------------------------------------------------------\n"	)
 	print(" If igenomes are preferred please use --igenome <value> instead of --reference : \n"	)
 	print(" --------------------------------------------------------------------------------------------\n"	)
