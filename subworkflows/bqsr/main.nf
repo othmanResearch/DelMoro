@@ -37,7 +37,7 @@ workflow BASE_QU_SCO_RECA {
     // Determine if we have valid BAM inputs
     def hasBamInput = params.fullmode ? true : (params.bam != null)
     
-    if (hasBamInput) {
+    if (hasBamInput && params.bqsr && !( (params.knownsite1 && params.knownsite2) || (params.ivcf1 && params.ivcf2) ) ){
 
     error("\033[31mERROR: Your Are trying to execute --bqsr in fullmode and you just missed.\n\n" +
           " --knownsite1 and --knownsite2 options\n\n" +

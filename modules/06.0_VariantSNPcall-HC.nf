@@ -25,13 +25,13 @@ process CallVariant {
     def intervals = params.region ? params.region : ""
 
     // Output label
-    def region_tag = params.region ? params.region.split(':')[0] : "full"
+    def regionTag = params.region ? params.region.split(':')[0] : "full"
     """                              
     gatk HaplotypeCaller \\
         --native-pair-hmm-threads ${task.cpus} \\
         --reference ${ref} \\
         --input ${ReclBamFile} \\
-        --output ${ReclBamFile.baseName}.${region_tag}.HC.vcf.gz \\
+        --output ${ReclBamFile.baseName}.${regionTag}.HC.vcf.gz \\
         ${intervals ? "-L ${intervals}" : ""}
     """
 }
@@ -61,14 +61,14 @@ process CreateGVCF {
     def intervals = params.region ? params.region : ""
 
     // Output label
-    def region_tag = params.region ? params.region.split(':')[0] : "full"
+    def regionTag = params.region ? params.region.split(':')[0] : "full"
        
     """
     gatk HaplotypeCaller \\
         --native-pair-hmm-threads ${task.cpus} \\
         --reference ${ref} \\
         --input ${ReclBamFile} \\
-        --output ${ReclBamFile.baseName}.${region_tag}.g.vcf.gz \\
+        --output ${ReclBamFile.baseName}.${regionTag}.g.vcf.gz \\
         --emit-ref-confidence GVCF \\
         ${intervals ? "-L ${intervals}" : ""}
     """
@@ -98,13 +98,13 @@ process CombineGvcfs {
     
     script:
     // Determine region tag (match previous logic)
-    def region_tag = params.region ? params.region.split(':')[0] : "full"
+    def regionTag = params.region ? params.region.split(':')[0] : "full"
 
     """
     gatk CombineGVCFs \\
 	--reference ${ref} \\
 	--variant ${GvcfFiles.join(' --variant ')} \\
-        --output cohort_delMoro-${region_tag}.g.vcf.gz
+        --output cohort_delMoro-${regionTag}.g.vcf.gz
     """
 }
  
@@ -134,13 +134,13 @@ process GenotypeGvcfs {
     
     script:
     // Determine region tag (same as previous processes)
-    def region_tag = params.region ? params.region.split(':')[0] : "full"
+    def regionTag = params.region ? params.region.split(':')[0] : "full"
 
     """
     gatk GenotypeGVCFs \\
 	--reference ${ref} \\
 	--variant ${CombinedFile} \\
-        --output cohort_delMoro-${region_tag}.vcf.gz
+        --output cohort_delMoro-${regionTag}.vcf.gz
     """
 }
 
