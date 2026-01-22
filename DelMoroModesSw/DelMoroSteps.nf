@@ -80,7 +80,7 @@ workflow DelMoroSteps {
  
     } else if (params.exec == 'align') {    // align reads to reference
 
-    ALIGN_TO_REF_GENOME(RefGenChannel,AlignIdxRef,ReadsToBeAligned,Target) 
+    ALIGN_TO_REF_GENOME(RefGenChannel,AlignIdxRef,ReadsToBeAligned) 
      
     } else if (params.exec == 'bqsr') {
            
@@ -88,7 +88,7 @@ workflow DelMoroSteps {
                
     } else if (params.exec == 'callvar' && !params.caller ) {    // Call snp
               
-    CALL_VARIANT_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall) 
+    CALL_VARIANT_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall,Target) 
           
     } else if (params.exec == 'callvar' && params.caller == 'deepvariant') {    // Call snp
               
@@ -130,5 +130,3 @@ workflow DelMoroSteps {
    
  }
        
-
-

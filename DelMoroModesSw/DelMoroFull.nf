@@ -28,8 +28,7 @@ workflow DelMoroFullSw {
 		    ALIGN_TO_REF_GENOME(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
-		        ReadsToBeAligned,
-		        Target
+		        ReadsToBeAligned
 		    ) 
 		    
 		    BASE_QU_SCO_RECA(
@@ -45,7 +44,8 @@ workflow DelMoroFullSw {
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.gatkDict,
 		        INDEXING_REF_GENOME.out.samtoolsIndex,
-		        BASE_QU_SCO_RECA.out.reaclBamWithIdx
+		        BASE_QU_SCO_RECA.out.reaclBamWithIdx,
+		        Target
 		    )
 
 		} else {
@@ -55,15 +55,15 @@ workflow DelMoroFullSw {
 		    ALIGN_TO_REF_GENOME(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
-		        ReadsToBeAligned,
-		        Target
+		        ReadsToBeAligned
 		    )
 			 
 		    CALL_VARIANT_GATK(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.gatkDict,
 		        INDEXING_REF_GENOME.out.samtoolsIndex,
-		        ALIGN_TO_REF_GENOME.out.bamWithIdx
+		        ALIGN_TO_REF_GENOME.out.bamWithIdx,
+		        Target
 		    ) 
 		}
 	} else if ( params.input && ( params.reference || params.igenome ) && params.caller	== "deepvariant" && params.modelType    != null ) {
@@ -74,8 +74,7 @@ workflow DelMoroFullSw {
 		    ALIGN_TO_REF_GENOME(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
-		        ReadsToBeAligned,
-		        Target
+		        ReadsToBeAligned
 		    ) 
 		    
 		    BASE_QU_SCO_RECA(
@@ -101,8 +100,7 @@ workflow DelMoroFullSw {
 		    ALIGN_TO_REF_GENOME(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
-		        ReadsToBeAligned,
-		        Target
+		        ReadsToBeAligned
 		    )
 			 
 		    CALL_VARIANT_DEEPVARIANT(
@@ -134,10 +132,3 @@ workflow DelMoroFullSw {
 
 	}
 }
-
-
-
-
-
-
-

@@ -17,6 +17,7 @@ workflow CALL_VARIANT_GATK {
     dictREF
     samidxREF
     BamToVarCall
+    bedtarget
  
     main: 
     if (params.stepmode && params.exec == "callvar" ) { DelMoroVarCallOutput() }
@@ -30,8 +31,9 @@ workflow CALL_VARIANT_GATK {
 	CallVariant 	(  ref_gen_channel
     	                  ,dictREF.collect()
     	                  ,samidxREF.collect()
-    	                  ,BamToVarCall ) 
- 
+    	                  ,BamToVarCall
+    	                  ,bedtarget) 
+ //bedtarget.view()
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(CallVariant.out.CallVariantvcf)
 
@@ -41,7 +43,8 @@ workflow CALL_VARIANT_GATK {
 	CreateGVCF	( ref_gen_channel
 	                 ,dictREF.collect()
 	                 ,samidxREF.collect()
-	                 ,BamToVarCall )
+	                 ,BamToVarCall
+	                 ,bedtarget)
 
     
     

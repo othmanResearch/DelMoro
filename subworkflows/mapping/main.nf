@@ -20,16 +20,12 @@ include { BigWig   		  } from '../../modules/04.2_BamToBigWig.nf'
 include { BigWigCoveragePlots	  } from '../../modules/04.3_BigWigPlotting.nf'
 
 include { BamCoverage	 	  } from '../../modules/04.4_CoverageStat.nf' 
-include { BamTargetCoverage	  } from '../../modules/04.4_CoverageStat.nf'
-
-
 
 workflow ALIGN_TO_REF_GENOME {
      take:
      ref_gen_channel
-    indexes
+     indexes
      READS
-     target
  
     main: 
     def inputFileChannel = params.input ?: params.tobealigned 
@@ -40,16 +36,14 @@ workflow ALIGN_TO_REF_GENOME {
     if ( params.aligner == null ) {
  
         if (referFileChannel 	!= null && 
-            inputFileChannel 	!= null && 
- 	    params.generate 	== null && 
-   	    params.bedtarget 	== null ){ 
+            inputFileChannel 	!= null ){ 
  
 	    AlignReadsToRef (ref_gen_channel, indexes.collect(),READS )		   	
 	    AssignReadGroup (AlignReadsToRef.out.sorted_bam)
 	    MarkDuplicates  (AssignReadGroup.out.sorted_labeled_bam)
 	    IndexBam        (MarkDuplicates.out.sorted_markduplicates_bam) 
 	      	
-	    if (params.report) {
+	    if (params.report ) {
 	    	GenerateStat	    ( AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
 		BamCoverage 	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 		BigWig		    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
@@ -58,53 +52,20 @@ workflow ALIGN_TO_REF_GENOME {
 	        InsertMetrics	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
 	        GcBiasMetrics	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
 	        Qualimap	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
-	    }
-	    
-        emit : 
-        bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
-        bamIdx = IndexBam.out  
-        bamWithIdx = bams.join(bamIdx)
-	// Case: CHECK COVERAGE IN TARGETD REGION FROM BED FILE 
-
-            } else if ( referFileChannel 	!= null && 
-	                inputFileChannel 	!= null &&
-		        params.generate 	== 'coverage' && 
-		        params.bedtarget	!== null ){ 
-	
-	        AlignReadsToRef	(ref_gen_channel, indexes.collect(),READS ) 
-	        AssignReadGroup	(AlignReadsToRef.out ) 
-	        MarkDuplicates  (AssignReadGroup.out ) 
-	        IndexBam        (MarkDuplicates.out.sorted_markduplicates_bam	) 
-	    
-	        if (params.report) {
-	    	    GenerateStat 	( AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
-	   	    BamTargetCoverage 	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out), target )
-	   	    BigWig		( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
-	    	    BigWigCoveragePlots ( BigWig.out, params.mindepth, params.saveImg)
-	    	    AlignmentMetrics    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
-	    	    InsertMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) 	  )
-	            GcBiasMetrics	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
-		    Qualimap	        ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) 	  )
-	        }
-            emit : 
-	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
-            bamIdx = IndexBam.out
-            bamWithIdx = bams.join(bamIdx)
-	
-	// Case: Region specified Extract BAM REGION FILE
-	
-                }  else {  
-	            error("\033[31m Error: Invalid or missing parameters.\n\n" +
-	                  " Please specify valid parameters:\n\n" +
-	                  " --reference option ( --reference <reference-path> )\n\n" +
-	                  " --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n\n" +
-	                  " --generate coverage  --bedtarget (bedfile)\n\n" +
-	                  " --aligner bwamem2 , Default bwa ( not to be mentionned ) \n\n" +
-	                  "------------------------------------------------------------\n\n" +
-	                  " For more information:\n\n" +
-	                  "   >>  View the help menu: nextflow main.nf --help\n\n" +
-	                  "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m ") 
-                }       
+            
+            } 
+        } else {  
+            error("\033[31m Error: Invalid or missing parameters.\n\n" +
+                  " Please specify valid parameters:\n\n" +
+                  " --reference option ( --reference <reference-path> )\n\n" +
+                  " --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n\n" +
+                  " --aligner bwamem2 , Default bwa ( not to be mentionned ) \n\n" +
+                  " --report , To Generate Bam Metrics \n\n"+
+                  "------------------------------------------------------------\n\n" +
+                  " For more information:\n\n" +
+                  "   >>  View the help menu: nextflow main.nf --help\n\n" +
+                  "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m ") 
+        }       
        
         emit: 	
         bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
@@ -114,9 +75,7 @@ workflow ALIGN_TO_REF_GENOME {
     } else  if ( params.aligner == "bwamem2" ) {
  
         if ( referFileChannel 	!= null && 
-            inputFileChannel 	!= null && 
-	    params.generate 	== null && 
-	    params.bedtarget 	== null ){ 
+            inputFileChannel 	!= null ){ 
  		 
 	
 	    AlignReadsToRefBwaMem2  ( ref_gen_channel, indexes.collect(),READS )		   	
@@ -124,83 +83,49 @@ workflow ALIGN_TO_REF_GENOME {
 	    MarkDuplicates	    ( AssignReadGroup.out )
 	    IndexBam		    ( MarkDuplicates.out.sorted_markduplicates_bam )
 	    
-	    if (params.report) { 
-	     	GenerateStat	    ( AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    	BamCoverage	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
-	    	BigWig		    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
-	    	BigWigCoveragePlots ( BigWig.out, params.mindepth, params.saveImg )
-	 	AlignmentMetrics    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
-	        InsertMetrics	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
+	    if (params.report ) {
+	    	GenerateStat	    ( AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
+		BamCoverage 	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
+		BigWig		    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
+	    	BigWigCoveragePlots ( BigWig.out, params.mindepth, params.saveImg)
+		AlignmentMetrics    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
+	        InsertMetrics	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
 	        GcBiasMetrics	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
-	        Qualimap	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
-	    }
-        emit : 
-        bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
-        bamIdx = IndexBam.out
-        bamWithIdx = bams.join(bamIdx)
-	
-	// Case: CHECK COVERAGE IN TARGETD REGION FROM BED FILE 
-
-	    } else if ( referFileChannel 	!= null && 
-	                inputFileChannel 	!= null && 
-		        params.generate 	== 'coverage' && 
-		        params.bedtarget 	!== null ){ 
-
-	        AlignReadsToRefBwaMem2	( ref_gen_channel, indexes.collect(),READS ) 
-	        AssignReadGroup	        ( AlignReadsToRefBwaMem2.out ) 
-	        MarkDuplicates	        ( AssignReadGroup.out )  
-	        IndexBam		( MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    
-	        if (params.report) {
-	    	    GenerateStat        ( AssignReadGroup.out.sorted_labeled_bam,MarkDuplicates.out.sorted_markduplicates_bam ) 
-	    	    BamTargetCoverage	( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) ,target	)
-	            BigWig		( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )		 
-	    	    BigWigCoveragePlots	( BigWig.out, params.mindepth, params.saveImg)
-	    	    AlignmentMetrics    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
-	    	    InsertMetrics       ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
-	    	    GcBiasMetrics       ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel ) 
-	    	    Qualimap	        ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
-	        }
-	    emit : 
-	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
-	    bamIdx = IndexBam.out
-	    bamWithIdx = bams.join(bamIdx)
-	// Case: Region specified Extract BAM REGION FILE
-	
-	    } else {        
-	    	error("\033[31m Error: Invalid or missing parameters.\n\n" +
-	    	      "\033[31m Please specify valid parameters:\n\n" +
-	    	      " --reference option ( --reference <reference-path> )\n\n" +
-	    	      " --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n\n" +
-	    	      " --generate coverage --bedtarget (bedfile)\n\n" +
-	    	      " --aligner bwamem2 , Default bwa ( not to be mentionned )\n\n" +
-	    	      "------------------------------------------------------------\n\n" +
-	    	      " For more information:\n\n" +
-	    	      "   >>  View the help menu: nextflow main.nf --help\n\n" +
-	    	      "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m")  
-	    }
-	    emit:	
-	    bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
-	    bamIdx = IndexBam.out
-            bamWithIdx = bams.join(bamIdx)    
+	        Qualimap	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out)  )
+       
+	    } 
+        } else {        
+            error("\033[31m Error: Invalid or missing parameters.\n\n" +
+	    	  "\033[31m Please specify valid parameters:\n\n" +
+	    	  " --reference option ( --reference <reference-path> )\n\n" +
+	    	  " --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n\n" +
+	    	  " --aligner bwamem2 , Default bwa ( not to be mentionned )\n\n" +
+	    	  " --report , To Generate Bam Metrics \n\n"+
+	    	  "------------------------------------------------------------\n\n" +
+	    	  " For more information:\n\n" +
+	    	  "   >>  View the help menu: nextflow main.nf --help\n\n" +
+	    	  "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m")  
+        }
+      emit:	
+      bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
+      bamIdx = IndexBam.out
+      bamWithIdx = bams.join(bamIdx)    
     
     } else {  
         error("\033[31m Error: Invalid or missing parameters.\n\n" +
               " Please specify valid parameters:\n\n" +
               " --reference option ( --reference <reference-path> )\n\n" +
               " --tobealigned ( --tobealigned CSVs/3_samplesheetForAssembly.csv )\n\n" +
-              " --generate coverage --bedtarget (bedfile)\n\n" +
               " --aligner bwamem2 , Default bwa ( not to be mentionned )\n\n" +
-              " --metrics , To Generate Bam Metrics \n\n"+
+              " --report , To Generate Bam Metrics \n\n"+
               "------------------------------------------------------------\n\n" +
               " For more information:\n\n" +
               "   >>  View the help menu: nextflow main.nf --help\n\n" +
               "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m") 
-    }
-	
+    }	
     emit : 
     bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
     bamIdx = IndexBam.out
     bamWithIdx = bams.join(bamIdx)
-  
+
 }

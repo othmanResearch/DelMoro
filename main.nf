@@ -80,7 +80,7 @@ include {DelMoroHelp	} 	from './.logos'
                                       		   	    .flatMap { it } 							: Channel.empty()
     						
   // target bed file to extract coverage 
-  Target		= params.bedtarget	? Channel.fromPath(params.bedtarget, checkIfExists: false).first()		: Channel.empty()      
+  Target 		= params.bedtarget	? Channel.fromPath(params.bedtarget, checkIfExists: true).first()	: Channel.value(file("NO_FILE"))
 	
   // knwon file 1 channel for BQSR    
 
