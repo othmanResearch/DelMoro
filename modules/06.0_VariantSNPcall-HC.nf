@@ -27,10 +27,12 @@ process CallVariant {
     def hasBed = bedtarget.name != 'NO_FILE'
     def hasRegion = params.region != null
 
-    def intervalArg = hasBed ? "-L ${bedtarget}"  : hasRegion ? "-L ${params.region}"       : ""
-    def regionTag   = hasBed ? "bedtargeted"      : hasRegion ? params.region.split(':')[0] : "full"
+    def regions = params.region instanceof List ? params.region : params.region.split(',')
 
-    """
+    def intervalArg = hasBed ? "-L ${bedtarget}"  : hasRegion ? regions.collect { "-L $it" }.join(' ') : ""
+    def regionTag   = hasBed ? "bedtargeted"      : hasRegion ? regions.collect { it.split(':')[0] }.join('_') : "full"
+   
+   """
     gatk HaplotypeCaller \\
         --native-pair-hmm-threads ${task.cpus} \\
         -R ${ref} \\
