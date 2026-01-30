@@ -8,8 +8,9 @@ include { CallVariant     } from '../../../modules/06.0_VariantSNPcall-HC.nf'
 include { CreateGVCF      } from '../../../modules/06.0_VariantSNPcall-HC.nf'  
 include { CombineGvcfs    } from '../../../modules/06.0_VariantSNPcall-HC.nf'  
 include { GenotypeGvcfs   } from '../../../modules/06.0_VariantSNPcall-HC.nf' 
-include { GenerateStats   } from '../../../modules/06.2_VarMetrics.nf' 
- 
+include { GenerateStats   } from '../../../modules/06.2_VarMetrics.nf'
+include { RsAnnotation    } from '../../../modules/06.3_VarAnnot_bcftools.nf' 
+
 workflow CALL_VARIANT_GATK {
 
     take:
@@ -18,6 +19,7 @@ workflow CALL_VARIANT_GATK {
     samidxREF
     BamToVarCall
     bedtarget
+    AnnotRefVCF
  
     main: 
     if (params.stepmode && params.exec == "callvar" ) { DelMoroVarCallOutput() }
@@ -33,10 +35,11 @@ workflow CALL_VARIANT_GATK {
     	                  ,samidxREF.collect()
     	                  ,BamToVarCall
     	                  ,bedtarget) 
- //bedtarget.view()
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(CallVariant.out.CallVariantvcf)
-
+        if ( params.rsid ) {
+            RsAnnotation(CallVariant.out, AnnotRefVCF )  
+        }
     } else if ( referFileChannel 	!= null && 
 		params.mode 		== 'cohort' ){	// generate vcf for all inputs 
 	
@@ -56,7 +59,10 @@ workflow CALL_VARIANT_GATK {
 	GenotypeGvcfs 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),CombineGvcfs.out.CohortVcf )
 
 	GenerateStats	( GenotypeGvcfs.out )  
-
+	
+	if ( params.rsid ) {
+            RsAnnotation(GenotypeGvcfs.out, AnnotRefVCF )  
+        }
  			
     }  else { 
 	print("\033[31m Error: Invalid or missing parameters.\n" )

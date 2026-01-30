@@ -165,6 +165,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   		   	   : --tovarcall   <path-to-bam-csv)
   		   	   : --mode only [ optional ]
   		   	   : --caller deepvariant [ optional ]
+  		   	   : --rsid <path-to-vcf>
   		   output  : .vcf
   		   	   : .table
   -- Annotation	  
@@ -256,7 +257,7 @@ log.info"""
 
 \033[32m --knownsite1	=\033[37m e.g. ./knownsites/1000g_gold_standard.indels.filtered.vcf 			=> vcf file 1 required for bqsr 
 \033[32m --knownsite2 	=\033[37m e.g. ./knownsites/GCF.38.filtered.renamed.vcf			                => vcf file 2 required for bqsr
-
+\033[32m --rsid         =\033[37m e.g. ./dbsnp_146.hg38.vcf.gz			                                => vcf file for variant ID adding 
 \033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
 \033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    
 

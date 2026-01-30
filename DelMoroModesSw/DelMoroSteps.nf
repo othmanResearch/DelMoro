@@ -44,6 +44,7 @@ workflow DelMoroSteps {
     MappedReads
     KnownSite1
     KnownSite2
+    AddRSID
     ToVarCall
     VepSpecies 
     Assembly
@@ -88,7 +89,7 @@ workflow DelMoroSteps {
                
     } else if (params.exec == 'callvar' && !params.caller ) {    // Call snp
               
-    CALL_VARIANT_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall,Target) 
+    CALL_VARIANT_GATK(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall,Target,AddRSID) 
           
     } else if (params.exec == 'callvar' && params.caller == 'deepvariant') {    // Call snp
               

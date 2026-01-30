@@ -17,6 +17,7 @@ workflow DelMoroFullSw {
     Target
     KnownSite1
     KnownSite2
+    AddRSID
     
     
     main: 
@@ -45,7 +46,8 @@ workflow DelMoroFullSw {
 		        INDEXING_REF_GENOME.out.gatkDict,
 		        INDEXING_REF_GENOME.out.samtoolsIndex,
 		        BASE_QU_SCO_RECA.out.reaclBamWithIdx,
-		        Target
+		        Target,
+		        AddRSID
 		    )
 
 		} else {
@@ -63,7 +65,8 @@ workflow DelMoroFullSw {
 		        INDEXING_REF_GENOME.out.gatkDict,
 		        INDEXING_REF_GENOME.out.samtoolsIndex,
 		        ALIGN_TO_REF_GENOME.out.bamWithIdx,
-		        Target
+		        Target,
+		        AddRSID
 		    ) 
 		}
 	} else if ( params.input && ( params.reference || params.igenome ) && params.caller	== "deepvariant" && params.modelType    != null ) {

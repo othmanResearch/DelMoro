@@ -103,8 +103,18 @@ include {DelMoroHelp	} 	from './.logos'
 							      def indexFile = file(tbi).exists() ? file(tbi) : file(idx)
 							      tuple(id, vcfile, indexFile)
 							   }.first()								: Channel.empty()
+ // VCF for Bcftools annotation
+ 
+  AddRSID 			= params.rsid 	? Channel.fromPath(params.rsid, checkIfExists: false)
+							  .map { vcfile ->
+							      def id = vcfile.baseName
+							      def tbi = vcfile.toString() + '.tbi'
+							      def idx = vcfile.toString() + '.idx'
+							      def indexFile = file(tbi).exists() ? file(tbi) : file(idx)
+							      tuple(id, vcfile, indexFile)
+							   }.first()								: Channel.empty()
 
-  // Indexes Channels 
+ // Indexes Channels 
 
     // Aligner Indexs Bwa mem2 
     AlignIdxRef = params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}", checkIfExists: false )	: Channel.empty()
@@ -190,7 +200,7 @@ workflow {
 		 	,Target
 		 	,KnownSite1
 		 	,KnownSite2  
-		 	 
+		 	,AddRSID
 		 	)
   } else if (params.stepmode){
 
@@ -206,6 +216,7 @@ workflow {
 		 	,MappedReads
 		 	,KnownSite1
 		 	,KnownSite2
+		 	,AddRSID
 		 	,ToVarCall
 		 	,VepSpecies 
 		 	,Assembly
