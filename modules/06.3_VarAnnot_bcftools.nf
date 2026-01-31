@@ -18,16 +18,16 @@ process RsAnnotation {
     tuple val(fileName), path(refVcf), path(refVcfIdx)
     
     output:
-    tuple val(patient_id), path("${patient_id}_delMoro_rs-${refVcf.getSimpleName()}.vcf.gz"), path("${patient_id}_delMoro_rs-${refVcf.getSimpleName()}.vcf.gz.tbi") , emit: bcfAnnotCh
+    tuple val(patient_id), path("${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz"), path("${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz.tbi") , emit: bcfAnnotCh
 
     script:
 
     """
     bcftools annotate --threads ${task.cpus} \\
     -a ${refVcf} -c ID \\
-    -Oz -o ${patient_id}_delMoro_rs-${refVcf.getSimpleName()}.vcf.gz ${queryVcf}
+    -Oz -o ${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz ${queryVcf}
     
-    gatk IndexFeatureFile --input ${patient_id}_delMoro_rs-${refVcf.getSimpleName()}.vcf.gz 
+    gatk IndexFeatureFile --input ${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz 
     """
 }
 
