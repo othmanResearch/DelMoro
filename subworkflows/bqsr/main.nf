@@ -109,7 +109,7 @@ workflow BASE_QU_SCO_RECA {
 	IndexRecalBam		(ApplyBQSR.out.recal_bam)
 	
 	if (params.report) {
-	    BigWig		(ApplyBQSR.out.recal_bam.join(IndexRecalBam.out), IndexRecalBam.out)
+	    BigWig		(ApplyBQSR.out.recal_bam.join(IndexRecalBam.out))
 	    BigWigCoveragePlots	(BigWig.out, params.mindepth, params.saveImg)
  	    AlignmentMetrics	(ApplyBQSR.out.recal_bam.join(IndexRecalBam.out), ref_gen_channel)
 	    InsertMetrics	(ApplyBQSR.out.recal_bam.join(IndexRecalBam.out) )
