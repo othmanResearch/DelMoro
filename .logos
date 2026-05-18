@@ -84,7 +84,7 @@ nextflow run main.nf
     [--aligner bwamem2]  
     [--bqsr]  
     [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
-    [--mode onlyvcf]  
+    [--mode cohort]  
 
 
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[37m
@@ -163,7 +163,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
      \033[32mcallvar\033[37m       Detect SNPs from aligned reads.
   	           require : --reference   <path-to-ref>
   		   	   : --tovarcall   <path-to-bam-csv)
-  		   	   : --mode only [ optional ]
+  		   	   : --mode cohort [ optional ]
   		   	   : --caller deepvariant [ optional ]
   		   	   : --rsid <path-to-vcf>
   		   output  : .vcf

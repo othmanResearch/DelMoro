@@ -31,7 +31,7 @@ process DownloadIgenomes {
 
 process CreateIndex {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
-    def isRemoteRef = ( params.reference?.startsWith('http://') || params.reference?.startsWith('https://') )
+    def isRemoteRef = ( params.reference?.startsWith('http' ))
     publishDir(
         path: isRemoteRef ? "${params.outdir}/Reference_Genome"
                           : ( params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" ),
@@ -60,7 +60,7 @@ process CreateIndex {
 
 process CreateIndexBwaMem2 {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
-    def isRemoteRef = ( params.reference?.startsWith('http://') || params.reference?.startsWith('https://') )
+    def isRemoteRef = ( params.reference?.startsWith('http' ))
     publishDir(
         path: isRemoteRef ? "${params.outdir}/Reference_Genome"
                           : ( params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" ),
@@ -92,7 +92,7 @@ process CreateIndexBwaMem2 {
 
 process CreateDictionary {
     tag "GENERATE DICTIONARY"
-    def isRemoteRef = ( params.reference?.startsWith('http://') || params.reference?.startsWith('https://') )
+    def isRemoteRef = ( params.reference?.startsWith('http' ))
     publishDir(
         path: isRemoteRef ? "${params.outdir}/Reference_Genome"
                           : ( params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" ),
@@ -125,7 +125,7 @@ process CreateDictionary {
 
 process CreateIndexSamtools {
     tag "GENERATE INDEX BY SAMTOOLS"
-    def isRemoteRef = ( params.reference?.startsWith('http://') || params.reference?.startsWith('https://') )
+    def isRemoteRef = ( params.reference?.startsWith('http' ))
     publishDir(
         path: isRemoteRef ? "${params.outdir}/Reference_Genome"
                           : ( params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" ),

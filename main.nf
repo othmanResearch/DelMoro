@@ -36,73 +36,93 @@ include {DelMoroHelp	} 	from './.logos'
   // reference
 
   inputFileChannel 	= params.input ?: params.tobealigned
-    // Trimmed reads      	       
+  // Trimmed reads      	       
   ReadsToBeAligned	= inputFileChannel	? Channel.fromPath(inputFileChannel, checkIfExists: false)       	
 	       					 	  .splitCsv(header: true)  
        	      				          	   .map { row -> tuple(row.patient_id, file(row.R1), file(row.R2)) }
                                	     		  	    .toSortedList { a, b -> a[0] <=> b[0] }   	 
                                       		   	     .flatMap { it } 							: Channel.empty()
   // reference
-  referFileChannel 	= params.reference ?: params.igenome
-  RefGenChannel		= referFileChannel	? Channel.fromPath(referFileChannel).first()					: Channel.empty()
+  referFileChannel 	= params.reference 	?: params.igenome
+  RefGenChannel		= referFileChannel 	? Channel.fromPath(referFileChannel).first()			: Channel.empty()
   
-  // BamFiles channel
-    // used for base recalibration
-    MappedReads 	= params.bam 		? Channel.fromPath(params.bam, checkIfExists: false)
-                                   			  .splitCsv(header: true)
-							   .map { row ->
-							       def bam       = file(row.BamFile)
-							       def indexPath = bam.toString() + '.bai'
-							       def indexFile = file(indexPath)
+  // BamFiles channel				
+  // used for base recalibration
+  MappedReads		= params.bam	? Channel.fromPath(params.bam, checkIfExists: false)
+  											  .splitCsv(header: true)
+  											   .map { row ->
+  											   		def bam       = file(row.BamFile)
+  											   		def isRemote  = row.BamFile.startsWith('http')
+  											   		def indexPath = bam.toString() + '.bai'
+  											   		def indexFile = isRemote	? file("${row.BamFile}.bai")
+  											   									: (	file("${row.BamFile}.bai").exists() ? file("${row.BamFile}.bai")
+  											   																			: null )
+  											   		if( !indexFile ) {
+  											   			log.warn "Index file missing for BAM: ${bam}. Expected: ${indexPath}"
+  											   			return null
+  											   		}
+  											   		tuple(row.patient_id, bam, indexFile)
 
-								  if (!indexFile.exists()) {
-								      log.warn "Index file missing for BAM: ${bam}. Expected: ${indexPath}"
-								      indexFile = null
-								      }
-							       tuple(row.patient_id, bam, indexFile)
-							       
-							   }.toSortedList { a, b -> a[0] <=> b[0] }   	 
-                                      		   	    .flatMap { it } 							: Channel.empty()
+  											}.filter { it != null }
+  											  .toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }	: Channel.empty()
+  											  
     // used for variant calling
-    ToVarCall		= params.tovarcall      ? Channel.fromPath(params.tovarcall, checkIfExists: false)
-                                   			  .splitCsv(header: true)
-							   .map { row ->
-							       def bam       = file(row.BamFile)
-							       def indexPath = bam.toString() + '.bai'
-							       def indexFile = file(indexPath)
-
-								  if (!indexFile.exists()) {
-								      log.warn "Index file missing for BAM: ${bam}. Expected: ${indexPath}"
-								      indexFile = null
-								      }
-							       tuple(row.patient_id, bam, indexFile)
-							   }.toSortedList { a, b -> a[0] <=> b[0] }   	 
-                                      		   	    .flatMap { it } 							: Channel.empty()
+    ToVarCall		= params.tovarcall	? Channel.fromPath(params.tovarcall, checkIfExists: false)
+  											  	  .splitCsv(header: true)
+                                   			  	   .map { row ->
+  											   			def bam       = file(row.BamFile)
+  											   			def isRemote  = row.BamFile.startsWith('http')
+  											   			def indexPath = bam.toString() + '.bai'
+  											   			def indexFile = isRemote	? file("${row.BamFile}.bai")
+  											   									: (	file("${row.BamFile}.bai").exists() ? file("${row.BamFile}.bai")
+  											   																			: null	)														
+  											   			if (!indexFile.exists()) {
+  											   				log.warn "Index file missing for BAM: ${bam}. Expected: ${indexPath}"
+  											   				indexFile = null
+  											   			}
+  											   			tuple(row.patient_id, bam, indexFile)
+  											   			}.filter { it != null }
+  											   			.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }	: Channel.empty()
     						
   // target bed file to extract coverage 
   Target 		= params.bedtarget	? Channel.fromPath(params.bedtarget, checkIfExists: true).first()	: Channel.value(file("NO_FILE"))
 	
-  // knwon file 1 channel for BQSR    
+// KnownSite1 channel for BQSR
 
-  KnownSite1		= params.knownsite1	? Channel.fromPath(params.knownsite1, checkIfExists: false)
-							   .map { vcfile ->
-							      def id = vcfile.baseName
-							      def tbi = vcfile.toString() + '.tbi'
-							      def idx = vcfile.toString() + '.idx'
-							      def indexFile = file(tbi).exists() ? file(tbi) : file(idx)
-							      tuple(id, vcfile, indexFile)
-							   }.first()   								: Channel.empty() 
-       			         
-  // knwon file 2 channel for BQSR       
-         
-  KnownSite2 		= params.knownsite2 	? Channel.fromPath(params.knownsite2, checkIfExists: false)
-							  .map { vcfile ->
-							      def id = vcfile.baseName
-							      def tbi = vcfile.toString() + '.tbi'
-							      def idx = vcfile.toString() + '.idx'
-							      def indexFile = file(tbi).exists() ? file(tbi) : file(idx)
-							      tuple(id, vcfile, indexFile)
-							   }.first()								: Channel.empty()
+  KnownSite1 	= params.knownsite1	? Channel.fromPath(params.knownsite1, checkIfExists: false)
+											  .map { vcfile ->
+											  		def id       = vcfile.baseName
+											  		def isRemote = params.knownsite1.startsWith('http')
+											  		def tbi = file("${vcfile}.tbi")
+											  		def idx = file("${vcfile}.idx")
+											  		def indexFile = isRemote	? ( params.testKnS1Idx	? file(params.testKnS1Idx)	
+											  															: ( tbi.exists() ? tbi : idx )
+																				  )	: ( tbi.exists()	? tbi	: ( idx.exists() ? idx : null ) )
+											  		if( !indexFile ) {
+											  			log.warn "Missing index for ${vcfile}"
+											  			return null
+											  		}
+											  		tuple(id, vcfile, indexFile)
+											  	}.filter { it != null }.first()		: Channel.empty()
+											  	
+// KnownSite2 channel for BQSR
+
+  KnownSite2  	= params.knownsite2	? Channel.fromPath(params.knownsite2, checkIfExists: false)
+											  .map { vcfile ->
+											  		def id       = vcfile.baseName
+											  		def isRemote = params.knownsite2.startsWith('http')
+											  		def tbi = file("${vcfile}.tbi")
+											  		def idx = file("${vcfile}.idx")
+											  		def indexFile = isRemote	? ( params.testKnS2Idx	? file(params.testKnS2Idx)
+											  															: ( tbi.exists() ? tbi : idx )
+																				  )	: ( tbi.exists()	? tbi	: ( idx.exists() ? idx : null )	)
+											  		if( !indexFile ) {
+											  			log.warn "Missing index for ${vcfile}"
+											  			return null
+											  		}
+											  	tuple(id, vcfile, indexFile)
+											}.filter { it != null }.first()		: Channel.empty()
+    
  // VCF for Bcftools annotation
  
   AddRSID 			= params.rsid 	? Channel.fromPath(params.rsid, checkIfExists: false)
@@ -116,14 +136,20 @@ include {DelMoroHelp	} 	from './.logos'
 
  // Indexes Channels 
 
-    // Aligner Indexs Bwa mem2 
-    AlignIdxRef = params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}", checkIfExists: false )	: Channel.empty()
-   	
-    //  Dictionary Indexs Bwa mem2 
-    DictIdxRef		= params.reference ? Channel.fromPath("${file(params.reference).getParent()}/*.dict", checkIfExists: false)			      	: Channel.empty()
+    // Aligner Indexs Bwa mem/2
+  	AlignIdxRef 	= params.reference	? ( params.reference.startsWith('http')
+    								? Channel.fromList(params.bwaTestIdx).map { file(it) }
+    								: Channel.fromPath("${file(params.reference).getParent()}/*.{0123,amb,ann,bwt.2bit.64,pac,bwt,sa}",checkIfExists: false) ): Channel.empty()
+    								
+    //  Dictionary Indexs Bwa mem/2 
+    DictIdxRef		= params.reference 	? ( params.reference.startsWith('http')
+    								? Channel.value(file(params.dicTestIdx))
+    								: Channel.fromPath("${file(params.reference).getParent()}/*.dict", checkIfExists: false)  ): Channel.empty()
        	
     // SamtoolsIndex
-    SamtIdxRef = params.reference ? Channel.fromPath("${file(params.reference).parent}/${file(params.reference).name}.{fai,gzi}",checkIfExists: false )       	: Channel.empty()
+    SamtIdxRef 		= params.reference 	? ( params.reference.startsWith('http')
+    								? Channel.value(file(params.samTestIdx))
+    								: Channel.fromPath("${file(params.reference).parent}/${file(params.reference).name}.{fai,gzi}",checkIfExists: false )  ): Channel.empty()
 
        		 
   // Vep Annotations Channels
@@ -177,8 +203,6 @@ include {DelMoroHelp	} 	from './.logos'
     pipeExecYamlCh 	= params.metaYaml	? Channel.fromPath(params.metaYaml)
         						  .map { file -> parseYamlFile(file) }					: Channel.empty()
  
-
-    // Combine both channels ( metaPatiLogCh with  pipeExecYamlCh ) 
     // Combine both channels ( metaPatiLogCh with  pipeExecYamlCh ) 
     metaPipeExecYaml = params.metaPatients && params.metaYaml ? metaPatiLogCh.combine(pipeExecYamlCh)
                         						      .map { metaPatients, vcFile, delmoroLogo, pipeExecYamlCh -> 
