@@ -140,6 +140,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   		           : --report    [ optional ]
   		           : --mindepth [ optional ] 
   		           : --saveImg  [ optional ] 
+  		           : --keepinter [ optional ] ; keep intermediate bam files 
   	           output  : .bam
   	           	   : .bai
   	           	   : .flagstat
@@ -196,6 +197,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
    -- Filtering
       \033[32mfilter\033[37m          Filter vcfs to SNP and INDELS
   	            require : --tofilter	<path-to-csv>
+  	                    : --keepinter [ optional ] ; keep intermediate vcf files 
 			    : --QD              <value> [ optional ] ; Default = 2.0 
 			    : --QUAL            <value> [ optional ] ; Default = 30.0 
 			    : --SOR             <value> [ optional ] ; Default = 3.0
@@ -232,7 +234,7 @@ log.info"""
 \033[32m --input 	=\033[37m null										=> input for full mode
 \033[32m --bqsr		=\033[37m null  									=> bqsr enable in full mode
 
-\033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM files derived from alignment  
+\033[32m --keepinter  	=\033[37m false 									=> Keep intermediate BAM/VCF files derived from alignment  
 \033[32m --report  	=\033[37m false 									=> Enables Metrics-bigwigs-html summary for Bam files 
 \033[32m --mindepth	=\033[37m 0 										=> Minimum depth in coverage bin plots
 \033[32m --saveImg 	= \033[37m false 	 								=> Save images( plots ) from bigwig files

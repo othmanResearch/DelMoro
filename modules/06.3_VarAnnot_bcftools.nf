@@ -10,8 +10,8 @@ process RsAnnotation {
 
     conda "bioconda::bcftools=1.21"
     container "${workflow.containerEngine == 'singularity'
-        ? 'docker://staphb/bcftools:latest'
-        : 'staphb/bcftools:latest'}"
+        ? "docker://firaszemzem/bcftools:1.21"
+        : "firaszemzem/bcftools:1.21"}"
 
     input:
     tuple val(patient_id), path(queryVcf), path(queryIdx)
@@ -27,7 +27,7 @@ process RsAnnotation {
     -a ${refVcf} -c ID \\
     -Oz -o ${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz ${queryVcf}
     
-    gatk IndexFeatureFile --input ${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz 
+    bcftools index --tbi ${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz 
     """
 }
 

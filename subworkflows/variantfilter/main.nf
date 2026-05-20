@@ -18,7 +18,7 @@ workflow FILTER_VARIANT {
 
  
     main: 
-    if (params.stepmode && params.exec == "filter" ) {     
+    if (params.stepmode && params.exec == "filter" && params.tofilter != null) {     
       SNPSelect     (vcf)
       FilterSNP     (SNPSelect.out  )
       INDELSelect   (vcf)
@@ -26,7 +26,17 @@ workflow FILTER_VARIANT {
       SortSnpVcf    (FilterSNP.out)
       SortIndVcf    (FilterINDEL.out)
       mergeVCFs     (SortSnpVcf.out.join(SortIndVcf.out).map { sampleId, snpVcf, snpIdx, indelVcf, indelIdx -> tuple(sampleId, snpVcf, snpIdx, indelVcf, indelIdx) } )
-    }
+    
+    } else { 
+	print("\033[31m Error: Invalid or missing parameters.\n" )
+	print(" Please specify valid parameters:\n"              )
+	print(" --filter option (--tovarcall CSVs/5_samplesheetReclibFiles.csv )\n "  )
+	print(" --keepinter [option]  : to keep intermediate vcf files"    ) 
+        print(" ---------------------------------------------------------------------------\n"  )
+        print(" For more information:\n"                                        )
+        print("   >>  View the help menu: nextflow main.nf --help\n"            )
+        print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"    ) 
+    } 
 }
 
 

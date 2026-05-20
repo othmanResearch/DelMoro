@@ -9,6 +9,11 @@ include { CreateGVCF      } from '../../../modules/06.0_VariantSNPcall-HC.nf'
 include { CombineGvcfs    } from '../../../modules/06.0_VariantSNPcall-HC.nf'  
 include { GenotypeGvcfs   } from '../../../modules/06.0_VariantSNPcall-HC.nf' 
 include { GenerateStats   } from '../../../modules/06.2_VarMetrics.nf'
+
+include { SortVCF         } from '../../../modules/10.0_splitmultilocus.nf'
+include { NormalizeVCF    } from '../../../modules/10.0_splitmultilocus.nf'
+include { AddVariantID    } from '../../../modules/10.0_splitmultilocus.nf'
+
 include { RsAnnotation    } from '../../../modules/06.3_VarAnnot_bcftools.nf' 
 
 workflow CALL_VARIANT_GATK {
@@ -37,9 +42,16 @@ workflow CALL_VARIANT_GATK {
     	                  ,bedtarget) 
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(CallVariant.out.CallVariantvcf)
-        if ( params.rsid ) {
-            RsAnnotation(CallVariant.out, AnnotRefVCF )  
-        }
+	SortVCF         (CallVariant.out) 
+	NormalizeVCF    ( SortVCF.out
+	                  ,ref_gen_channel
+	                  ,dictREF.collect()
+    	                  ,samidxREF.collect() )
+    	                  
+    	if ( !params.rsid ) {
+            AddVariantID    ( NormalizeVCF.out)   
+            } else { RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF ) }
+ 	
     } else if ( referFileChannel 	!= null && 
 		params.mode 		== 'cohort' ){	// generate vcf for all inputs 
 	
@@ -60,9 +72,16 @@ workflow CALL_VARIANT_GATK {
 
 	GenerateStats	( GenotypeGvcfs.out )  
 	
-	if ( params.rsid ) {
-            RsAnnotation(GenotypeGvcfs.out, AnnotRefVCF )  
-        }
+	SortVCF         (GenotypeGvcfs.out) 
+	NormalizeVCF    ( SortVCF.out
+	                  ,ref_gen_channel
+	                  ,dictREF.collect()
+    	                  ,samidxREF.collect() )
+       
+        
+	if ( !params.rsid ) {
+            AddVariantID    ( NormalizeVCF.out)   
+            } else { RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF ) }
  			
     }  else { 
 	print("\033[31m Error: Invalid or missing parameters.\n" )

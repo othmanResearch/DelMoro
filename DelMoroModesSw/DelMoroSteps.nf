@@ -93,7 +93,7 @@ workflow DelMoroSteps {
           
     } else if (params.exec == 'callvar' && params.caller == 'deepvariant') {    // Call snp
               
-    CALL_VARIANT_DEEPVARIANT(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall) 
+    CALL_VARIANT_DEEPVARIANT(RefGenChannel,DictIdxRef,SamtIdxRef,ToVarCall,Target,AddRSID) 
           
     } else if (params.exec == 'filter') {
     

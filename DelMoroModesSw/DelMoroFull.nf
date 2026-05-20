@@ -21,7 +21,7 @@ workflow DelMoroFullSw {
     
     
     main: 
-	if ( params.input && ( params.reference || params.igenome ) && !params.caller ) {    
+	if ( params.input && ( params.reference || params.igenome ) && !params.caller ) {
 		if (params.bqsr) {
 			FullModeBqsrOutput()
 			INDEXING_REF_GENOME(RefGenChannel)
@@ -93,7 +93,9 @@ workflow DelMoroFullSw {
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.gatkDict,
 		        INDEXING_REF_GENOME.out.samtoolsIndex,
-		        BASE_QU_SCO_RECA.out.reaclBamWithIdx
+		        BASE_QU_SCO_RECA.out.reaclBamWithIdx,
+		        Target,
+		        AddRSID
 		    )
 
 		} else {
@@ -110,7 +112,9 @@ workflow DelMoroFullSw {
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.gatkDict,
 		        INDEXING_REF_GENOME.out.samtoolsIndex,
-		        ALIGN_TO_REF_GENOME.out.bamWithIdx
+		        ALIGN_TO_REF_GENOME.out.bamWithIdx,
+		        Target,
+		        AddRSID
 		    ) 
 		}
 	} else {

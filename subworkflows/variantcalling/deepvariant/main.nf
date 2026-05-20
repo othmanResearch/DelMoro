@@ -8,6 +8,12 @@ include { deepVariant     } from '../../../modules/06.1_VariantSNPcall-DV.nf'
 include {  glnexus        } from '../../../modules/06.1_VariantSNPcall-DV.nf'
 include { GenerateStats   } from '../../../modules/06.2_VarMetrics.nf' 
 
+include { SortVCF         } from '../../../modules/10.0_splitmultilocus.nf'
+include { NormalizeVCF    } from '../../../modules/10.0_splitmultilocus.nf'
+include { AddVariantID    } from '../../../modules/10.0_splitmultilocus.nf'
+
+include { RsAnnotation    } from '../../../modules/06.3_VarAnnot_bcftools.nf' 
+
 workflow CALL_VARIANT_DEEPVARIANT {
 
     take:
@@ -15,6 +21,9 @@ workflow CALL_VARIANT_DEEPVARIANT {
     dictREF
     samidxREF
     BamToVarCall
+    bedtarget
+    AnnotRefVCF
+
  
     main: 
     if (params.stepmode && params.exec == "callvar" ) { DelMoroVarCallOutput() }
@@ -27,10 +36,24 @@ workflow CALL_VARIANT_DEEPVARIANT {
    	 params.modelType       != null &&
    	 params.caller          == "deepvariant" ){
 	
-	deepVariant 	( ref_gen_channel, dictREF.collect(), samidxREF.collect(), BamToVarCall ) 
+	deepVariant 	( ref_gen_channel
+	                  ,dictREF.collect()
+	                  ,samidxREF.collect()
+	                  ,BamToVarCall
+	                  ,bedtarget ) 
 
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(deepVariant.out.CallVariantvcf)
+	
+	SortVCF         (deepVariant.out.CallVariantvcf) 
+	NormalizeVCF    ( SortVCF.out
+	                  ,ref_gen_channel
+	                  ,dictREF.collect()
+    	                  ,samidxREF.collect() )
+    	                  
+    	if ( !params.rsid ) {
+            AddVariantID    ( NormalizeVCF.out)   
+            } else { RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF ) }
 
 
     } else if ( referFileChannel 	!= null &&
@@ -38,12 +61,27 @@ workflow CALL_VARIANT_DEEPVARIANT {
                 params.mode 		== "cohort" &&
                 params.caller           == "deepvariant" ){	// generate vcf for all inputs 
 	
-	deepVariant	( ref_gen_channel, dictREF.collect(), samidxREF.collect(), BamToVarCall )
+	deepVariant	( ref_gen_channel
+	                  ,dictREF.collect()
+	                  ,samidxREF.collect()
+	                  ,BamToVarCall
+	                  ,bedtarget )
 	
         GenerateStats	( deepVariant.out.CallVariantvcf)
 
 	glnexus         ( deepVariant.out.deepGvcf.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
-			
+	
+	SortVCF         (glnexus.out) 
+	NormalizeVCF    ( SortVCF.out
+	                  ,ref_gen_channel
+	                  ,dictREF.collect()
+    	                  ,samidxREF.collect() )
+    	                  
+    	if ( !params.rsid ) {
+            AddVariantID    ( NormalizeVCF.out)   
+            } else { RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF ) }
+
+
     }  else { 
         print("\033[31m Error: Invalid or missing parameters.\n" )
 	print(" Please specify valid parameters:\n"      )

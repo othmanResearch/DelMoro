@@ -15,6 +15,7 @@ process deepVariant {
     path dic
     path fai
     tuple val(patient_id), path(bamFile), path(Bamidx)
+    path bedtarget
     
     output:
     tuple val(patient_id), path("${bamFile.baseName}.*.DV.vcf.gz"), path("${bamFile.baseName}.*.DV.vcf.gz.{tbi,idx}") , emit: "CallVariantvcf"
