@@ -29,7 +29,7 @@ nextflow run main.nf
     [--bqsr ]  
     [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
     [ --caller deepvariant --modelType <WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ> ]
-    [--mode onlyvcf ]  
+    [--mode cohort ]  
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -110,6 +110,8 @@ Requirements :
                             : --tovarcall   <path-to-bam-csv)
                             : --mode onlyvcf [ optional ]
                             : --caller deepvariant [ optional ]
+                            : --rsid <path-to-vcf> [ optional ]
+  		   	                : --splitAllele  [ optional ]
                    output   : .vcf
                             : .table
   -- Annotation	  
@@ -488,6 +490,15 @@ You can modify the output behavior using the `--mode` flag:
     - To check required option please refer to [parameters page](5parameters.md#filtering ) 
     - <span style="color:red ;">Deepvariant caller only available with `-profile docker`</span>
 
+
+???+ note " 💡 **Add rs id Option:** `--rsid parameter`"
+    - To use add rs id , specify `--rsid` path/to/vcf   
+    - To check required option please refer to [parameters page](5parameters.md/#variant-calling ) 
+    - <span style="color:red ;">Default variant id is set to chrName_position_REF_ALT</span>
+
+???+ note " 💡 **Splitting Multi Allelic sites:** `--splitAllele parameter`"
+    - To use add rs id , specify `--splitAllele`    
+    - To check required option please refer to [parameters page](5parameters.md/#variant-calling ) 
 
 ---
 #### Targeted chromosome variant Calling 
