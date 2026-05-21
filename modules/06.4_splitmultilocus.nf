@@ -1,5 +1,5 @@
 // Module files for DelMoro pipeline
- 
+
 // Sort VCF 
 
 process SortVCF {
@@ -29,8 +29,8 @@ process SortVCF {
 // Normalize and split multiallelic VCF
 
 process NormalizeVCF {
-    tag "NORM ${vcf}"
-    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy', enabled: params.keepinter
+    tag "SPLIT MULTI ALLELES FOR ${vcf}"
+    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy',  enabled: (params.splitAllele != null && params.rsid == null )
     
     conda "bioconda::bcftools=1.21"
     container "${workflow.containerEngine == 'singularity'
@@ -65,36 +65,4 @@ process NormalizeVCF {
     """
 }
 
-// Add IDs to normalized VCF
 
-process AddVariantID {
-
-    tag "ADD_ID ${vcf}"
-    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy'
-
-    conda "bioconda::bcftools=1.21"
-    container "${workflow.containerEngine == 'singularity'
-        ? 'docker://firaszemzem/bcftools:1.21'
-        : 'firaszemzem/bcftools:1.21'}"
-
-    input:
-    tuple val(patient_id), path(vcf), path(vcfIdx)
-
-    output:
-    tuple val(patient_id),
-        path("${vcf.getBaseName(vcf.name.endsWith('.gz') ? 2 : 1)}.id.vcf.gz"),
-        path("${vcf.getBaseName(vcf.name.endsWith('.gz') ? 2 : 1)}.id.vcf.gz.{tbi,csi}")
-
-    script:
-
-    def prefix = vcf.getBaseName(vcf.name.endsWith('.gz') ? 2 : 1)
-
-    """
-    bcftools annotate \\
-        --set-id +'%CHROM\\_%POS\\_%REF\\_%FIRST_ALT' \\
-        ${vcf} \\
-        -Oz -o ${prefix}.id.vcf.gz
-
-    tabix -p vcf ${prefix}.id.vcf.gz
-    """
-}

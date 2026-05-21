@@ -10,11 +10,14 @@ include { CombineGvcfs    } from '../../../modules/06.0_VariantSNPcall-HC.nf'
 include { GenotypeGvcfs   } from '../../../modules/06.0_VariantSNPcall-HC.nf' 
 include { GenerateStats   } from '../../../modules/06.2_VarMetrics.nf'
 
-include { SortVCF         } from '../../../modules/10.0_splitmultilocus.nf'
-include { NormalizeVCF    } from '../../../modules/10.0_splitmultilocus.nf'
-include { AddVariantID    } from '../../../modules/10.0_splitmultilocus.nf'
+include { AddVariantID    } from '../../../modules/06.3_VariantIDAnnotat.nf'
+include { RsAnnotation    } from '../../../modules/06.3_VariantIDAnnotat.nf'
 
-include { RsAnnotation    } from '../../../modules/06.3_VarAnnot_bcftools.nf' 
+include { SortVCF         } from '../../../modules/06.4_splitmultilocus.nf'
+include { NormalizeVCF    } from '../../../modules/06.4_splitmultilocus.nf'
+
+
+
 
 workflow CALL_VARIANT_GATK {
 
@@ -33,33 +36,35 @@ workflow CALL_VARIANT_GATK {
     def referFileChannel = params.reference ?: params.igenome
        
     if  (params.mode 		== null && 
-   	 referFileChannel 	!= null ){
+        referFileChannel 	!= null ){
 	
-	CallVariant 	(  ref_gen_channel
-    	                  ,dictREF.collect()
-    	                  ,samidxREF.collect()
-    	                  ,BamToVarCall
-    	                  ,bedtarget) 
+	CallVariant 	(  ref_gen_channel, dictREF.collect(), samidxREF.collect(), BamToVarCall ,bedtarget) 
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(CallVariant.out.CallVariantvcf)
-	SortVCF         (CallVariant.out) 
-	NormalizeVCF    ( SortVCF.out
-	                  ,ref_gen_channel
-	                  ,dictREF.collect()
-    	                  ,samidxREF.collect() )
-    	                  
-    	if ( !params.rsid ) {
-            AddVariantID    ( NormalizeVCF.out)   
-            } else { RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF ) }
- 	
+	    
+        if (  params.splitAllele  == null &&
+              params.rsid         != null  ){ 
+              AddVariantID  ( CallVariant.out)   
+              RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
+        
+        } else if ( params.splitAllele  != null && 
+                    params.rsid         == null ){
+                    AddVariantID    (CallVariant.out)         
+                    SortVCF         ( AddVariantID.out) 
+	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                	
+                  } else if ( params.splitAllele  != null && 
+                              params.rsid         != null ){
+                              AddVariantID    (CallVariant.out)   
+                              SortVCF       ( AddVariantID.out) 
+	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
+                    } else { AddVariantID   ( CallVariant.out)   }
+  	
     } else if ( referFileChannel 	!= null && 
 		params.mode 		== 'cohort' ){	// generate vcf for all inputs 
 	
-	CreateGVCF	( ref_gen_channel
-	                 ,dictREF.collect()
-	                 ,samidxREF.collect()
-	                 ,BamToVarCall
-	                 ,bedtarget)
+	CreateGVCF	( ref_gen_channel, dictREF.collect(), samidxREF.collect(), BamToVarCall, bedtarget)
 
     
     
@@ -68,21 +73,29 @@ workflow CALL_VARIANT_GATK {
 			  samidxREF.collect(),
 			  CreateGVCF.out.g_vcf_Recal.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
 
-	GenotypeGvcfs 	( ref_gen_channel,dictREF.collect(),samidxREF.collect(),CombineGvcfs.out.CohortVcf )
+	GenotypeGvcfs 	( ref_gen_channel, dictREF.collect(), samidxREF.collect(), CombineGvcfs.out.CohortVcf )
 
 	GenerateStats	( GenotypeGvcfs.out )  
-	
-	SortVCF         (GenotypeGvcfs.out) 
-	NormalizeVCF    ( SortVCF.out
-	                  ,ref_gen_channel
-	                  ,dictREF.collect()
-    	                  ,samidxREF.collect() )
-       
         
-	if ( !params.rsid ) {
-            AddVariantID    ( NormalizeVCF.out)   
-            } else { RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF ) }
- 			
+        if (  params.splitAllele  == null &&
+              params.rsid         != null  ){ 
+              AddVariantID    (GenotypeGvcfs.out)   
+              RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
+        
+        } else if ( params.splitAllele  != null && 
+                    params.rsid         == null ){
+                      AddVariantID    (GenotypeGvcfs.out)         
+                      SortVCF         ( AddVariantID.out) 
+	              NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                	
+                  } else if ( params.splitAllele  != null && 
+                              params.rsid         != null ){
+                              AddVariantID    (GenotypeGvcfs.out)   
+                              SortVCF       ( AddVariantID.out) 
+	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
+                    } else { AddVariantID   ( GenotypeGvcfs.out)    }
+			
     }  else { 
 	print("\033[31m Error: Invalid or missing parameters.\n" )
 	print(" Please specify valid parameters:\n"              )

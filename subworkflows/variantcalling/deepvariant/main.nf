@@ -8,11 +8,12 @@ include { deepVariant     } from '../../../modules/06.1_VariantSNPcall-DV.nf'
 include {  glnexus        } from '../../../modules/06.1_VariantSNPcall-DV.nf'
 include { GenerateStats   } from '../../../modules/06.2_VarMetrics.nf' 
 
-include { SortVCF         } from '../../../modules/10.0_splitmultilocus.nf'
-include { NormalizeVCF    } from '../../../modules/10.0_splitmultilocus.nf'
-include { AddVariantID    } from '../../../modules/10.0_splitmultilocus.nf'
+include { AddVariantID    } from '../../../modules/06.3_VariantIDAnnotat.nf'
+include { RsAnnotation    } from '../../../modules/06.3_VariantIDAnnotat.nf'
 
-include { RsAnnotation    } from '../../../modules/06.3_VarAnnot_bcftools.nf' 
+include { SortVCF         } from '../../../modules/06.4_splitmultilocus.nf'
+include { NormalizeVCF    } from '../../../modules/06.4_splitmultilocus.nf'
+
 
 workflow CALL_VARIANT_DEEPVARIANT {
 
@@ -44,17 +45,25 @@ workflow CALL_VARIANT_DEEPVARIANT {
 
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(deepVariant.out.CallVariantvcf)
-	
-	SortVCF         (deepVariant.out.CallVariantvcf) 
-	NormalizeVCF    ( SortVCF.out
-	                  ,ref_gen_channel
-	                  ,dictREF.collect()
-    	                  ,samidxREF.collect() )
-    	                  
-    	if ( !params.rsid ) {
-            AddVariantID    ( NormalizeVCF.out)   
-            } else { RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF ) }
 
+        if (  params.splitAllele  == null &&
+              params.rsid         != null  ){ 
+              AddVariantID  ( deepVariant.out.CallVariantvcf)   
+              RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
+        
+        } else if ( params.splitAllele  != null && 
+                    params.rsid         == null ){
+                    AddVariantID    (deepVariant.out.CallVariantvcf)         
+                    SortVCF         ( AddVariantID.out) 
+	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                	
+                  } else if ( params.splitAllele  != null && 
+                              params.rsid         != null ){
+                              AddVariantID  (deepVariant.out.CallVariantvcf)   
+                              SortVCF       ( AddVariantID.out) 
+	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
+                    } else { AddVariantID   (deepVariant.out.CallVariantvcf)   }
 
     } else if ( referFileChannel 	!= null &&
                 params.modelType        != null && 
@@ -71,17 +80,25 @@ workflow CALL_VARIANT_DEEPVARIANT {
 
 	glnexus         ( deepVariant.out.deepGvcf.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
 	
-	SortVCF         (glnexus.out) 
-	NormalizeVCF    ( SortVCF.out
-	                  ,ref_gen_channel
-	                  ,dictREF.collect()
-    	                  ,samidxREF.collect() )
-    	                  
-    	if ( !params.rsid ) {
-            AddVariantID    ( NormalizeVCF.out)   
-            } else { RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF ) }
+        if (  params.splitAllele  == null &&
+              params.rsid         != null  ){ 
+              
+              RsAnnotation  ( glnexus.out, AnnotRefVCF ) 
+        
+        } else if ( params.splitAllele  != null && 
+                    params.rsid         == null ){
 
+                    SortVCF         ( glnexus.out) 
+	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                	
+                  } else if ( params.splitAllele  != null && 
+                              params.rsid         != null ){
 
+                              SortVCF       ( glnexus.out) 
+	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
+                    } 
+                    
     }  else { 
         print("\033[31m Error: Invalid or missing parameters.\n" )
 	print(" Please specify valid parameters:\n"      )

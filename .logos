@@ -166,7 +166,8 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   		   	   : --tovarcall   <path-to-bam-csv)
   		   	   : --mode cohort [ optional ]
   		   	   : --caller deepvariant [ optional ]
-  		   	   : --rsid <path-to-vcf>
+  		   	   : --rsid <path-to-vcf> [ optional ]
+  		   	   : --splitAllele  [ optional ]
   		   output  : .vcf
   		   	   : .table
   -- Annotation	  
@@ -260,10 +261,12 @@ log.info"""
 \033[32m --knownsite1	=\033[37m e.g. ./knownsites/1000g_gold_standard.indels.filtered.vcf 			=> vcf file 1 required for bqsr 
 \033[32m --knownsite2 	=\033[37m e.g. ./knownsites/GCF.38.filtered.renamed.vcf			                => vcf file 2 required for bqsr
 \033[32m --rsid         =\033[37m e.g. ./dbsnp_146.hg38.vcf.gz			                                => vcf file for variant ID adding 
+\033[32m --splitAllele  =\033[37m null			                                                        => enable vcf spliting multiallelic sites 
+
 \033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
 \033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    
 
-\033[32m --generate	=\033[37m The default parameter generates CSVs for all inputs or coverage or target bed file  
+\033[32m --generate	=\033[37m The default he generates CSVs for all inputs or coverage or target bed file  
 \033[32m			 \033[37m  <-> CSV 							  	=> nextflow main.nf --generate CSV --basedon <path-to-csv>
 \033[32m                         \033[37m  <-> coverage							  	=> --generate coverage --bedtarget BEDFILE 
 

@@ -5,7 +5,7 @@
 process CallVariant {
 
     tag "Variant Calling with Gatk HaplotypeCaller"
-    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy', enabled: params.keepinter 
+    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy', enabled: params.keepinter
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -147,3 +147,4 @@ process GenotypeGvcfs {
         --output cohort_delMoro-${regionTag}.vcf.gz
     """
 }
+
