@@ -8,11 +8,12 @@ include { deepVariant     } from '../../../modules/06.1_VariantSNPcall-DV.nf'
 include {  glnexus        } from '../../../modules/06.1_VariantSNPcall-DV.nf'
 include { GenerateStats   } from '../../../modules/06.2_VarMetrics.nf' 
 
-include { AddVariantID    } from '../../../modules/06.3_VariantIDAnnotat.nf'
-include { RsAnnotation    } from '../../../modules/06.3_VariantIDAnnotat.nf'
+include { AlleleBalance   } from '../../../modules/06.3_AlleleBalance.nf' 
+include { AddVariantID    } from '../../../modules/06.4_VariantIDAnnotat.nf'
+include { RsAnnotation    } from '../../../modules/06.4_VariantIDAnnotat.nf'
 
-include { SortVCF         } from '../../../modules/06.4_splitmultilocus.nf'
-include { NormalizeVCF    } from '../../../modules/06.4_splitmultilocus.nf'
+include { SortVCF         } from '../../../modules/06.5_splitmultilocus.nf'
+include { NormalizeVCF    } from '../../../modules/06.5_splitmultilocus.nf'
 
 
 workflow CALL_VARIANT_DEEPVARIANT {
@@ -45,25 +46,25 @@ workflow CALL_VARIANT_DEEPVARIANT {
 
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(deepVariant.out.CallVariantvcf)
-
+        AlleleBalance   ( deepVariant.out.CallVariantvcf )
         if (  params.splitAllele  == null &&
               params.rsid         != null  ){ 
-              AddVariantID  ( deepVariant.out.CallVariantvcf)   
+              AddVariantID  ( AlleleBalance.out )   
               RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
         
         } else if ( params.splitAllele  != null && 
                     params.rsid         == null ){
-                    AddVariantID    (deepVariant.out.CallVariantvcf)         
+                    AddVariantID    (AlleleBalance.out)         
                     SortVCF         ( AddVariantID.out) 
 	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
                 	
                   } else if ( params.splitAllele  != null && 
                               params.rsid         != null ){
-                              AddVariantID  (deepVariant.out.CallVariantvcf)   
+                              AddVariantID  ( AlleleBalance.out)   
                               SortVCF       ( AddVariantID.out) 
 	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
                               RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
-                    } else { AddVariantID   (deepVariant.out.CallVariantvcf)   }
+                    } else { AddVariantID   ( AlleleBalance.out )   }
 
     } else if ( referFileChannel 	!= null &&
                 params.modelType        != null && 
@@ -79,22 +80,23 @@ workflow CALL_VARIANT_DEEPVARIANT {
         GenerateStats	( deepVariant.out.CallVariantvcf)
 
 	glnexus         ( deepVariant.out.deepGvcf.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
-	
+	AlleleBalance   ( glnexus.out )
+        
         if (  params.splitAllele  == null &&
               params.rsid         != null  ){ 
               
-              RsAnnotation  ( glnexus.out, AnnotRefVCF ) 
+              RsAnnotation  ( AlleleBalance.out, AnnotRefVCF ) 
         
         } else if ( params.splitAllele  != null && 
                     params.rsid         == null ){
 
-                    SortVCF         ( glnexus.out) 
+                    SortVCF         ( AlleleBalance.out) 
 	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
                 	
                   } else if ( params.splitAllele  != null && 
                               params.rsid         != null ){
 
-                              SortVCF       ( glnexus.out) 
+                              SortVCF       ( AlleleBalance.out) 
 	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
                               RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
                     } 

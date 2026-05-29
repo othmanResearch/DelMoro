@@ -18,17 +18,18 @@ process AddVariantID {
 
     output:
     tuple val(patient_id),
-        path("${vcf.getBaseName(vcf.name.endsWith('.gz') ? 2 : 1)}.id.vcf.gz"),
-        path("${vcf.getBaseName(vcf.name.endsWith('.gz') ? 2 : 1)}.id.vcf.gz.{tbi,csi}")
+        path("${vcf.getBaseName(3)}.vcf.gz"),
+        path("${vcf.getBaseName(3)}.vcf.gz.{tbi,csi}")
 
     script:
+    def basename = vcf.getBaseName(3)
     """
     bcftools annotate \\
         --set-id +'%CHROM\\_%POS\\_%REF\\_%FIRST_ALT' \\
         ${vcf} \\
-        -Oz -o ${vcf.getBaseName(vcf.name.endsWith('.gz') ? 2 : 1)}.id.vcf.gz
+        -Oz -o ${vcf.getBaseName(3)}.vcf.gz
 
-    bcftools index --tbi ${vcf.getBaseName(vcf.name.endsWith('.gz') ? 2 : 1)}.id.vcf.gz
+    bcftools index --tbi ${vcf.getBaseName(3)}.vcf.gz
     """
 }
 
