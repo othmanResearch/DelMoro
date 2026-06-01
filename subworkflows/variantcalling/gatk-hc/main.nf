@@ -17,7 +17,8 @@ include { RsAnnotation    } from '../../../modules/06.4_VariantIDAnnotat.nf'
 include { SortVCF         } from '../../../modules/06.5_splitmultilocus.nf'
 include { NormalizeVCF    } from '../../../modules/06.5_splitmultilocus.nf'
 
-
+include { GetSamples      } from '../../../modules/06.6_splitBySample.nf'
+include { SplitBySample   } from '../../../modules/06.6_splitBySample.nf'
 
 
 workflow CALL_VARIANT_GATK {
@@ -52,14 +53,14 @@ workflow CALL_VARIANT_GATK {
         } else if ( params.splitAllele  != null && 
                     params.rsid         == null ){
                     AddVariantID    (AlleleBalance.out)         
-                    SortVCF         ( AddVariantID.out) 
-	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                    SortVCF         ( AddVariantID.out)
+                    NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
                 	
                   } else if ( params.splitAllele  != null && 
                               params.rsid         != null ){
                               AddVariantID    (AlleleBalance.out)   
-                              SortVCF       ( AddVariantID.out) 
-	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                              SortVCF       ( AddVariantID.out)
+                              NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
                               RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
                     } else { AddVariantID   ( AlleleBalance.out)   }
   	
@@ -84,32 +85,58 @@ workflow CALL_VARIANT_GATK {
               params.rsid         != null  ){ 
               AddVariantID  ( AlleleBalance.out)   
               RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
-        
+              
+              if (params.splitSample) {
+                  GetSamples ( RsAnnotation.out)
+                  SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
+                                                            -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	      }                
         } else if ( params.splitAllele  != null && 
                     params.rsid         == null ){
-                      AddVariantID    ( AlleleBalance.out)         
-                      SortVCF         ( AddVariantID.out) 
-	              NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                	
+                    
+                    AddVariantID    ( AlleleBalance.out)         
+                    SortVCF         ( AddVariantID.out)
+                    NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                    
+                    if (params.splitSample) {
+	                GetSamples ( NormalizeVCF.out)
+	                SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
+	                                                          -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	            }          
                   } else if ( params.splitAllele  != null && 
                               params.rsid         != null ){
+                              
                               AddVariantID  ( AlleleBalance.out)   
                               SortVCF       ( AddVariantID.out) 
-	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
-                    } else { AddVariantID   ( AlleleBalance.out)    }
-			
+                              NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
+                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )  
+                              
+                              if (params.splitSample) {
+	                            GetSamples ( RsAnnotation.out)
+	                            SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
+	                                                                    -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	                      }
+	                      
+                    } else { AddVariantID   ( AlleleBalance.out)
+                             
+                             if (params.splitSample) {
+	                        GetSamples ( AddVariantID.out)
+	                        SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
+	                                                                 -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	                     }
+                      }
+
     }  else { 
 	print("\033[31m Error: Invalid or missing parameters.\n" )
 	print(" Please specify valid parameters:\n"              )
 	print(" --reference option (--reference reference ) \n" )
 	print(" --tovarcall option (--tovarcall CSVs/5_samplesheetReclibFiles.csv )\n "  )
-	print(" --mode cohort  ( Default : null --> will generate a single vcfs )\n "    ) 
-        print(" --caller deepvariant ( Default : no caller --> variant calling with gatk )\n " ) 
-        print(" ---------------------------------------------------------------------------\n"  )
-        print(" For more information:\n"                                        )
-        print("   >>  View the help menu: nextflow main.nf --help\n"            )
-        print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"    ) 
+	print(" --mode cohort  ( Default : null --> will generate a single vcfs )\n "    )
+	print(" --caller deepvariant ( Default : no caller --> variant calling with gatk )\n " ) 
+	print(" ---------------------------------------------------------------------------\n"  )
+	print(" For more information:\n"                                        )
+	print("   >>  View the help menu: nextflow main.nf --help\n"            )
+	print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"    ) 
     } 
 }
 

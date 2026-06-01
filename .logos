@@ -168,6 +168,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   		   	   : --caller deepvariant [ optional ]
   		   	   : --rsid <path-to-vcf> [ optional ]
   		   	   : --splitAllele  [ optional ]
+  		   	   : --splitSample  [ optional ] 
   		   output  : .vcf
   		   	   : .table
   -- Annotation	  
@@ -262,6 +263,7 @@ log.info"""
 \033[32m --knownsite2 	=\033[37m e.g. ./knownsites/GCF.38.filtered.renamed.vcf			                => vcf file 2 required for bqsr
 \033[32m --rsid         =\033[37m e.g. ./dbsnp_146.hg38.vcf.gz			                                => vcf file for variant ID adding 
 \033[32m --splitAllele  =\033[37m null			                                                        => enable vcf spliting multiallelic sites 
+\033[32m --splitSample  =\033[37m null		                                                                => enable sample splitting for cohort vcf
 
 \033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
 \033[32m			         \033[37m  <-> --aligner bwamem2					=> bwa-mem2 version    

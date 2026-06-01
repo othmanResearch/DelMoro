@@ -15,6 +15,8 @@ include { RsAnnotation    } from '../../../modules/06.4_VariantIDAnnotat.nf'
 include { SortVCF         } from '../../../modules/06.5_splitmultilocus.nf'
 include { NormalizeVCF    } from '../../../modules/06.5_splitmultilocus.nf'
 
+include { GetSamples      } from '../../../modules/06.6_splitBySample.nf'
+include { SplitBySample   } from '../../../modules/06.6_splitBySample.nf'
 
 workflow CALL_VARIANT_DEEPVARIANT {
 
@@ -49,17 +51,20 @@ workflow CALL_VARIANT_DEEPVARIANT {
         AlleleBalance   ( deepVariant.out.CallVariantvcf )
         if (  params.splitAllele  == null &&
               params.rsid         != null  ){ 
+              
               AddVariantID  ( AlleleBalance.out )   
               RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
         
         } else if ( params.splitAllele  != null && 
                     params.rsid         == null ){
+                    
                     AddVariantID    (AlleleBalance.out)         
                     SortVCF         ( AddVariantID.out) 
 	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
                 	
                   } else if ( params.splitAllele  != null && 
                               params.rsid         != null ){
+                              
                               AddVariantID  ( AlleleBalance.out)   
                               SortVCF       ( AddVariantID.out) 
 	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
@@ -81,25 +86,50 @@ workflow CALL_VARIANT_DEEPVARIANT {
 
 	glnexus         ( deepVariant.out.deepGvcf.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
 	AlleleBalance   ( glnexus.out )
-        
+	                      
         if (  params.splitAllele  == null &&
               params.rsid         != null  ){ 
+              AddVariantID  ( AlleleBalance.out )
+              RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
               
-              RsAnnotation  ( AlleleBalance.out, AnnotRefVCF ) 
-        
+              if (params.splitSample) {
+                  GetSamples ( RsAnnotation.out)
+                  SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
+                                                            -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	      }
         } else if ( params.splitAllele  != null && 
                     params.rsid         == null ){
-
-                    SortVCF         ( AlleleBalance.out) 
+                    
+                    AddVariantID  ( AlleleBalance.out )
+                    SortVCF         ( AddVariantID.out) 
 	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                	
+                    
+                    if (params.splitSample) {
+                        GetSamples ( NormalizeVCF.out)
+                        SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
+                                                                  -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	            }
                   } else if ( params.splitAllele  != null && 
                               params.rsid         != null ){
-
-                              SortVCF       ( AlleleBalance.out) 
+                              
+                              AddVariantID  ( AlleleBalance.out )
+                              SortVCF       ( AddVariantID.out) 
 	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
-                    } 
+                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )
+                              
+                              if (params.splitSample) {
+                                  GetSamples ( RsAnnotation.out)
+                                  SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
+                                                                            -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	                      }
+                    } else { 
+                        AddVariantID  ( AlleleBalance.out )
+                        if (params.splitSample) {
+	                        GetSamples ( AddVariantID.out)
+	                        SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
+	                                                                 -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	                     }
+                      }
                     
     }  else { 
         print("\033[31m Error: Invalid or missing parameters.\n" )
