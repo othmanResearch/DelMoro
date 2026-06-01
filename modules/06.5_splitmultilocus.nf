@@ -55,6 +55,7 @@ process NormalizeVCF {
         --fasta-ref ${reference} \\
         --multiallelics -both \\
         --atomize \\
+        --rm-dup all \\
         --atom-overlaps '*' \\
         --check-ref w \\
         --keep-sum AD \\
