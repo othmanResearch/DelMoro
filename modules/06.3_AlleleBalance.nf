@@ -6,10 +6,10 @@ process AlleleBalance {
     tag "ADD ALLELE BALANCE RaTIO FOR ${vcf}."
     publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy', enabled: params.rsid == null
 
-    conda "bioconda::bcftools=1.21"
+    conda "bioconda::pysam=0.22.1"
     container "${workflow.containerEngine == 'singularity'
-        ? "docker://firaszemzem/bcftools:1.21"
-        : "firaszemzem/bcftools:1.21"}"
+        ? "docker://firaszemzem/pysam:0.22.1"
+        : "firaszemzem/pysam:0.22.1"}"
         
     input:
     tuple val(patient_id), path(vcf), path(vcfIdx)

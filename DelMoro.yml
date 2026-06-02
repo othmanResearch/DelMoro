@@ -22,6 +22,7 @@ dependencies:
   - fastp=0.23.2
   - ensembl-vep=114.2
   - qualimap=2.3
+  - pysam=0.22.1
   - pyqt
   - pyinstaller
   - qrcode
@@ -33,6 +34,6 @@ dependencies:
   - pybigwig
   - tqdm
   - plotly
-  - python-kaleido	  
+  - python-kaleido
 
 
