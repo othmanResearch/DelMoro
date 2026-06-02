@@ -5,7 +5,7 @@
 process AddVariantID {
 
     tag "ADD DEFAULT VARIANT IDs FOR ${vcf}"
-    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy', enabled: (params.splitAllele == null && params.rsid == null)
+    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy', enabled: params.keepinter
 
 
     conda "bioconda::bcftools=1.21"
@@ -18,18 +18,18 @@ process AddVariantID {
 
     output:
     tuple val(patient_id),
-        path("${vcf.getBaseName(3)}.vcf.gz"),
-        path("${vcf.getBaseName(3)}.vcf.gz.{tbi,csi}")
+        path("${vcf.getBaseName(2)}.id.vcf.gz"),
+        path("${vcf.getBaseName(2)}.id.vcf.gz.{tbi,csi}")
+        
 
     script:
-    def basename = vcf.getBaseName(3)
     """
     bcftools annotate \\
         --set-id +'%CHROM\\_%POS\\_%REF\\_%FIRST_ALT' \\
         ${vcf} \\
-        -Oz -o ${vcf.getBaseName(3)}.vcf.gz
+        -Oz -o ${vcf.getBaseName(2)}.id.vcf.gz
 
-    bcftools index --tbi ${vcf.getBaseName(3)}.vcf.gz
+    bcftools index --tbi ${vcf.getBaseName(2)}.id.vcf.gz
     """
 }
 
@@ -52,7 +52,9 @@ process RsAnnotation {
     tuple val(fileName), path(refVcf), path(refVcfIdx)
     
     output:
-    tuple val(patient_id), path("${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz"), path("${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz.tbi") , emit: bcfAnnotCh
+    tuple val(patient_id), 
+        path("${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz"), 
+        path("${queryVcf.getBaseName(2)}_rs-${refVcf.getSimpleName()}.vcf.gz.tbi") , emit: bcfAnnotCh
 
     script:
     """

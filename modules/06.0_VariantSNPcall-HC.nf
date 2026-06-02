@@ -89,7 +89,7 @@ process CreateGVCF {
 
 process CombineGvcfs {
     tag "COMBINE GVCF files with Gatk HaplotypeCaller"
-    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy'
+    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy', enabled: params.keepinter
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'
@@ -120,7 +120,7 @@ process CombineGvcfs {
 
 process GenotypeGvcfs {
     tag "GENERATING GENOTYPES OF GVCF"
-    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy'
+    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy', enabled: params.keepinter
 
     conda "bioconda::gatk4=4.4.0.0"
     container "${workflow.containerEngine == 'singularity'

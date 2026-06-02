@@ -48,28 +48,15 @@ workflow CALL_VARIANT_DEEPVARIANT {
 
 	///// Metrics Extracting from vcfs 
 	GenerateStats	(deepVariant.out.CallVariantvcf)
-        AlleleBalance   ( deepVariant.out.CallVariantvcf )
-        if (  params.splitAllele  == null &&
-              params.rsid         != null  ){ 
-              
-              AddVariantID  ( AlleleBalance.out )   
-              RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
-        
-        } else if ( params.splitAllele  != null && 
-                    params.rsid         == null ){
-                    
-                    AddVariantID    (AlleleBalance.out)         
-                    SortVCF         ( AddVariantID.out) 
-	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                	
-                  } else if ( params.splitAllele  != null && 
-                              params.rsid         != null ){
-                              
-                              AddVariantID  ( AlleleBalance.out)   
-                              SortVCF       ( AddVariantID.out) 
-	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
-                    } else { AddVariantID   ( AlleleBalance.out )   }
+	
+	AddVariantID  	( deepVariant.out.CallVariantvcf  )  
+	SortVCF         ( AddVariantID.out	)
+	NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect()	) 
+	AlleleBalance   ( NormalizeVCF.out )
+	
+	if ( params.rsid	!= null  ){ 
+            RsAnnotation  ( deepVariant.out.CallVariantvcf, AnnotRefVCF ) 
+        } 
 
     } else if ( referFileChannel 	!= null &&
                 params.modelType        != null && 
@@ -85,52 +72,25 @@ workflow CALL_VARIANT_DEEPVARIANT {
         GenerateStats	( deepVariant.out.CallVariantvcf)
 
 	glnexus         ( deepVariant.out.deepGvcf.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
-	AlleleBalance   ( glnexus.out )
-	                      
-        if (  params.splitAllele  == null &&
-              params.rsid         != null  ){ 
-              AddVariantID  ( AlleleBalance.out )
-              RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
-              
-              if (params.splitSample) {
-                  GetSamples ( RsAnnotation.out)
-                  SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
-                                                            -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-	      }
-        } else if ( params.splitAllele  != null && 
-                    params.rsid         == null ){
-                    
-                    AddVariantID  ( AlleleBalance.out )
-                    SortVCF         ( AddVariantID.out) 
-	            NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                    
-                    if (params.splitSample) {
-                        GetSamples ( NormalizeVCF.out)
-                        SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
-                                                                  -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-	            }
-                  } else if ( params.splitAllele  != null && 
-                              params.rsid         != null ){
-                              
-                              AddVariantID  ( AlleleBalance.out )
-                              SortVCF       ( AddVariantID.out) 
-	                      NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )
-                              
-                              if (params.splitSample) {
-                                  GetSamples ( RsAnnotation.out)
-                                  SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
-                                                                            -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-	                      }
-                    } else { 
-                        AddVariantID  ( AlleleBalance.out )
-                        if (params.splitSample) {
-	                        GetSamples ( AddVariantID.out)
-	                        SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
-	                                                                 -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-	                     }
-                      }
-                    
+
+        AddVariantID  	( glnexus.out )  
+        SortVCF         ( AddVariantID.out	)
+        NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect()	) 
+        AlleleBalance   ( NormalizeVCF.out )
+	
+	if ( params.rsid  != null  ){ 
+	    RsAnnotation  ( AlleleBalance.out, AnnotRefVCF ) 
+	    
+	    if (params.splitSample) {
+	        GetSamples ( RsAnnotation.out)
+	        SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	    }
+	} else if (params.splitSample) {
+	    GetSamples ( AlleleBalance.out)	
+	    SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+	} 
+	
+                          
     }  else { 
         print("\033[31m Error: Invalid or missing parameters.\n" )
 	print(" Please specify valid parameters:\n"      )

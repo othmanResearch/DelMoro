@@ -30,7 +30,7 @@ process SortVCF {
 
 process NormalizeVCF {
     tag "SPLIT MULTI ALLELES FOR ${vcf}"
-    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy',  enabled: (params.splitAllele != null && params.rsid == null )
+    publishDir "${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk" }", mode: 'copy',  enabled: params.keepinter
     
     conda "bioconda::bcftools=1.21"
     container "${workflow.containerEngine == 'singularity'
@@ -53,7 +53,7 @@ process NormalizeVCF {
     bcftools norm \\
         --threads ${task.cpus} \\
         --fasta-ref ${reference} \\
-        --multiallelics -any \\
+        --multiallelics -both \\
         --atomize \\
         --rm-dup all \\
         --atom-overlaps '*' \\

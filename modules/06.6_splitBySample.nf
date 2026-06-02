@@ -3,7 +3,7 @@
 // GET SAMPLES NAME FROM COHORT VCF
 
 process GetSamples {
-	tag "GET SAMPLES NAME "
+	tag "GET SAMPLES NAME in ${vcf}"
 	
 	conda "bioconda::bcftools=1.21"
     container "${workflow.containerEngine == 'singularity'

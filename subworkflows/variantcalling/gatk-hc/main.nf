@@ -37,94 +37,46 @@ workflow CALL_VARIANT_GATK {
     // Determine if we are using local reference or igenome fasta retrieving
     def referFileChannel = params.reference ?: params.igenome
        
-    if  (params.mode 		== null && 
-        referFileChannel 	!= null ){
+    if  ( params.mode 		== null && 
+          referFileChannel	!= null ){
 	
-	CallVariant 	(  ref_gen_channel, dictREF.collect(), samidxREF.collect(), BamToVarCall ,bedtarget) 
-	///// Metrics Extracting from vcfs 
-	GenerateStats	( CallVariant.out.CallVariantvcf)
-	AlleleBalance   ( CallVariant.out )
+		CallVariant 	(  ref_gen_channel, dictREF.collect(), samidxREF.collect(), BamToVarCall ,bedtarget) 
+		///// Metrics Extracting from vcfs 
+		GenerateStats	( CallVariant.out.CallVariantvcf)
+
+		AddVariantID  	( CallVariant.out	)  
+		SortVCF         ( AddVariantID.out	)
+		NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect()	) 
+		AlleleBalance   ( NormalizeVCF.out )
+		
+		if ( params.rsid	!= null  ){ 
+			RsAnnotation  ( AlleleBalance.out, AnnotRefVCF ) 
+		} 
+
+    } else if ( referFileChannel  != null &&
+                params.mode       == 'cohort' ){	// generate vcf for all inputs 
 	
-        if (  params.splitAllele  == null &&
-              params.rsid         != null  ){ 
-              AddVariantID  ( AlleleBalance.out)   
-              RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
-        
-        } else if ( params.splitAllele  != null && 
-                    params.rsid         == null ){
-                    AddVariantID    (AlleleBalance.out)         
-                    SortVCF         ( AddVariantID.out)
-                    NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                	
-                  } else if ( params.splitAllele  != null && 
-                              params.rsid         != null ){
-                              AddVariantID    (AlleleBalance.out)   
-                              SortVCF       ( AddVariantID.out)
-                              NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )            	                  
-                    } else { AddVariantID   ( AlleleBalance.out)   }
-  	
-    } else if ( referFileChannel 	!= null && 
-		params.mode 		== 'cohort' ){	// generate vcf for all inputs 
-	
-	CreateGVCF	( ref_gen_channel, dictREF.collect(), samidxREF.collect(), BamToVarCall, bedtarget)
-
-    
-    
-	CombineGvcfs	( ref_gen_channel,
-			  dictREF.collect(),
-			  samidxREF.collect(),
-			  CreateGVCF.out.g_vcf_Recal.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
-
-	GenotypeGvcfs 	( ref_gen_channel, dictREF.collect(), samidxREF.collect(), CombineGvcfs.out.CohortVcf )
-
-	GenerateStats	( GenotypeGvcfs.out )  
-        AlleleBalance   ( GenotypeGvcfs.out )
-        
-        if (  params.splitAllele  == null &&
-              params.rsid         != null  ){ 
-              AddVariantID  ( AlleleBalance.out)   
-              RsAnnotation  ( AddVariantID.out, AnnotRefVCF ) 
-              
-              if (params.splitSample) {
-                  GetSamples ( RsAnnotation.out)
-                  SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
-                                                            -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-	      }                
-        } else if ( params.splitAllele  != null && 
-                    params.rsid         == null ){
-                    
-                    AddVariantID    ( AlleleBalance.out)         
-                    SortVCF         ( AddVariantID.out)
-                    NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                    
-                    if (params.splitSample) {
-	                GetSamples ( NormalizeVCF.out)
-	                SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
-	                                                          -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-	            }          
-                  } else if ( params.splitAllele  != null && 
-                              params.rsid         != null ){
-                              
-                              AddVariantID  ( AlleleBalance.out)   
-                              SortVCF       ( AddVariantID.out) 
-                              NormalizeVCF  ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect() ) 
-                              RsAnnotation  ( NormalizeVCF.out, AnnotRefVCF )  
-                              
-                              if (params.splitSample) {
-	                            GetSamples ( RsAnnotation.out)
-	                            SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
-	                                                                    -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-	                      }
-	                      
-                    } else { AddVariantID   ( AlleleBalance.out)
-                             
-                             if (params.splitSample) {
-	                        GetSamples ( AddVariantID.out)
-	                        SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs 
-	                                                                 -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-	                     }
-                      }
+		CreateGVCF		( ref_gen_channel, dictREF.collect(), samidxREF.collect(), BamToVarCall, bedtarget)
+		CombineGvcfs	( ref_gen_channel, dictREF.collect(), samidxREF.collect(), CreateGVCF.out.g_vcf_Recal.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
+		GenotypeGvcfs 	( ref_gen_channel, dictREF.collect(), samidxREF.collect(), CombineGvcfs.out.CohortVcf )
+		GenerateStats	( GenotypeGvcfs.out ) 
+		//
+		AddVariantID  	( GenotypeGvcfs.out	)  
+		SortVCF         ( AddVariantID.out	)
+		NormalizeVCF    ( SortVCF.out, ref_gen_channel, dictREF.collect(), samidxREF.collect()	) 
+		AlleleBalance   ( NormalizeVCF.out )
+		
+		if ( params.rsid	!= null  ){ 
+			RsAnnotation  ( AlleleBalance.out, AnnotRefVCF ) 
+				if (params.splitSample) {
+					GetSamples ( RsAnnotation.out)
+					SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+		        }
+		} else if (params.splitSample) {
+			GetSamples ( AlleleBalance.out)	
+			SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
+			}      
+		           
 
     }  else { 
 	print("\033[31m Error: Invalid or missing parameters.\n" )
