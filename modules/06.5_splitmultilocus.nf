@@ -53,7 +53,7 @@ process NormalizeVCF {
     bcftools norm \\
         --threads ${task.cpus} \\
         --fasta-ref ${reference} \\
-        --multiallelics -both \\
+        --multiallelics -any \\
         --atomize \\
         --rm-dup all \\
         --atom-overlaps '*' \\
