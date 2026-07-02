@@ -22,10 +22,10 @@ Run e.g.:
         --vep_tab /data/vep_tab \
         --spliceai_vcfs /data/spliceai_vcfs \
         --loftee_out /data/loftee_out
-"""
+""" 
 
-import csv
 import os
+import glob
 import pandas as pd
 from metaflow import FlowSpec, Parameter, step
 
@@ -80,22 +80,21 @@ class DataAggregator(FlowSpec):
             if not os.path.exists(path):
                 raise FileNotFoundError(f"{name} path does not exist: {path}")
 
-        with open(self.samples) as f:
-            reader = csv.DictReader(f)
-            self.sample_list = list(reader)
+        # read list of samples file 
+        with open(self.samples, 'r') as f: 
+            self.sample_ids = [ id.strip() for id in f.readlines()]
 
-        print(f"Loaded {len(self.sample_list)} samples from {self.samples}")
-        self.next(self.process_samples)
+        print(f"Loaded {len(self.sample_ids)} samples")
+        self.next(self.process_vep)
 
     @step
-    def process_samples(self):
+    def process_vep(self):
         """Placeholder for per-sample processing / annotation-merging logic."""
-        # Example: fan out over samples in parallel with a foreach, e.g.
-        #   self.next(self.per_sample, foreach='sample_list')
-        for sample in self.sample_list:
-            print(f"Processing sample: {sample}")
-            # TODO: pull matching files from self.lirical_path, self.vep_tab,
-            # self.spliceai_vcfs, self.loftee_out based on sample ID
+        for id in self.sample_ids :
+            path_to_vep_files= "/".join([self.vep_tab,"*"+id+"*.tsv"])
+            print(path_to_vep_files)
+            fasta_files = glob.glob(path_to_vep_files)
+            print(fasta_files)
         self.next(self.end)
 
     @step
