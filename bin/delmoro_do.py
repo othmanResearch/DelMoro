@@ -37,11 +37,31 @@ logging.basicConfig(level=logging.INFO)
 # verify that the necessary modules are available within the workflow honme 
 script_dir = Path(__file__).resolve().parent
 
-module = script_dir / "modules/vep.py" 
-vep_module = input_file.resolve()
-
+# verify parse_vep module file exists
+module = script_dir / "modules/parse_vep.py" 
+vep_module = module.resolve()
 if not vep_module.is_file():
-    raise FileNotFoundError(f"vep.py module was not found in the workflow home: {script_dir}")
+    raise FileNotFoundError(f"parse_vep.py module was not found in the workflow home directory {script_dir}")
+
+# verify parrse_loftee module file exists
+module = script_dir / "modules/parse_loftee.py" 
+loftee_module = module.resolve()
+if not loftee_module.is_file():
+    raise FileNotFoundError(f"parse_loftee.py module was not found in the workflow directory {script_dir}")
+
+# verify parse_lirical module file exists 
+module = script_dir / "modules/parse_lirical.py" 
+vep_module = module.resolve()
+if not vep_module.is_file():
+    raise FileNotFoundError(f"parse_lirical.py module was not found in the workflow home: {script_dir}")
+
+
+# verify parse_splice module file exists 
+module = script_dir / "modules/parse_splice.py" 
+vep_module = module.resolve()
+if not vep_module.is_file():
+    raise FileNotFoundError(f"parse_splice.py module was not found in the workflow home: {script_dir}")
+
 
 class DataAggregator(FlowSpec):
 
