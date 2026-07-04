@@ -26,6 +26,7 @@ Run e.g.:
 
 import os
 import glob
+import sys
 import pandas as pd
 import logging
 from pathlib import Path
@@ -62,6 +63,18 @@ vep_module = module.resolve()
 if not vep_module.is_file():
     raise FileNotFoundError(f"parse_splice.py module was not found in the workflow home: {script_dir}")
 
+print(os.path.abspath(os.path.join(script_dir, '.', 'modules')))
+sys.path.append(os.path.abspath(os.path.join(script_dir, '.', 'modules')))    # set before calling internal modles
+
+from modules.parse_vep import *
+from modules.parse_loftee import *
+from modules.parse_lirical import *
+from modules.parse_splice import *
+
+
+###########################################
+#            WORKFLOW 
+###########################################
 
 class DataAggregator(FlowSpec):
 
