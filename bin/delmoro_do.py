@@ -27,8 +27,21 @@ Run e.g.:
 import os
 import glob
 import pandas as pd
+import logging
+from pathlib import Path
 from metaflow import FlowSpec, Parameter, step
 
+# allow INFO level of logging
+logging.basicConfig(level=logging.INFO)
+
+# verify that the necessary modules are available within the workflow honme 
+script_dir = Path(__file__).resolve().parent
+
+module = script_dir / "modules/vep.py" 
+vep_module = input_file.resolve()
+
+if not vep_module.is_file():
+    raise FileNotFoundError(f"vep.py module was not found in the workflow home: {script_dir}")
 
 class DataAggregator(FlowSpec):
 
@@ -85,16 +98,33 @@ class DataAggregator(FlowSpec):
             self.sample_ids = [ id.strip() for id in f.readlines()]
 
         print(f"Loaded {len(self.sample_ids)} samples")
-        self.next(self.process_vep)
+        self.next(self.get_vep_paths)
 
     @step
-    def process_vep(self):
+    def get_vep_paths(self):
         """Placeholder for per-sample processing / annotation-merging logic."""
+        
+        self.vep_paths_for_all_samples = []
+        
         for id in self.sample_ids :
             path_to_vep_files= "/".join([self.vep_tab,"*"+id+"*.tsv"])
-            print(path_to_vep_files)
-            fasta_files = glob.glob(path_to_vep_files)
-            print(fasta_files)
+            vep_paths = glob.glob(path_to_vep_files)
+            
+            # raise error if vep file was not found
+            if len(vep_paths) == 0:
+                raise FileNotFoundError(f"No VEP annotation file was found for sample {id}")
+
+            # raise error if more than one file was identified per sample 
+            if len(vep_paths) > 1: 
+                raise ValueError(f"More than one file match id: {id} in {self.vep_tab} ")
+
+            self.vep_paths_for_all_samples.append(vep_paths[0])
+        self.next(self.process_vep_output)
+
+    @step
+    def process_vep_output(self):
+
+
         self.next(self.end)
 
     @step
