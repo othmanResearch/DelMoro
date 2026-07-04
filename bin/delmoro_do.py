@@ -157,21 +157,16 @@ class DataAggregator(FlowSpec):
 
     @step
     def process_vep_output(self):
-        
-        file_path = self.input
-        #for id, file in zip( self.sample_ids,self.vep_paths_for_all_samples) : 
-        #    raw_vep = read_vep_file(file)
-        self.result = read_vep_file(file_path)
-
-
-
+        logging.info(f"Processing vep output for filtering missens variants")
+        entire_df = read_vep_file(self.input)
+        self.result = filter_out_consequence(entire_df, consequence='missense_variant')
+        self.result.rename(columns={"#Uploaded_variation": "var_id"}, inplace=True)
         self.next(self.join)
 
     @step 
     def join(self, inputs): 
         self.vep_dfs = [inp.result for inp in inputs]
         self.merge_artifacts(inputs, exclude=['result'])
-
         self.next(self.end)
 
     @step

@@ -35,3 +35,169 @@ def read_vep_file(filepath):
     df.columns = df.columns.str.lstrip('#')
     
     return df
+
+
+def filter_out_consequence(df, consequence='missense_variant'):
+    """
+    retains rows from a dataframe where the "Consequence" column 
+    contains a specific consequence (including when combined with other values).
+    
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe with a "Consequence" column
+    consequence : str
+        The consequence type to filter out (default: 'missense_variant')
+    
+    Returns:
+    --------
+    pd.DataFrame
+        Filtered dataframe without rows containing the specified consequence
+    """
+    # Check if "Consequence" column contains the consequence string
+    mask = df['Consequence'].astype(str).str.contains(
+        consequence, 
+        na=False, 
+        case=False
+    )
+    
+    # Return rows where the consequence is NOT found (negate the mask)
+    return df[mask]
+
+def filter_by_max_af(df, cutoff=0.05, missing_as_pass=False):
+    """
+    Create a boolean vector filtering rows by MAX_AF (allele frequency) values.
+    
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe with a "MAX_AF" column
+    cutoff : float
+        Allele frequency cutoff (default: 0.05)
+    missing_as_pass : bool
+        If True, missing values ("-") are treated as passing the filter (True)
+        If False, missing values are treated as not passing the filter (False)
+        (default: False)
+    
+    Returns:
+    --------
+    pd.Series (bool)
+        Boolean vector where True indicates MAX_AF < cutoff
+    """
+    # Convert "-" to NaN first
+    af_series = df['MAX_AF'].replace('-', pd.NA)
+    
+    # Convert to numeric (handles scientific notation and coerces errors to NaN)
+    af_values = pd.to_numeric(af_series, errors='coerce')
+    
+    # Create boolean mask where values < cutoff
+    mask = af_values < cutoff
+    
+    # Handle missing values
+    if missing_as_pass:
+        # NaN values become True (pass the filter)
+        mask = mask.fillna(True)
+    else:
+        # NaN values become False (don't pass the filter)
+        mask = mask.fillna(False)
+    
+    return mask
+
+def classify_variant_pathogenicity(df):
+    """
+    Classify variants based on multiple prediction scores.
+    
+    Classification logic:
+    - "D" (Deleterious): AlphaMissense shows P (Pathogenic) AND MetaRNN shows D
+    - "T" (Tolerated): Otherwise
+    - "not_applicable": Insufficient data
+    
+    Support levels (only for "D" variants):
+    - 2: AlphaMissense=P AND MetaRNN=D
+    - 3: AlphaMissense=P AND MetaRNN=D AND M-CAP=D
+    
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe with columns: M-CAP_pred, AlphaMissense_pred, MetaRNN_pred
+    
+    Returns:
+    --------
+    classification : np.array
+        Array of "D", "T", or "not_applicable"
+    support_level : np.array
+        Array of support levels (0, 2, or 3; 0 for "T" and "not_applicable")
+    """
+    
+    def get_worst_prediction(pred_string, predictor_type):
+        """
+        Extract the worst (most severe) prediction from comma-separated values.
+        
+        Returns: worst prediction or None if no valid prediction found
+        """
+        if pd.isna(pred_string):
+            return None
+        
+        # Split by comma and clean whitespace
+        predictions = [p.strip() for p in str(pred_string).split(',')]
+        
+        if predictor_type == 'AlphaMissense':
+            # Severity: P > A > B
+            severity = {'P': 3, 'A': 2, 'B': 1}
+        else:  # MetaRNN or M-CAP
+            # Severity: D > T
+            severity = {'D': 2, 'T': 1}
+        
+        # Filter out dots and missing values
+        valid_preds = [p for p in predictions if p and p != '.']
+        
+        if not valid_preds:
+            return None
+        
+        # Return the prediction with highest severity
+        worst = max(valid_preds, key=lambda x: severity.get(x, 0))
+        return worst if severity.get(worst, 0) > 0 else None
+    
+    # Extract worst predictions for each predictor
+    alpha_preds = df['AlphaMissense_pred'].apply(
+        lambda x: get_worst_prediction(x, 'AlphaMissense')
+    )
+    metarnn_preds = df['MetaRNN_pred'].apply(
+        lambda x: get_worst_prediction(x, 'MetaRNN')
+    )
+    mcap_preds = df['M-CAP_pred'].apply(
+        lambda x: get_worst_prediction(x, 'M-CAP')
+    )
+    
+    # Initialize output arrays
+    n_rows = len(df)
+    classification = np.empty(n_rows, dtype=object)
+    support_level = np.zeros(n_rows, dtype=int)
+    
+    # Apply classification logic
+    for i in range(n_rows):
+        alpha = alpha_preds.iloc[i]
+        metarnn = metarnn_preds.iloc[i]
+        mcap = mcap_preds.iloc[i]
+        
+        # Check if we have enough data
+        if alpha is None or metarnn is None:
+            classification[i] = 'not_applicable'
+            support_level[i] = 0
+        # Classify as "D" if AlphaMissense=P AND MetaRNN=D
+        elif alpha == 'P' and metarnn == 'D':
+            classification[i] = 'D'
+            # Determine support level
+            if mcap == 'D':
+                support_level[i] = 3  # All three support
+            else:
+                support_level[i] = 2  # AlphaMissense and MetaRNN support
+        else:
+            classification[i] = 'T'
+            support_level[i] = 0
+    
+    return classification, support_level
+
+
+
+
