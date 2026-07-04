@@ -66,11 +66,11 @@ if not vep_module.is_file():
 print(os.path.abspath(os.path.join(script_dir, '.', 'modules')))
 sys.path.append(os.path.abspath(os.path.join(script_dir, '.', 'modules')))    # set before calling internal modles
 
+# import customised module
 from modules.parse_vep import *
 from modules.parse_loftee import *
 from modules.parse_lirical import *
 from modules.parse_splice import *
-
 
 ###########################################
 #            WORKFLOW 
@@ -152,11 +152,25 @@ class DataAggregator(FlowSpec):
                 raise ValueError(f"More than one file match id: {id} in {self.vep_tab} ")
 
             self.vep_paths_for_all_samples.append(vep_paths[0])
-        self.next(self.process_vep_output)
+
+        self.next(self.process_vep_output, foreach='vep_paths_for_all_samples')  # will allow forking the processes 
 
     @step
     def process_vep_output(self):
+        
+        file_path = self.input
+        #for id, file in zip( self.sample_ids,self.vep_paths_for_all_samples) : 
+        #    raw_vep = read_vep_file(file)
+        self.result = read_vep_file(file_path)
 
+
+
+        self.next(self.join)
+
+    @step 
+    def join(self, inputs): 
+        self.vep_dfs = [inp.result for inp in inputs]
+        self.merge_artifacts(inputs, exclude=['result'])
 
         self.next(self.end)
 
