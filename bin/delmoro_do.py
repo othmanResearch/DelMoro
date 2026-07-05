@@ -174,7 +174,25 @@ class DataAggregator(FlowSpec):
         self.vep_missens = [inp.missens for inp in inputs] # recover the missens table
         self.entire_vep_dfs = [inp.vep_df for inp in inputs]  # recover thge general vep table 
         self.merge_artifacts(inputs, exclude=['missens', 'vep_df'])
+        self.next(self.process_clinsign)
+    
+    @step
+    def process_clinsign(self): 
+        """ Variants labeled in CLIN_SIG colukn as  affects, association, confers_sensitivity, 
+        drug_response, established_risk_allele ,likely_pathogenic, pathogenic, pathogenic_low_penetrance,
+        likely_risk_allele, risk_allele, protective, conflicting_interpretations_of_pathogenicity will abe retained """
+
+        self.clinsign_dfs = []
+        for df in self.entire_vep_dfs:
+            filtered_clin = filter_clin_sig(df) 
+            filtered_clin["classification"]= 'D'
+            filtered_clin["classification_type"] = 'clinical significance'
+
+            self.clinsign_dfs.append( filtered_clin )
+
         self.next(self.end)
+
+
 
     @step
     def end(self):
