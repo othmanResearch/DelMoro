@@ -159,14 +159,18 @@ class DataAggregator(FlowSpec):
     def process_vep_output(self):
         logging.info(f"Processing vep output for filtering missens variants")
         entire_df = read_vep_file(self.input)
-        self.result = filter_out_consequence(entire_df, consequence='missense_variant')
-        self.result.rename(columns={"#Uploaded_variation": "var_id"}, inplace=True)
+        self.missens = filter_out_consequence(entire_df, consequence='missense_variant')
+        classification, support_level = classify_variant_pathogenicity(self.missens)
+
+        self.missens["classification"] = classification
+        self.missens["classification_type"] = "prediction missens"
+        self.missens["support_level"] = support_level
         self.next(self.join)
 
     @step 
     def join(self, inputs): 
-        self.vep_dfs = [inp.result for inp in inputs]
-        self.merge_artifacts(inputs, exclude=['result'])
+        self.vep_dfs = [inp.missens for inp in inputs]
+        self.merge_artifacts(inputs, exclude=['missens'])
         self.next(self.end)
 
     @step
