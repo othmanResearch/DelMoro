@@ -151,15 +151,17 @@ class DataAggregator(FlowSpec):
             if len(vep_paths) > 1: 
                 raise ValueError(f"More than one file match id: {id} in {self.vep_tab} ")
 
-            self.vep_paths_for_all_samples.append(vep_paths[0])
+            self.vep_paths_for_all_samples.append((id, vep_paths[0]))
 
         self.next(self.process_vep_output, foreach='vep_paths_for_all_samples')  # will allow forking the processes 
 
     @step
     def process_vep_output(self):
-        logging.info(f"Processing vep output for filtering missens variants")
-        entire_df = read_vep_file(self.input)
-        self.missens = filter_out_consequence(entire_df, consequence='missense_variant')
+        logging.info(f"Processing vep output for filtering missens variants for sample {self.input[0]}")
+        self.vep_df = read_vep_file(self.input[1])
+        # add the sample id to the dataframe 
+        self.vep_df["sample_id"] = self.input[0]
+        self.missens = filter_out_consequence(self.vep_df, consequence='missense_variant')
         classification, support_level = classify_variant_pathogenicity(self.missens)
 
         self.missens["classification"] = classification
@@ -169,8 +171,9 @@ class DataAggregator(FlowSpec):
 
     @step 
     def join(self, inputs): 
-        self.vep_dfs = [inp.missens for inp in inputs]
-        self.merge_artifacts(inputs, exclude=['missens'])
+        self.vep_missens = [inp.missens for inp in inputs] # recover the missens table
+        self.entire_vep_dfs = [inp.vep_df for inp in inputs]  # recover thge general vep table 
+        self.merge_artifacts(inputs, exclude=['missens', 'vep_df'])
         self.next(self.end)
 
     @step

@@ -198,6 +198,48 @@ def classify_variant_pathogenicity(df):
     
     return classification, support_level
 
+def filter_clin_sig(df: pd.DataFrame, column: str = "CLIN_SIG") -> pd.DataFrame:
+    """
+    Filter a VEP DataFrame based on the CLIN_SIG column.
 
+    A row is retained if at least one comma-separated CLIN_SIG value belongs
+    to the list of clinically relevant values. Missing values are represented
+    by '-'.
 
+    Parameters
+    ----------
+    df : pd.DataFrame
+        VEP DataFrame.
+    column : str, default="CLIN_SIG"
+        Name of the CLIN_SIG column.
+
+    Returns
+    -------
+    pd.DataFrame
+        Filtered DataFrame.
+    """
+
+    allowed = {
+        "affects",
+        "association",
+        "confers_sensitivity",
+        "drug_response",
+        "established_risk_allele",
+        "likely_pathogenic",
+        "pathogenic",
+        "pathogenic_low_penetrance",
+        "likely_risk_allele",
+        "risk_allele",
+        "protective",
+        "conflicting_interpretations_of_pathogenicity",
+    }
+
+    def keep(value):
+        if pd.isna(value) or value == "-":
+            return False
+
+        values = {v.strip() for v in str(value).split(",")}
+        return not allowed.isdisjoint(values)
+
+    return df[df[column].apply(keep)].copy()
 
