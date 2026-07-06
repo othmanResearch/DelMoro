@@ -203,11 +203,72 @@ class DataAggregator(FlowSpec):
             lof_vars['classification_type'] = 'Loss of Function'
 
             self.lof_dfs.append( (vep_df[0], lof_vars) )
-            del lof_vars
+            del lof_vars # just in case something went silently wrong, the lof_vars won't recycle 
+        self.next(self.get_spliceai_files)
 
+    @step
+    def get_spliceai_files(self): 
+        """ a step for reading the paths for vcf files containing apliceai data  """
+        
+
+        self.spliceai_vcf_paths_for_all_samples = []
+        
+        for id in self.sample_ids :
+            path_to_spliceai_vcf_file= "/".join([self.spliceai_vcfs,"*"+id+"*.vcf.gz"])
+            spliceai_vcf_abs_path = glob.glob(path_to_spliceai_vcf_file)
             
-        self.next(self.end)
+            # raise error if vep file was not found
+            if len(spliceai_vcf_abs_path) == 0:
+                raise FileNotFoundError(f"No VCF file was found for parsing spliceAI data for sample {id}")
 
+            # raise error if more than one file was identified per sample 
+            if len(spliceai_vcf_abs_path) > 1: 
+                raise ValueError(f"More than one VCF file for spliceAI parsing, match id: {id} in {self.vep_tab} ")
+
+            self.spliceai_vcf_paths_for_all_samples.append((id, spliceai_vcf_abs_path[0]))
+
+
+        self.next(self.collect_spliceai_high_impact_variants)
+
+    @step 
+    def collect_spliceai_high_impact_variants(self): 
+
+        lookup = dict(self.entire_vep_dfs)
+        self.matched_splicing_vars_dfs= []
+        self.unmatched_splicing_dfs = []
+
+        for id, path in self.spliceai_vcf_paths_for_all_samples: 
+            flag_cols = ["DS_AG_flag", "DS_AL_flag", "DS_DG_flag", "DS_DL_flag"]
+            vcf_obj = read_vcf(path)
+            vars = extrat_spliceai_info(vcf_obj, cutoff_value = 0.5 , label = id) 
+            if vars:
+                vars_df = pd.DataFrame(vars)
+                vars_df["any_flag"] = (vars_df[flag_cols] == 1).any(axis=1).astype(int)
+                # selecting IDs of splicing variants 
+                splicing_vars = vars_df.query("any_flag == 1")
+                
+                # looking the matching variants with the vep annotation table and the unmatched variants 
+                vep_table = lookup[id]
+                matching_rows = vep_table[vep_table["Uploaded_variation"].isin(splicing_vars["var_id"]) ]
+                unmatched_splicing = splicing_vars[~splicing_vars["var_id"].isin(vep_table["Uploaded_variation"])] 
+                
+                # prepare for merging 
+                matching_rows["classification"] = 'D'
+                matching_rows["classification_type"] = 'splicing'
+
+                self.matched_splicing_vars_dfs.append( (id, matching_rows) )
+                self.unmatched_splicing_dfs.append((id, unmatched_splicing))
+
+                del matching_rows
+                del unmatched_splicing
+
+
+
+
+
+
+
+        self.next(self.end)
 
 
     @step

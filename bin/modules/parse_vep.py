@@ -3,6 +3,53 @@
 import pandas as pd
 import numpy as np
 from io import StringIO
+from pathlib import Path
+import glob
+
+
+def vep_paths(sample_ids, vep_dir):
+    """
+    Find the unique VEP annotation file for each sample.
+
+    Parameters
+    ----------
+    sample_ids : iterable of str
+        Sample identifiers.
+    vep_dir : str or Path
+        Directory containing VEP TSV files.
+
+    Returns
+    -------
+    list[tuple[str, str]]
+        List of (sample_id, vep_file_path) tuples.
+
+    Raises
+    ------
+    FileNotFoundError
+        If no VEP file is found for a sample.
+    ValueError
+        If more than one VEP file matches a sample.
+    """
+    vep_dir = Path(vep_dir)
+    vep_paths_for_all_samples = []
+
+    for sample_id in sample_ids:
+        matches = glob.glob(str(vep_dir / f"*{sample_id}*.tsv"))
+
+        if not matches:
+            raise FileNotFoundError(
+                f"No VEP annotation file was found for sample '{sample_id}'."
+            )
+
+        if len(matches) > 1:
+            raise ValueError(
+                f"Multiple VEP annotation files match sample '{sample_id}' "
+                f"in '{vep_dir}'."
+            )
+
+        vep_paths_for_all_samples.append((sample_id, matches[0]))
+
+    return vep_paths_for_all_samples
 
 def read_vep_file(filepath):
     """
