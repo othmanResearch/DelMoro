@@ -196,10 +196,16 @@ class DataAggregator(FlowSpec):
 
     @step 
     def process_lof(self): 
+        self.lof_dfs = []
         for vep_df in self.entire_vep_dfs: 
-            filter_lof(vep_df[1])
-            
+            lof_vars  = filter_lof(vep_df[1])
+            lof_vars["classification"] = 'D'
+            lof_vars['classification_type'] = 'Loss of Function'
 
+            self.lof_dfs.append( (vep_df[0], lof_vars) )
+            del lof_vars
+
+            
         self.next(self.end)
 
 
