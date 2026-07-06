@@ -120,8 +120,7 @@ class DataAggregator(FlowSpec):
             (self.samples, "samples"),
             (self.lirical_path, "lirical_path"),
             (self.vep_tab, "vep_tab"),
-            (self.spliceai_vcfs, "spliceai_vcfs"),
-            (self.loftee_out, "loftee_out"),
+            (self.spliceai_vcfs, "spliceai_vcfs")
         ]:
             if not os.path.exists(path):
                 raise FileNotFoundError(f"{name} path does not exist: {path}")
@@ -163,10 +162,13 @@ class DataAggregator(FlowSpec):
         self.vep_df["sample_id"] = self.input[0]
         self.missens = filter_out_consequence(self.vep_df, consequence='missense_variant')
         classification, support_level = classify_variant_pathogenicity(self.missens)
-
         self.missens["classification"] = classification
         self.missens["classification_type"] = "prediction missens"
         self.missens["support_level"] = support_level
+        
+        # ensures pairing to safely assign data to sample ids 
+        self.missens = (self.input[0], self.missens)
+        self.vep_df = (self.input[0], self.vep_df)
         self.next(self.join)
 
     @step 
@@ -184,11 +186,19 @@ class DataAggregator(FlowSpec):
 
         self.clinsign_dfs = []
         for df in self.entire_vep_dfs:
-            filtered_clin = filter_clin_sig(df) 
+            filtered_clin = filter_clin_sig(df[1]) 
             filtered_clin["classification"]= 'D'
             filtered_clin["classification_type"] = 'clinical significance'
 
-            self.clinsign_dfs.append( filtered_clin )
+            self.clinsign_dfs.append( ( df[0], filtered_clin) ) # ensures sanity of pairing between data and sample ids
+
+        self.next(self.process_lof)
+
+    @step 
+    def process_lof(self): 
+        for vep_df in self.entire_vep_dfs: 
+            filter_lof(vep_df[1])
+            
 
         self.next(self.end)
 
