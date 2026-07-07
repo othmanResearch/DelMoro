@@ -120,16 +120,16 @@ class DataAggregator(FlowSpec):
         type=str,
     )
 
-    loftee_out = Parameter(
-        "loftee_out",
-        help="Directory containing LOFTEE output files",
+    hgnc_map = Parameter(
+        "hgnc_map",
+        help="HGNC mapping between NCBI gene ids and ensembl gene ids",
         required=True,
         type=str,
     )
 
-    hgnc_map = Parameter(
-        "hgnc_map",
-        help="HGNC mapping between NCBI gene ids and ensembl gene ids",
+    output_dir = Parameter(
+        "output_dir",
+        help="Path to output directory",
         required=True,
         type=str,
     )
@@ -402,7 +402,7 @@ class DataAggregator(FlowSpec):
                     var_ids.append(var_id)
 
                 lirical_merged["var_ids"] = var_ids
-                lirical_merged = lirical_merged[["var_ids", "diseaseCurie", "rank"] ].rename(columns={"rank": "lirical_rank"})
+                lirical_merged = lirical_merged[["var_ids", "diseaseCurie", "diseaseName", "rank"] ].rename(columns={"rank": "lirical_rank"})
 
                 merge_with_vep = lookup[id].merge(
                             lirical_merged,
@@ -452,6 +452,9 @@ class DataAggregator(FlowSpec):
 
     @step
     def end(self):
+        # create output dir if it does not exist 
+        Path(self.output_dir).mkdir(parents=True, exist_ok=True)
+
         for id, df in self.all_vars_filtered: 
             df = df.drop(columns=["IMPACT", "DISTANCE", "STRAND", 
                                   "FLAGS", "SYMBOL_SOURCE", "HGNC_ID", 
@@ -467,8 +470,11 @@ class DataAggregator(FlowSpec):
                                   "gnomADg_REMAINING_AF", "gnomADg_SAS_AF", "SOMATIC", "PHENO", "MOTIF_NAME", 
                                   "MOTIF_POS", "HIGH_INF_POS", "MOTIF_SCORE_CHANGE", "TRANSCRIPTION_FACTORS", 
                                   "AlphaMissense_pred", "AlphaMissense_score", "M-CAP_pred", "M-CAP_score", "MetaRNN_pred",
-                                  "MetaRNN_score", "LoF", "LoF_filter", "LoF_flags", "LoF_info", "var_ids"]
- ])
+                                  "MetaRNN_score", "LoF", "LoF_filter", "LoF_flags", "LoF_info", "var_ids", "ID", "Codons", "sample_id", "clinvar_clnsig"] )
+            output_file = "/".join([self.output_dir, id+"_prioritized_vars_DeGso.xlsx"])
+
+            converted_df = clean_and_convert_numeric(df)
+            converted_df.to_excel(output_file, sheet_name="priorittized variants", index=False)
 
 
 if __name__ == "__main__":

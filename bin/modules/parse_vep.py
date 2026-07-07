@@ -307,3 +307,41 @@ def concatenate_dataframes(*dfs: pd.DataFrame) -> pd.DataFrame:
         ignore_index=True,
         sort=False
     )
+
+
+import pandas as pd
+
+def clean_and_convert_numeric(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Replace '-' with missing values and convert columns to numeric where possible.
+
+    A column is converted to a numeric dtype only if all non-missing values
+    can be successfully converted. Otherwise, the original column is kept.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input DataFrame.
+
+    Returns
+    -------
+    pd.DataFrame
+        Cleaned DataFrame.
+    """
+    df = df.copy()
+
+    # Replace '-' with missing values
+    df.replace("-", pd.NA, inplace=True)
+
+    # Attempt numeric conversion column by column
+    for col in df.columns:
+        converted = pd.to_numeric(df[col], errors="coerce")
+
+        # Convert only if all non-missing values were successfully converted
+        original_non_missing = df[col].notna().sum()
+        converted_non_missing = converted.notna().sum()
+
+        if original_non_missing == converted_non_missing:
+            df[col] = converted
+
+    return df
