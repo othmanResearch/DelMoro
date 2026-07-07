@@ -262,13 +262,12 @@ class DataAggregator(FlowSpec):
                 del matching_rows
                 del unmatched_splicing
 
+        self.next(self.get_stop_loss)
 
-
-
-
-
-
-        self.next(self.end)
+    @step
+    def get_stop_loss(self): 
+        
+        self.next(self.end) 
 
 
     @step
