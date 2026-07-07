@@ -290,3 +290,28 @@ def filter_clin_sig(df: pd.DataFrame, column: str = "CLIN_SIG") -> pd.DataFrame:
 
     return df[df[column].apply(keep)].copy()
 
+
+def concatenate_dataframes(*dfs: pd.DataFrame) -> pd.DataFrame:
+    """
+    Concatenate multiple DataFrames while keeping all columns.
+    Missing columns in any DataFrame are added and filled with NaN.
+
+    Parameters
+    ----------
+    *dfs : pd.DataFrame
+        Two or more DataFrames to concatenate.
+
+    Returns
+    -------
+    pd.DataFrame
+        Concatenated DataFrame with the union of all columns.
+    """
+    if not dfs:
+        raise ValueError("At least one DataFrame must be provided.")
+
+    return pd.concat(
+        dfs,
+        axis=0,
+        ignore_index=True,
+        sort=False
+    )

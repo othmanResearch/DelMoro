@@ -311,28 +311,72 @@ class DataAggregator(FlowSpec):
         hgnc_map = pd.read_table(self.hgnc_map, dtype={"NCBI Gene ID(supplied by NCBI)": object})
         hgnc_map = hgnc_map[["NCBI Gene ID(supplied by NCBI)", "Approved symbol", "Ensembl ID(supplied by Ensembl)"]]
         self.lirical_transformed_dfs = []
+        lookup = dict(self.entire_vep_dfs)
         
-        if not self.lirical_tsv_paths:
+        if self.lirical_tsv_paths:
             for id, lirical_file_path in self.lirical_tsv_paths: 
-                lirical_df = pd.read_table(lirical_file_path, skiprows = 5)
+                lirical_df = pd.read_table(lirical_file_path, comment="!")
                 lirical_df = remove_ncbigene_prefix(lirical_df)
-
+                
                 lirical_merged = lirical_df.merge(hgnc_map,
                                  how="left",
                                  left_on="entrezGeneId",
                                  right_on="NCBI Gene ID(supplied by NCBI)")
+
                 var_ids = []
                 for var in lirical_merged["variants"]: 
                     variant = var.split(" ")[0]
                     var_identifiers = parse_variant(variant)
-                    
+
                     # add var identifiers consistent to the vcf ID column 
                     var_id = "chr"+var_identifiers[0]+"_"+var_identifiers[1]+"_"+var_identifiers[2]+"_"+var_identifiers[3]
                     var_ids.append(var_id)
 
                 lirical_merged["var_ids"] = var_ids
-                self.lirical_transformed_dfs.append( (id, lirical_merged) )
+                lirical_merged = lirical_merged[["var_ids", "diseaseCurie", "rank"] ].rename(columns={"rank": "lirical_rank"})
+
+                merge_with_vep = lookup[id].merge(
+                            lirical_merged,
+                            how="inner",
+                            left_on="Uploaded_variation",
+                            right_on="var_ids")
+                merge_with_vep["classification"] = 'D'
+                merge_with_vep["classification_type"] = 'Phenotype matching'
+
+                self.lirical_transformed_dfs.append( (id, merge_with_vep ) )
+
+        self.next(self.assembl_dfs)
+    
+    @step
+    def assembl_dfs(self): 
+        dic_missens = dict(self.vep_missens)
+        dic_lof = dict(self.lof_dfs)
+        dic_splicing = dict(self.matched_splicing_vars_dfs)
+        dic_stop_loss = dict(self.stop_loss_dfs) 
+        dic_clindign = dict(self.clinsign_dfs)
+        dic_lirical = dict(self.lirical_transformed_dfs)
+
+        for id in self.sample_ids:  
+            # make sure that the second dataframe is not empty 
+            if dic_lof[id].empty == False:
+                merged_df = concatenate_dataframes(dic_missens[id], dic_lof[id])
+            else: 
+                merged_df = dic_missens[id]
+            # merging splice ai data 
+            merged_df = concatenate_dataframes(merged_df, dic_clindign[id], dic_splicing[id], dic_stop_loss[id], dic_lirical[id])
+
+
+
+
+
+
+
+
+
+
+        
         self.next(self.end)
+
 
 
 
