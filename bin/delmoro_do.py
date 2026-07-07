@@ -459,7 +459,15 @@ class DataAggregator(FlowSpec):
                                   "TSL", "APPRIS", "TREMBL", "UNIPARC", "UNIPROT_ISOFORM",
                                   "GENE_PHENO", "DOMAINS", "miRNA", "HGVS_OFFSET", "AF",
                                   "AFR_AF", "AMR_AF", "EAS_AF", "EUR_AF", "SAS_AF",  
-                                  "gnomADe_AF"gnomADe_AFR_AF	gnomADe_AMR_AF	gnomADe_ASJ_AF	gnomADe_EAS_AF	gnomADe_FIN_AF	gnomADe_MID_AF	gnomADe_NFE_AF	gnomADe_REMAINING_AF	gnomADe_SAS_AF	gnomADg_AF	gnomADg_AFR_AF	gnomADg_AMI_AF	gnomADg_AMR_AF	gnomADg_ASJ_AF	gnomADg_EAS_AF	gnomADg_FIN_AF	gnomADg_MID_AF	gnomADg_NFE_AF	gnomADg_REMAINING_AF	gnomADg_SAS_AF
+                                  "gnomADe_AF", "gnomADe_AFR_AF", "gnomADe_AMR_AF",
+                                  "gnomADe_ASJ_AF", "gnomADe_EAS_AF", "gnomADe_FIN_AF", "gnomADe_MID_AF", 
+                                  "gnomADe_NFE_AF", "gnomADe_REMAINING_AF", "gnomADe_SAS_AF", 
+                                  "gnomADg_AF", "gnomADg_AFR_AF", "gnomADg_AMI_AF", "gnomADg_AMR_AF", "gnomADg_ASJ_AF", 
+                                  "gnomADg_EAS_AF", "gnomADg_FIN_AF", "gnomADg_MID_AF", "gnomADg_NFE_AF",
+                                  "gnomADg_REMAINING_AF", "gnomADg_SAS_AF", "SOMATIC", "PHENO", "MOTIF_NAME", 
+                                  "MOTIF_POS", "HIGH_INF_POS", "MOTIF_SCORE_CHANGE", "TRANSCRIPTION_FACTORS", 
+                                  "AlphaMissense_pred", "AlphaMissense_score", "M-CAP_pred", "M-CAP_score", "MetaRNN_pred",
+                                  "MetaRNN_score", "LoF", "LoF_filter", "LoF_flags", "LoF_info", "var_ids"]
  ])
 
 
