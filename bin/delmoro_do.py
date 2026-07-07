@@ -29,6 +29,7 @@ import glob
 import sys
 import pandas as pd
 import logging
+import warnings
 from pathlib import Path
 from metaflow import FlowSpec, Parameter, step
 
@@ -113,6 +114,12 @@ class DataAggregator(FlowSpec):
         type=str,
     )
 
+    hgnc_map = Parameter(
+        "hgnc_map",
+        help="HGNC mapping between NCBI gene ids and ensembl gene ids",
+        required=True,
+        type=str,
+    )
     @step
     def start(self):
         """Validate inputs and load the sample sheet."""
@@ -120,7 +127,7 @@ class DataAggregator(FlowSpec):
             (self.samples, "samples"),
             (self.lirical_path, "lirical_path"),
             (self.vep_tab, "vep_tab"),
-            (self.spliceai_vcfs, "spliceai_vcfs")
+            (self.spliceai_vcfs, "spliceai_vcfs"),
         ]:
             if not os.path.exists(path):
                 raise FileNotFoundError(f"{name} path does not exist: {path}")
@@ -209,8 +216,7 @@ class DataAggregator(FlowSpec):
     @step
     def get_spliceai_files(self): 
         """ a step for reading the paths for vcf files containing apliceai data  """
-        
-
+    
         self.spliceai_vcf_paths_for_all_samples = []
         
         for id in self.sample_ids :
@@ -276,8 +282,60 @@ class DataAggregator(FlowSpec):
 
                 self.stop_loss_dfs.append((id, stop_loss_vars))
 
+        self.next(self.read_lirical)
+    
+    @step 
+    def read_lirical(self): 
+
+        self.lirical_tsv_paths = []
         
-        self.next(self.end) 
+        for id in self.sample_ids :
+            path_to_lirical_tsv= "/".join([self.lirical_path,"*"+id+"*.tsv"])
+            lirical_tsv_abs_path = glob.glob(path_to_lirical_tsv)
+            
+            # raise error if vep file was not found
+            if len(lirical_tsv_abs_path) == 0:
+                warnings.warn(f"No TSV file was found for parsing LIRICAL data for sample {id}")
+
+            # raise error if more than one file was identified per sample 
+            if len(lirical_tsv_abs_path) > 1: 
+                raise ValueError(f"More than one TSV file was detected for LIRICAL parsing, sample: {id} in {self.lirical_path} ")
+
+            self.lirical_tsv_paths.append((id, lirical_tsv_abs_path[0]))
+        
+        self.next(self.process_lirical) 
+
+    @step
+    def process_lirical(self):
+        # reading ncbi gene id to gene symbol + ensemble gene id maps 
+        hgnc_map = pd.read_table(self.hgnc_map, dtype={"NCBI Gene ID(supplied by NCBI)": object})
+        hgnc_map = hgnc_map[["NCBI Gene ID(supplied by NCBI)", "Approved symbol", "Ensembl ID(supplied by Ensembl)"]]
+        self.lirical_transformed_dfs = []
+        
+        if not self.lirical_tsv_paths:
+            for id, lirical_file_path in self.lirical_tsv_paths: 
+                lirical_df = pd.read_table(lirical_file_path, skiprows = 5)
+                lirical_df = remove_ncbigene_prefix(lirical_df)
+
+                lirical_merged = lirical_df.merge(hgnc_map,
+                                 how="left",
+                                 left_on="entrezGeneId",
+                                 right_on="NCBI Gene ID(supplied by NCBI)")
+                var_ids = []
+                for var in lirical_merged["variants"]: 
+                    variant = var.split(" ")[0]
+                    var_identifiers = parse_variant(variant)
+                    
+                    # add var identifiers consistent to the vcf ID column 
+                    var_id = "chr"+var_identifiers[0]+"_"+var_identifiers[1]+"_"+var_identifiers[2]+"_"+var_identifiers[3]
+                    var_ids.append(var_id)
+
+                lirical_merged["var_ids"] = var_ids
+                self.lirical_transformed_dfs.append( (id, lirical_merged) )
+        self.next(self.end)
+
+
+
 
 
     @step
