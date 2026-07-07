@@ -447,13 +447,20 @@ class DataAggregator(FlowSpec):
             vars_freq_filtered =  filter_by_max_af(var_df, cutoff=0.05)
             self.all_vars_filtered.append((id, var_df[vars_freq_filtered]))
 
-            var_df[vars_freq_filtered].to_csv("~/Desktop/vars_with_dp.csv")
         self.next(self.end)
 
 
     @step
     def end(self):
-        print("Pipeline complete.")
+        for id, df in self.all_vars_filtered: 
+            df = df.drop(columns=["IMPACT", "DISTANCE", "STRAND", 
+                                  "FLAGS", "SYMBOL_SOURCE", "HGNC_ID", 
+                                  "BIOTYPE", "CANONICAL", "MANE", "MANE_PLUS_CLINICAL", 
+                                  "TSL", "APPRIS", "TREMBL", "UNIPARC", "UNIPROT_ISOFORM",
+                                  "GENE_PHENO", "DOMAINS", "miRNA", "HGVS_OFFSET", "AF",
+                                  "AFR_AF", "AMR_AF", "EAS_AF", "EUR_AF", "SAS_AF",  
+                                  "gnomADe_AF"gnomADe_AFR_AF	gnomADe_AMR_AF	gnomADe_ASJ_AF	gnomADe_EAS_AF	gnomADe_FIN_AF	gnomADe_MID_AF	gnomADe_NFE_AF	gnomADe_REMAINING_AF	gnomADe_SAS_AF	gnomADg_AF	gnomADg_AFR_AF	gnomADg_AMI_AF	gnomADg_AMR_AF	gnomADg_ASJ_AF	gnomADg_EAS_AF	gnomADg_FIN_AF	gnomADg_MID_AF	gnomADg_NFE_AF	gnomADg_REMAINING_AF	gnomADg_SAS_AF
+ ])
 
 
 if __name__ == "__main__":
