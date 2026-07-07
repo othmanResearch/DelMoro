@@ -172,6 +172,7 @@ class DataAggregator(FlowSpec):
         self.missens["classification"] = classification
         self.missens["classification_type"] = "prediction missens"
         self.missens["support_level"] = support_level
+        self.missens = self.missens.query("classification == 'D' ")
         
         # ensures pairing to safely assign data to sample ids 
         self.missens = (self.input[0], self.missens)
@@ -184,7 +185,9 @@ class DataAggregator(FlowSpec):
         self.entire_vep_dfs = [inp.vep_df for inp in inputs]  # recover thge general vep table 
         self.merge_artifacts(inputs, exclude=['missens', 'vep_df'])
         self.next(self.process_clinsign)
-    
+   
+
+
     @step
     def process_clinsign(self): 
         """ Variants labeled in CLIN_SIG colukn as  affects, association, confers_sensitivity, 
@@ -348,7 +351,8 @@ class DataAggregator(FlowSpec):
         self.next(self.assembl_dfs)
     
     @step
-    def assembl_dfs(self): 
+    def assembl_dfs(self):
+        self.merged_dfs = []
         dic_missens = dict(self.vep_missens)
         dic_lof = dict(self.lof_dfs)
         dic_splicing = dict(self.matched_splicing_vars_dfs)
@@ -365,21 +369,18 @@ class DataAggregator(FlowSpec):
             # merging splice ai data 
             merged_df = concatenate_dataframes(merged_df, dic_clindign[id], dic_splicing[id], dic_stop_loss[id], dic_lirical[id])
 
+            self.merged_dfs.append(( id, merged_df)) 
+            del merged_df
 
+        self.next(self.filter_freq)
 
-
-
-
-
-
-
-
-        
+    @step
+    def filter_freq(self):
+        self.all_vars_filtered = []
+        for id, var_df in self.merged_dfs :
+            vars_freq_filtered =  filter_by_max_af(var_df, cutoff=0.05)
+            self.all_vars_filtered.append((id, var_df[vars_freq_filtered]))
         self.next(self.end)
-
-
-
-
 
 
     @step
