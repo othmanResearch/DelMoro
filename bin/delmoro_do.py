@@ -53,18 +53,23 @@ if not loftee_module.is_file():
 
 # verify parse_lirical module file exists 
 module = script_dir / "modules/parse_lirical.py" 
-vep_module = module.resolve()
-if not vep_module.is_file():
+lirical_module = module.resolve()
+if not lirical_module.is_file():
     raise FileNotFoundError(f"parse_lirical.py module was not found in the workflow home: {script_dir}")
 
 
 # verify parse_splice module file exists 
 module = script_dir / "modules/parse_splice.py" 
-vep_module = module.resolve()
-if not vep_module.is_file():
+splice_module = module.resolve()
+if not splice_module.is_file():
     raise FileNotFoundError(f"parse_splice.py module was not found in the workflow home: {script_dir}")
 
-print(os.path.abspath(os.path.join(script_dir, '.', 'modules')))
+# verify parse_vcf module file exists 
+module = script_dir / "modules/parse_vcf.py" 
+vcf_module = module.resolve()
+if not vcf_module.is_file():
+    raise FileNotFoundError(f"parse_vcf.py module was not found in the workflow home: {script_dir}")
+
 sys.path.append(os.path.abspath(os.path.join(script_dir, '.', 'modules')))    # set before calling internal modles
 
 # import customised module
@@ -72,6 +77,7 @@ from modules.parse_vep import *
 from modules.parse_loftee import *
 from modules.parse_lirical import *
 from modules.parse_splice import *
+from modules.parse_vcf import *
 
 ###########################################
 #            WORKFLOW 
@@ -107,6 +113,13 @@ class DataAggregator(FlowSpec):
         type=str,
     )
 
+    vcfs = Parameter(
+        "vcfs",
+        help="Directory containing per sample vcf files",
+        required=False,
+        type=str,
+    )
+
     loftee_out = Parameter(
         "loftee_out",
         help="Directory containing LOFTEE output files",
@@ -120,6 +133,7 @@ class DataAggregator(FlowSpec):
         required=True,
         type=str,
     )
+
     @step
     def start(self):
         """Validate inputs and load the sample sheet."""
@@ -167,26 +181,78 @@ class DataAggregator(FlowSpec):
         self.vep_df = read_vep_file(self.input[1])
         # add the sample id to the dataframe 
         self.vep_df["sample_id"] = self.input[0]
-        self.missens = filter_out_consequence(self.vep_df, consequence='missense_variant')
-        classification, support_level = classify_variant_pathogenicity(self.missens)
-        self.missens["classification"] = classification
-        self.missens["classification_type"] = "prediction missens"
-        self.missens["support_level"] = support_level
-        self.missens = self.missens.query("classification == 'D' ")
         
         # ensures pairing to safely assign data to sample ids 
-        self.missens = (self.input[0], self.missens)
         self.vep_df = (self.input[0], self.vep_df)
         self.next(self.join)
 
     @step 
     def join(self, inputs): 
-        self.vep_missens = [inp.missens for inp in inputs] # recover the missens table
+        #self.vep_missens = [inp.missens for inp in inputs] # recover the missens table
         self.entire_vep_dfs = [inp.vep_df for inp in inputs]  # recover thge general vep table 
-        self.merge_artifacts(inputs, exclude=['missens', 'vep_df'])
-        self.next(self.process_clinsign)
-   
+        self.merge_artifacts(inputs, exclude=['vep_df'])
+        self.next(self.read_vcfs)
 
+    @step
+    def read_vcfs(self):
+        """Read per sample vcf files"""        
+        self.vcf_paths_for_all_samples = []
+        
+        for id in self.sample_ids :
+            path_to_vcf_files= "/".join([self.vcfs,"*"+id+"*.vcf.gz"])
+            vcf_paths = glob.glob(path_to_vcf_files)
+            
+            # raise error if vcf file was not found
+            if len(vcf_paths) == 0:
+                raise FileNotFoundError(f"No VCF file was found for sample {id}")
+
+            # raise error if more than one file was identified per sample 
+            if len(vcf_paths) > 1: 
+                raise ValueError(f"More than one VCF file match id: {id} in {self.vcfs} ")
+
+            self.vcf_paths_for_all_samples.append((id, vcf_paths[0]))
+
+        self.next(self.add_genotype_depth_information)  # will allow forking the processes 
+
+    @step
+    def add_genotype_depth_information(self):
+        lookup = dict(self.entire_vep_dfs)
+        self.entire_vep_dfs = []
+        for id, vcf_path in self.vcf_paths_for_all_samples: 
+            extracted_data = extract_vcf_genotype_data(vcf_path)
+
+            # "." means that the datafame cannnot be used to join with vep
+            if (n := (extracted_data["ID"] == ".").sum()) > 0:
+                raise ValueError(f"The 'ID' column contains {n} invalid '.' value(s).")
+
+            extracted_data = extracted_data[["ID", "GT", "DP"]].copy()
+            
+            # merge the DP and GT data 
+            vep_with_dp_gt = lookup[id].merge(
+                extracted_data,
+                how="left",
+                left_on="Uploaded_variation",
+                right_on="ID")
+
+            self.entire_vep_dfs.append( (id, vep_with_dp_gt) )
+            del vep_with_dp_gt        
+        self.next(self.get_high_impact_missens)
+
+    @step 
+    def get_high_impact_missens(self):
+        self.vep_missens = []
+
+        for id, vep_df in self.entire_vep_dfs:
+            missens = filter_out_consequence(vep_df, consequence='missense_variant')
+            classification, support_level = classify_variant_pathogenicity(missens)
+            missens["classification"] = classification
+            missens["classification_type"] = "prediction missens"
+            missens["support_level"] = support_level
+            missens = missens.query("classification == 'D' ")
+            self.vep_missens.append( (id, missens) )
+            del missens 
+
+        self.next(self.process_clinsign)
 
     @step
     def process_clinsign(self): 
@@ -380,6 +446,8 @@ class DataAggregator(FlowSpec):
         for id, var_df in self.merged_dfs :
             vars_freq_filtered =  filter_by_max_af(var_df, cutoff=0.05)
             self.all_vars_filtered.append((id, var_df[vars_freq_filtered]))
+
+            var_df[vars_freq_filtered].to_csv("~/Desktop/vars_with_dp.csv")
         self.next(self.end)
 
 
