@@ -265,7 +265,17 @@ class DataAggregator(FlowSpec):
         self.next(self.get_stop_loss)
 
     @step
-    def get_stop_loss(self): 
+    def get_stop_loss(self):
+        self.stop_loss_dfs = []
+        for id, vep_df in self.entire_vep_dfs : 
+            stop_loss_vars = vep_df[vep_df["Consequence"].str.contains("stop_lost", na=False)]
+
+            if stop_loss_vars.empty == False: 
+                stop_loss_vars["classification"] = 'D'
+                stop_loss_vars["classification_type"] = 'stop loss'
+
+                self.stop_loss_dfs.append((id, stop_loss_vars))
+
         
         self.next(self.end) 
 
