@@ -111,43 +111,35 @@ def filter_out_consequence(df, consequence='missense_variant'):
     # Return rows where the consequence is NOT found (negate the mask)
     return df[mask]
 
-def filter_by_max_af(df, cutoff=0.05, missing_as_pass=False):
+
+def filter_by_max_af(df, cutoff=0.05):
     """
-    Create a boolean vector filtering rows by MAX_AF (allele frequency) values.
-    
-    Parameters:
-    -----------
+    Return a boolean mask selecting variants with:
+      - MAX_AF < cutoff, or
+      - missing/invalid MAX_AF values.
+
+    Parameters
+    ----------
     df : pd.DataFrame
-        Input dataframe with a "MAX_AF" column
-    cutoff : float
-        Allele frequency cutoff (default: 0.05)
-    missing_as_pass : bool
-        If True, missing values ("-") are treated as passing the filter (True)
-        If False, missing values are treated as not passing the filter (False)
-        (default: False)
-    
-    Returns:
-    --------
-    pd.Series (bool)
-        Boolean vector where True indicates MAX_AF < cutoff
+        Input dataframe containing a 'MAX_AF' column.
+    cutoff : float, default=0.05
+        Maximum allowed allele frequency.
+
+    Returns
+    -------
+    pd.Series
+        Boolean mask where True indicates the row passes the filter.
     """
-    # Convert "-" to NaN first
-    af_series = df['MAX_AF'].replace('-', pd.NA)
-    
-    # Convert to numeric (handles scientific notation and coerces errors to NaN)
-    af_values = pd.to_numeric(af_series, errors='coerce')
-    
-    # Create boolean mask where values < cutoff
-    mask = af_values < cutoff
-    
-    # Handle missing values
-    if missing_as_pass:
-        # NaN values become True (pass the filter)
-        mask = mask.fillna(True)
-    else:
-        # NaN values become False (don't pass the filter)
-        mask = mask.fillna(False)
-    
+    # Treat "-" as missing
+    af_values = (
+        df["MAX_AF"]
+        .replace("-", pd.NA)
+        .pipe(pd.to_numeric, errors="coerce")
+    )
+
+    # Pass if below cutoff OR missing
+    mask = (af_values < cutoff) | af_values.isna()
+
     return mask
 
 def classify_variant_pathogenicity(df):
