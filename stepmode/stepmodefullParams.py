@@ -707,7 +707,7 @@ class sMFullParamsPage(QWidget):
             self.csvForAnnInput.setText(filePath)
 
     def selectReferenceFile(self):
-        filePath, _ = QFileDialog.getOpenFileName(self, "Select Reference File", "", "FASTA Files (*.fa *.fasta)")
+        filePath, _ = QFileDialog.getOpenFileName(self, "Select Reference File", "", "FASTA Files (*.fa *.fasta *.gz)")
         if filePath:
             self.referenceFileInput.setText(filePath)
 
