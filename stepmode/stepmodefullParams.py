@@ -116,7 +116,7 @@ class FullParamsRunnerThread(QThread):
                                 cmd.extend(["--knownsite2", self.vcf2Input])
 
                 # Variant Calling Mode
-                elif self.selectedExec == "callsnp":
+                elif self.selectedExec == "callvar":
                     cmd.extend(["--exec", self.selectedExec,
                                 "--reference", self.referenceFile,
                                 "--tovarcall", self.csvForVarC])
@@ -374,7 +374,7 @@ class sMFullParamsPage(QWidget):
             "refidx",           # Reference indexing
             "align",            # Sequence alignment
             "bqsr",             # Base quality score recalibration
-            "callsnp",          # Variant calling
+            "callvar",          # Variant calling
             "vepcache",         # VEP cache setup
             "vepannotate",      # Variant annotation
             "params",           # Parmeters information
@@ -514,12 +514,12 @@ class sMFullParamsPage(QWidget):
         sidebarLayout.addWidget(self.alignerDropdown)
 
         # Variant Calling Options
-        self.callsnpLabel = QLabel("Callsnp Option:")
-        sidebarLayout.addWidget(self.callsnpLabel)
-        self.callsnpDropdown = QComboBox()
-        self.callsnpDropdown.addItems(["Defaults", "cohort"])
-        self.callsnpDropdown.setToolTip("Variant calling output mode")
-        sidebarLayout.addWidget(self.callsnpDropdown)
+        self.callvarLabel = QLabel("callvar Option:")
+        sidebarLayout.addWidget(self.callvarLabel)
+        self.callvarDropdown = QComboBox()
+        self.callvarDropdown.addItems(["Defaults", "cohort"])
+        self.callvarDropdown.setToolTip("Variant calling output mode")
+        sidebarLayout.addWidget(self.callvarDropdown)
 
         # VCF Selection Group
         self.createVcfSelectionGroup()
@@ -719,7 +719,7 @@ class sMFullParamsPage(QWidget):
         isRefidx = selectedExec == "refidx"
         isAlign = selectedExec == "align"
         isBqsr = selectedExec == "bqsr"
-        isCallsnp = selectedExec == "callsnp"
+        iscallvar = selectedExec == "callvar"
         isVepCache = selectedExec == "vepcache"
         isVepAnnotate = selectedExec == "vepannotate"
 
@@ -747,23 +747,23 @@ class sMFullParamsPage(QWidget):
         self.csvForBqsrButton.setVisible(isBqsr)
         self.vcfSelectionGroup.setVisible(isBqsr)
 
-        self.csvForVarCLabel.setVisible(isCallsnp)
-        self.csvForVarCInput.setVisible(isCallsnp)
-        self.csvForVarCButton.setVisible(isCallsnp)
+        self.csvForVarCLabel.setVisible(iscallvar)
+        self.csvForVarCInput.setVisible(iscallvar)
+        self.csvForVarCButton.setVisible(iscallvar)
 
         self.csvForAnnLabel.setVisible(isVepAnnotate)
         self.csvForAnnInput.setVisible(isVepAnnotate)
         self.csvForAnnButton.setVisible(isVepAnnotate)
 
-        self.referenceFileLabel.setVisible(isRefidx or isAlign or isBqsr or isCallsnp or isVepAnnotate)
-        self.referenceFileInput.setVisible(isRefidx or isAlign or isBqsr or isCallsnp or isVepAnnotate)
-        self.referenceFileButton.setVisible(isRefidx or isAlign or isBqsr or isCallsnp or isVepAnnotate)
+        self.referenceFileLabel.setVisible(isRefidx or isAlign or isBqsr or iscallvar or isVepAnnotate)
+        self.referenceFileInput.setVisible(isRefidx or isAlign or isBqsr or iscallvar or isVepAnnotate)
+        self.referenceFileButton.setVisible(isRefidx or isAlign or isBqsr or iscallvar or isVepAnnotate)
 
         self.alignerLabel.setVisible(isRefidx or isAlign)
         self.alignerDropdown.setVisible(isRefidx or isAlign)
 
-        self.callsnpLabel.setVisible(isCallsnp)
-        self.callsnpDropdown.setVisible(isCallsnp)
+        self.callvarLabel.setVisible(iscallvar)
+        self.callvarDropdown.setVisible(iscallvar)
         showVepParams = isVepCache or isVepAnnotate
         self.vepSpeciesLabel.setVisible(showVepParams)
         self.vepSpeciesInput.setVisible(showVepParams)
@@ -952,19 +952,19 @@ class sMFullParamsPage(QWidget):
         isTestProfile = "test" in profile.split(",")
 
         # Get other parameters
-        callsnpOption = self.callsnpDropdown.currentText() if selectedExec == "callsnp" else None
+        callvarOption = self.callvarDropdown.currentText() if selectedExec == "callvar" else None
         csvFile = self.csvInput.text() if selectedExec == "Generate CSV" else None
         csvForRawQc = self.csvForRawQcInput.text() if selectedExec == "rawqc" else None
         csvForTrimming = self.csvForTrimmingInput.text() if selectedExec == "trim" else None
         csvForAssembly = self.csvForAssemblyInput.text() if selectedExec == "align" else None
         csvForBqsr = self.csvForBqsrInput.text() if selectedExec == "bqsr" else None
-        csvForVarC = self.csvForVarCInput.text() if selectedExec == "callsnp" else None
+        csvForVarC = self.csvForVarCInput.text() if selectedExec == "callvar" else None
         csvForAnn = self.csvForAnnInput.text() if selectedExec == "vepannotate" else None
 
         vcf1 = self.vcf1Input.text().strip() if selectedExec == "bqsr" else None
         vcf2 = self.vcf2Input.text().strip() if selectedExec == "bqsr" else None
         referenceFile = self.referenceFileInput.text() if selectedExec in ["refidx", "align", "bqsr",
-                                                                           "callsnp", "vepannotate"] else None
+                                                                           "callvar", "vepannotate"] else None
 
         # Get VEP parameters if needed
         species = self.vepSpeciesInput.text().strip() if selectedExec in ["vepcache", "vepannotate"] else None
@@ -1054,7 +1054,7 @@ class sMFullParamsPage(QWidget):
                 )
                 return
 
-        if selectedExec == "callsnp":
+        if selectedExec == "callvar":
             missing = []
             if not referenceFile and not isTestProfile:
                 missing.append("reference file")
@@ -1077,7 +1077,7 @@ class sMFullParamsPage(QWidget):
             workflow=workflow,
             selectedExec=selectedExec,
             profile=profile,
-            generateOption=callsnpOption,
+            generateOption=callvarOption,
             csvFile=csvFile,
             csvForRawQc=csvForRawQc,
             csvForTrimming=csvForTrimming,

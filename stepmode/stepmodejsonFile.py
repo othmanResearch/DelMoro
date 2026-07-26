@@ -316,7 +316,7 @@ class sMJsonFilesPage(QWidget):
             "refidx",           # Reference indexing
             "align",            # Sequence alignment
             "bqsr",             # Base quality score recalibration
-            "callsnp",          # Variant calling
+            "callvar",          # Variant calling
             "vepcache",         # VEP cache setup
             "vepannotate",      # Variant annotation
             "params",           # Parmeters information
@@ -340,14 +340,14 @@ class sMJsonFilesPage(QWidget):
 
         """ Variant Calling Options Widgets For Configuring SNP Calling Options """
 
-        self.callsnpLabel = QLabel("Callsnp Option:")   # Label for variant calling options
-        sidebarLayout.addWidget(self.callsnpLabel)      # Add label to layout
-        self.callsnpDropdown = QComboBox()              # Dropdown for SNP calling modes
-        self.callsnpDropdown.addItems([
+        self.callvarLabel = QLabel("callvar Option:")   # Label for variant calling options
+        sidebarLayout.addWidget(self.callvarLabel)      # Add label to layout
+        self.callvarDropdown = QComboBox()              # Dropdown for SNP calling modes
+        self.callvarDropdown.addItems([
             "Defaults",     # Default, no special option
             "cohort"    # Generate cohort GVCFs
         ])
-        sidebarLayout.addWidget(self.callsnpDropdown)  # Add dropdown to layout
+        sidebarLayout.addWidget(self.callvarDropdown)  # Add dropdown to layout
 
         """ CSV File Selection Widgets for handling CSV input files """
 
@@ -481,12 +481,12 @@ class sMJsonFilesPage(QWidget):
             self.csvInput.setText(filePath)
 
     def toggleOptions(self, selectedExec):
-        isCallsnp = selectedExec == "callsnp"
+        iscallvar = selectedExec == "callvar"
         isCsv = selectedExec == "Generate CSV"
         isTrim = selectedExec == "trim"
 
-        self.callsnpLabel.setVisible(isCallsnp)
-        self.callsnpDropdown.setVisible(isCallsnp)
+        self.callvarLabel.setVisible(iscallvar)
+        self.callvarDropdown.setVisible(iscallvar)
         self.csvLabel.setVisible(isCsv)
         self.csvInput.setVisible(isCsv)
         self.csvButton.setVisible(isCsv)
@@ -499,7 +499,7 @@ class sMJsonFilesPage(QWidget):
         selectedCores = self.cpuCoresSlider.value()
         paramsFile = self.paramsInput.text()
         selectedExec = self.optionDropdown.currentText()
-        callsnpOption = self.callsnpDropdown.currentText()
+        callvarOption = self.callvarDropdown.currentText()
         csvFilePath = self.csvInput.text()
         trimmer = self.trimmerDropdown.currentText() if selectedExec == "trim" else None
         isTestProfile = "test" in ",".join(selectedProfiles).split(",")
@@ -542,7 +542,7 @@ class sMJsonFilesPage(QWidget):
             paramsFile if not isTestProfile else None,  # Pass None for paramsFile in test mode
             "",
             selectedExec,
-            callsnpOption,
+            callvarOption,
             csvFilePath,
             trimmer,
             cores=selectedCores
