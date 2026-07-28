@@ -167,7 +167,6 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   		   	   : --mode cohort [ optional ]
   		   	   : --caller deepvariant [ optional ]
   		   	   : --rsid <path-to-vcf> [ optional ]
-  		   	   : --splitAllele  [ optional ]
   		   	   : --splitSample  [ optional ] 
   		   output  : .vcf
   		   	   : .table
@@ -200,6 +199,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
       \033[32mfilter\033[37m          Filter vcfs to SNP and INDELS
   	            require : --tofilter	<path-to-csv>
   	                    : --keepinter [ optional ] ; keep intermediate vcf files 
+  	                    : --skipFilter [ optional ] ; skip filter in fullmode
 			    : --QD              <value> [ optional ] ; Default = 2.0 
 			    : --QUAL            <value> [ optional ] ; Default = 30.0 
 			    : --SOR             <value> [ optional ] ; Default = 3.0
@@ -258,11 +258,11 @@ log.info"""
 \033[32m --tovarcall	=\033[37m e.g. ./CSVs/5_samplesheetReclibFiles.csv 					=> Recalibrated Bam files paths 
 \033[32m --toannotate	=\033[37m e.g. ./CSVs/6_samplesheetvcfFiles.csv 					=> Vcf files paths 
 \033[32m --tofilter	=\033[37m e.g. ./CSVs/6_samplesheetvcfFiles.csv 					=> Vcf files paths 
+\033[32m --skipFilter   =\033[37m null                                                                          => skip filter in fullmode
 
 \033[32m --knownsite1	=\033[37m e.g. ./knownsites/1000g_gold_standard.indels.filtered.vcf 			=> vcf file 1 required for bqsr 
 \033[32m --knownsite2 	=\033[37m e.g. ./knownsites/GCF.38.filtered.renamed.vcf			                => vcf file 2 required for bqsr
-\033[32m --rsid         =\033[37m e.g. ./dbsnp_146.hg38.vcf.gz			                                => vcf file for variant ID adding 
-\033[32m --splitAllele  =\033[37m null			                                                        => enable vcf spliting multiallelic sites 
+\033[32m --rsid         =\033[37m e.g. ./dbsnp_146.hg38.vcf.gz			                                => vcf file for variant ID adding
 \033[32m --splitSample  =\033[37m null		                                                                => enable sample splitting for cohort vcf
 
 \033[32m --aligner	=\033[37m  Default to null <-> bwa indexing & mapping					=> Burrows-Wheeler Aligner
@@ -359,8 +359,8 @@ log.info"""
 \033[32m ✔ Process Cpus   =\033[37m ${params.pcpus}
 \033[32m ✔ Max Forks      =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Raw QC         =\033[37m ./${params.outdir}/QualityControl/RAW/
-\033[32m ✔ Raw Multi QC   =\033[37m ./${params.outdir}/QualityControl/RAW/multiqc/
+\033[32m ✔ Raw QC         =\033[37m ${PWD}/${params.outdir}/QualityControl/RAW/
+\033[32m ✔ Raw Multi QC   =\033[37m ${PWD}/${params.outdir}/QualityControl/RAW/multiqc/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -376,9 +376,9 @@ log.info"""
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Trimmed Reads        =\033[37m ./${params.outdir}/TrimmedREADS/
-\033[32m ✔ Trimmed QC           =\033[37m ./${params.outdir}/QualityControl/TRIMMED/
-\033[32m ✔ Trimmed Multi QC     =\033[37m ./${params.outdir}/QualityControl/TRIMMED/multiqc/
+\033[32m ✔ Trimmed Reads        =\033[37m ${PWD}/${params.outdir}/TrimmedREADS/
+\033[32m ✔ Trimmed QC           =\033[37m ${PWD}/${params.outdir}/QualityControl/TRIMMED/
+\033[32m ✔ Trimmed Multi QC     =\033[37m ${PWD}/${params.outdir}/QualityControl/TRIMMED/multiqc/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -414,9 +414,9 @@ log.info"""
 \033[32m ✔ Mapping Max Forks    =\033[37m 2
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Mapped reads         =\033[37m ./${params.outdir}/Mapping
-\033[32m ✔ Mapped reads metrics =\033[37m ./${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes     =\033[37m ./${params.outdir}/Indexes/BamFiles
+\033[32m ✔ Mapped reads         =\033[37m ${PWD}/${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics =\033[37m ${PWD}/${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes     =\033[37m ${PWD}/${params.outdir}/Indexes/BamFiles
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -437,9 +437,9 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Known Sites (ivcf 1)         =\033[37m ./knownsites/${params.ivcf1}
 \033[32m ✔ Known Sites (ivcf 2)         =\033[37m ./knownsites/${params.ivcf2}
-\033[32m ✔ Known Sites (local vcf 1)    =\033[37m ./knownsites/${params.knownsite1}
-\033[32m ✔ Known Sites (local vcf 2)    =\033[37m ./knownsites/${params.knownsite2}
-\033[32m ✔ Base Recalibration           =\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Known Sites (local vcf 1)    =\033[37m ${params.knownsite1}
+\033[32m ✔ Known Sites (local vcf 2)    =\033[37m ${params.knownsite2}
+\033[32m ✔ Base Recalibration           =\033[37m ${PWD}/${params.outdir}/Mapping
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -458,11 +458,27 @@ log.info"""
 \033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
 \033[32m ✔ Caller               =\033[37m ${params.caller ? "deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ VCF Files            =\033[37m ./${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
+\033[32m ✔ VCF Files            =\033[37m ${PWD}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
 	
+// DelMoro Variant Filtering Output Paths 
+def DelMoroFiltOutput() { 
+
+DelMoroWelcome()
+log.info"""
+                                                                              
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
+\033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
+\033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\033[32m ✔ VCF Files            =\033[37m ${PWD}/${params.outdir}/Voutdir/Variants/filtered/
+\033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"""
+	}
 
 
 // DelMoro Annotate Help
@@ -518,7 +534,7 @@ log.info"""
 \033[32m ✔ Cache Type 			=\033[37m ${params.cachetype}
 \033[32m ✔ Assembly			=\033[37m ${params.assembly}
 \033[32m ✔ Cache Directory 		=\033[37m ${params.cachedir}
-\033[32m ✔ Annotated Files   		=\033[37m ./${params.outdir}/annotation/
+\033[32m ✔ Annotated Files   		=\033[37m ${PWD}/${params.outdir}/annotation/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -549,11 +565,11 @@ log.info"""
 \033[32m ✔ Input 		        =\033[37m ${params.input}
 \033[32m ✔ Reference 		        =\033[37m ${params.reference ? params.reference : params.igenome} 
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Mapped reads 		=\033[37m ./${params.outdir}/Mapping
-\033[32m ✔ Mapped reads metrics  	=\033[37m ./${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes		=\033[37m ./${params.outdir}/Mapping/
+\033[32m ✔ Mapped reads 		=\033[37m ${PWD}/${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics  	=\033[37m ${PWD}/${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes		=\033[37m ${PWD}/${params.outdir}/Mapping/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
+\033[32m ✔ VCF Files 			=\033[37m ${PWD}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
 \033[32m ✔ Caller                       =\033[37m ${params.caller ? "deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }
@@ -574,17 +590,17 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ outdir                       =\033[37m ${params.outdir}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Mapped reads                 =\033[37m ./${params.outdir}/Mapping
-\033[32m ✔ Mapped reads metrics         =\033[37m ./${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes             =\033[37m ./${params.outdir}/Mapping/
+\033[32m ✔ Mapped reads                 =\033[37m ${PWD}/${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics         =\033[37m ${PWD}/${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes             =\033[37m ${PWD}/${params.outdir}/Mapping/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Known Sites (ivcf 1)         =\033[37m ./knownsites/${params.ivcf1}
 \033[32m ✔ Known Sites (ivcf 2)         =\033[37m ./knownsites/${params.ivcf2}
-\033[32m ✔ Known Sites (local vcf 1)    =\033[37m ./knownsites/${params.knownsite1}
-\033[32m ✔ Known Sites (local vcf 2)    =\033[37m ./knownsites/${params.knownsite2}
-\033[32m ✔ Base Recalibration           =\033[37m ./${params.outdir}/Mapping
+\033[32m ✔ Known Sites (local vcf 1)    =\033[37m ${params.knownsite1}
+\033[32m ✔ Known Sites (local vcf 2)    =\033[37m ${params.knownsite2}
+\033[32m ✔ Base Recalibration           =\033[37m ${PWD}/${params.outdir}/Mapping
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ VCF Files 			=\033[37m ./${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
+\033[32m ✔ VCF Files 			=\033[37m ${PWD}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
 \033[32m ✔ Caller                       =\033[37m ${params.caller ? "deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }

@@ -3,7 +3,7 @@
 // Variant Calling with DeepVariant 
 
 process deepVariant {
-    tag "Variant Calling with Gatk DEEPVARIANT"
+    tag "Variant Calling with DEEPVARIANT"
     publishDir "${params.outdir}/Variants/deepvariant", mode: 'copy'
 
     container "${workflow.containerEngine == 'singularity'

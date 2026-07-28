@@ -52,7 +52,7 @@ workflow CALL_VARIANT_GATK {
 		if ( params.rsid	!= null  ){ 
 			RsAnnotation  ( AlleleBalance.out, AnnotRefVCF ) 
 		} 
-
+                
     } else if ( referFileChannel  != null &&
                 params.mode       == 'cohort' ){	// generate vcf for all inputs 
 	
@@ -75,9 +75,8 @@ workflow CALL_VARIANT_GATK {
 		} else if (params.splitSample) {
 			GetSamples ( AlleleBalance.out)	
 			SplitBySample ( GetSamples.out.flatMap { cohort_id, vcf, tbi, samplesIDs -> samplesIDs.trim().split('\n').collect { sampleId -> tuple(sampleId, vcf, tbi) } } )
-			}      
-		           
-
+			}    
+			
     }  else { 
 	print("\033[31m Error: Invalid or missing parameters.\n" )
 	print(" Please specify valid parameters:\n"              )
@@ -90,6 +89,9 @@ workflow CALL_VARIANT_GATK {
 	print("   >>  View the help menu: nextflow main.nf --help\n"            )
 	print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"    ) 
     } 
+    /// NEW EMITTED CHANNEL TO ADD IN FULLMODE	
+    emit : 
+    rawvcf = params.splitSample ? SplitBySample.out : (params.rsid ? RsAnnotation.out : AlleleBalance.out)
 }
 
 

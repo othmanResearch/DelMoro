@@ -68,8 +68,7 @@ workflow CALL_VARIANT_DEEPVARIANT {
 	                  ,samidxREF.collect()
 	                  ,BamToVarCall
 	                  ,bedtarget )
-	
-        GenerateStats	( deepVariant.out.CallVariantvcf)
+	GenerateStats	( deepVariant.out.CallVariantvcf)
 
 	glnexus         ( deepVariant.out.deepGvcf.map { id, gvcf, idx -> tuple("cohort", gvcf, idx) }.groupTuple() ) 
 
@@ -92,18 +91,21 @@ workflow CALL_VARIANT_DEEPVARIANT {
 	
                           
     }  else { 
-        print("\033[31m Error: Invalid or missing parameters.\n" )
+	print("\033[31m Error: Invalid or missing parameters.\n" )
 	print(" Please specify valid parameters:\n"      )
 	print(" --reference option (--reference reference ) \n" )
 	print(" --tovarcall option (--tovarcall CSVs/5_samplesheetReclibFiles.csv )\n "	  )
 	print(" --caller deepvariant ( Default : no caller --> variant calling with gatk )\n "   ) 
 	print(" --modelType <WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ> )\n "        ) 
-	print(" --mode cohort  ( Default : null --> will generate a single vcfs )\n " )  
-        print(" ---------------------------------------------------------------------------\n"    )
-        print(" For more information:\n"                                        )
-        print("   >>  View the help menu: nextflow main.nf --help\n"            )
-        print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"    ) 
-    } 
+	print(" --mode cohort  ( Default : null --> will generate a single vcfs )\n " )
+	print(" ---------------------------------------------------------------------------\n"    )
+	print(" For more information:\n"                                        )
+	print("   >>  View the help menu: nextflow main.nf --help\n"            )
+	print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"    ) 
+    }
+    /// NEW EMITTED CHANNEL TO ADD IN FULLMODE	
+    emit : 
+    rawvcf = params.splitSample ? SplitBySample.out : (params.rsid ? RsAnnotation.out : AlleleBalance.out) 
 }
 
 

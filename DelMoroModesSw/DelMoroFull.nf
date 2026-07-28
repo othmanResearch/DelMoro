@@ -9,6 +9,7 @@ include { ALIGN_TO_REF_GENOME 	} from '../subworkflows/mapping'
 include { BASE_QU_SCO_RECA 		} from '../subworkflows/bqsr'
 include { CALL_VARIANT_GATK 	} from '../subworkflows/variantcalling/gatk-hc'
 include { CALL_VARIANT_DEEPVARIANT 	} from '../subworkflows/variantcalling/deepvariant'
+include { FILTER_VARIANT		} from '../subworkflows/variantfilter/main.nf'
 
 workflow DelMoroFullSw {
     take: 
@@ -49,7 +50,12 @@ workflow DelMoroFullSw {
 		        Target,
 		        AddRSID
 		    )
-
+		    if ( !params.skipFilter ){
+				FILTER_VARIANT(
+					CALL_VARIANT_GATK.out.rawvcf
+				)
+			}
+			
 		} else {
 			FullModeOutput()
 			INDEXING_REF_GENOME(RefGenChannel)
@@ -67,7 +73,12 @@ workflow DelMoroFullSw {
 		        ALIGN_TO_REF_GENOME.out.bamWithIdx,
 		        Target,
 		        AddRSID
-		    ) 
+		    )
+		    if ( !params.skipFilter ){
+				FILTER_VARIANT( 
+					CALL_VARIANT_GATK.out.rawvcf
+				)
+		    }
 		}
 	} else if ( params.input && ( params.reference || params.igenome ) && params.caller	== "deepvariant" && params.modelType    != null ) {
 		if (params.bqsr) {
@@ -97,6 +108,11 @@ workflow DelMoroFullSw {
 		        Target,
 		        AddRSID
 		    )
+		    if ( !params.skipFilter ){
+				FILTER_VARIANT( 
+					CALL_VARIANT_DEEPVARIANT.out.rawvcf
+				)
+		    }
 
 		} else {
 			FullModeOutput()
@@ -115,7 +131,12 @@ workflow DelMoroFullSw {
 		        ALIGN_TO_REF_GENOME.out.bamWithIdx,
 		        Target,
 		        AddRSID
-		    ) 
+		    )
+		    if ( !params.skipFilter ){
+				FILTER_VARIANT( 
+					CALL_VARIANT_DEEPVARIANT.out.rawvcf
+				)
+		    } 
 		}
 	} else {
 	FullModeBqsrOutput()

@@ -1,7 +1,7 @@
-// Variant Calling subworkflow 
+// Variant Filtering subworkflow 
 
 include { DelMoroWelcome	} from '../../.logos'
-include { DelMoroVarCallOutput	} from '../../.logos'
+include { DelMoroFiltOutput	} from '../../.logos'
 	
 include { SNPSelect		} from '../../modules/09.0_filter.nf' 
 include { FilterSNP		} from '../../modules/09.0_filter.nf' 
@@ -16,9 +16,12 @@ workflow FILTER_VARIANT {
     take:
     vcf
 
- 
     main: 
-    if (params.stepmode && params.exec == "filter" && params.tofilter != null) {     
+    if (params.stepmode && params.exec == "filter") { DelMoroFiltOutput() }
+    
+    def hasVcfInput = params.fullmode ? true : (params.tofilter != null)
+    
+    if (hasVcfInput) {     
       SNPSelect     (vcf)
       FilterSNP     (SNPSelect.out  )
       INDELSelect   (vcf)
@@ -30,7 +33,7 @@ workflow FILTER_VARIANT {
     } else { 
 	print("\033[31m Error: Invalid or missing parameters.\n" )
 	print(" Please specify valid parameters:\n"              )
-	print(" --filter option (--tovarcall CSVs/5_samplesheetReclibFiles.csv )\n "  )
+	print(" --tofilter option (--tofilter CSVs/5_samplesheetVcfbFiles.csv )\n "  )
 	print(" --keepinter [option]  : to keep intermediate vcf files"    ) 
         print(" ---------------------------------------------------------------------------\n"  )
         print(" For more information:\n"                                        )
