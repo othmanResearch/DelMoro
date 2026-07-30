@@ -200,6 +200,7 @@ Module  :\033[37m - \033[32mrawqc\033[37m 	: Check           quality      of    
   	            require : --tofilter	<path-to-csv>
   	                    : --keepinter [ optional ] ; keep intermediate vcf files 
   	                    : --skipFilter [ optional ] ; skip filter in fullmode
+  	                    : --strictFilter [ optional ] ; enable strict Filter
 			    : --QD              <value> [ optional ] ; Default = 2.0 
 			    : --QUAL            <value> [ optional ] ; Default = 30.0 
 			    : --SOR             <value> [ optional ] ; Default = 3.0
@@ -259,6 +260,7 @@ log.info"""
 \033[32m --toannotate	=\033[37m e.g. ./CSVs/6_samplesheetvcfFiles.csv 					=> Vcf files paths 
 \033[32m --tofilter	=\033[37m e.g. ./CSVs/6_samplesheetvcfFiles.csv 					=> Vcf files paths 
 \033[32m --skipFilter   =\033[37m null                                                                          => skip filter in fullmode
+\033[32m --strictFilter =\033[37m null                                                                          => enable strict filter
 
 \033[32m --knownsite1	=\033[37m e.g. ./knownsites/1000g_gold_standard.indels.filtered.vcf 			=> vcf file 1 required for bqsr 
 \033[32m --knownsite2 	=\033[37m e.g. ./knownsites/GCF.38.filtered.renamed.vcf			                => vcf file 2 required for bqsr

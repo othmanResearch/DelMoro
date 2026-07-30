@@ -43,13 +43,18 @@ process FilterSNP {
  
 
     output:
-    tuple val(patient_id), path("${variants.getSimpleName()}.SNP.filtered.vcf.gz") ,path("*.{idx,tbi}")     , emit: filteredsnp
+    tuple val(patient_id), path("${variants.getSimpleName()}.SNP.*filtered.vcf.gz") ,path("*.{idx,tbi}")     , emit: filteredsnp
 
 
     script:
+    
+    if ( params.strictFilter ) 
     """
     gatk VariantFiltration \\
         --variant ${variants} \\
+        --genotype-filter-expression "GQ < ${params.GQ}" --genotype-filter-name "GQ${params.GQ}" \\
+        --genotype-filter-expression "DP < ${params.DP}" --genotype-filter-name "DP${params.DP}" \\
+        --genotype-filter-expression "(AB < ${params.ABmin} || AB > ${params.ABmax})" --genotype-filter-name "AB${params.ABmin}-${params.ABmax}" \\
         --filter-expression "QD < ${params.QD}" --filter-name "QD${params.QD}" \\
         --filter-expression "QUAL < ${params.QUAL}" --filter-name "QUAL${params.QUAL}" \\
         --filter-expression "SOR > ${params.SOR}" --filter-name "SOR${params.SOR}" \\
@@ -57,6 +62,15 @@ process FilterSNP {
         --filter-expression "MQ < ${params.MQ}" --filter-name "MQ${params.MQ}" \\
         --filter-expression "MQRankSum < ${params.MQRankSum}" --filter-name "MQRankSum-${params.MQRankSum}" \\
         --filter-expression "ReadPosRankSum < ${params.ReadPosRankSumSNP}" --filter-name "ReadPosRankSum-${params.ReadPosRankSumSNP}" \\
+        --output ${variants.getSimpleName()}.SNP.strict-filtered.vcf.gz
+    """
+    else
+    """
+    gatk VariantFiltration \\
+        --variant ${variants} \\
+        --genotype-filter-expression "GQ < ${params.GQ}" --genotype-filter-name "GQ${params.GQ}" \\
+        --genotype-filter-expression "DP < ${params.DP}" --genotype-filter-name "DP${params.DP}" \\
+        --genotype-filter-expression "(AB < ${params.ABmin} || AB > ${params.ABmax})" --genotype-filter-name "AB${params.ABmin}-${params.ABmax}" \\
         --output ${variants.getSimpleName()}.SNP.filtered.vcf.gz
     """
 }
@@ -104,16 +118,29 @@ process FilterINDEL {
     tuple val(patient_id), path(variants), path(indexes)
 
     output:
-    tuple val(patient_id), path("${variants.getSimpleName()}.INDEL.filtered.vcf.gz") ,path("*.{idx,tbi}")      , emit: filteredindel
+    tuple val(patient_id), path("${variants.getSimpleName()}.INDEL.*filtered.vcf.gz") ,path("*.{idx,tbi}")      , emit: filteredindel
 
     script:
+    if ( params.strictFilter ) 
     """ 
     gatk VariantFiltration \\
         --variant ${variants} \\
+        --genotype-filter-expression "GQ < ${params.GQ}" --genotype-filter-name "GQ${params.GQ}" \\
+        --genotype-filter-expression "DP < ${params.DP}" --genotype-filter-name "DP${params.DP}" \\
+        --genotype-filter-expression "(AB < ${params.ABmin} || AB > ${params.ABmax})" --genotype-filter-name "AB${params.ABmin}-${params.ABmax}" \\
         --filter-expression "QD < ${params.QD}" --filter-name "QD${params.QD}" \\
         --filter-expression "QUAL < ${params.QUAL}" --filter-name "QUAL${params.QUAL}" \\
         --filter-expression "FS > ${params.FSINDEL}" --filter-name "FS${params.FSINDEL}" \\
         --filter-expression "ReadPosRankSum < ${params.ReadPosRankSumINDEL}" --filter-name "ReadPosRankSum-${params.ReadPosRankSumINDEL}" \\
+        --output ${variants.getSimpleName()}.INDEL.strict-filtered.vcf.gz
+    """
+    else
+    """
+    gatk VariantFiltration \\
+        --variant ${variants} \\
+        --genotype-filter-expression "GQ < ${params.GQ}" --genotype-filter-name "GQ${params.GQ}" \\
+        --genotype-filter-expression "DP < ${params.DP}" --genotype-filter-name "DP${params.DP}" \\
+        --genotype-filter-expression "(AB < ${params.ABmin} || AB > ${params.ABmax})" --genotype-filter-name "AB${params.ABmin}-${params.ABmax}" \\
         --output ${variants.getSimpleName()}.INDEL.filtered.vcf.gz
     """
 }
