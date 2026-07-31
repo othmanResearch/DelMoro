@@ -52,8 +52,6 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--reference` = Path to reference genome FASTA file. <span title="Default: ./Reference_Genome/*.fa">⊕</span>  
 - `--tobealigned` = CSV with trimmed read paths. <span title="Default: ./CSVs/3_samplesheetForAssembly.csv">⊕</span>  
 - `--aligner` = Alignment tool to use (`bwa`, `bwamem2`, etc.). <span title="Default: null (bwa)">⊕</span>
-- `--region` = Extract region from BAM (`chr:start-end`). <span title="[Optional] - Default: null">⊕</span>  
-- `--generate` = Generate coverage from bed file <span title="[Optional] - Default: null">⊕</span>  
 - `--bedtarget` = BED file for coverage extraction. <span title="[Optional] - Default: null">⊕</span>
 - `--keepinter` =  Keep intermediate BAM files derived from alignment. <span title="[Optional] - Default: false">⊕</span>
 - `--report` = Enables Metrics-bigwigs-html summary for Bam files. <span title="[Optional] - Default: false">⊕</span>   
