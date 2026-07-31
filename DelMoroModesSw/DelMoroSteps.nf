@@ -81,7 +81,7 @@ workflow DelMoroSteps {
  
     } else if (params.exec == 'align') {    // align reads to reference
 
-    ALIGN_TO_REF_GENOME(RefGenChannel,AlignIdxRef,ReadsToBeAligned) 
+    ALIGN_TO_REF_GENOME(RefGenChannel,AlignIdxRef,ReadsToBeAligned,Target) 
      
     } else if (params.exec == 'bqsr') {
            

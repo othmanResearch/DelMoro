@@ -26,6 +26,7 @@ workflow ALIGN_TO_REF_GENOME {
      ref_gen_channel
      indexes
      READS
+     bedtarget
  
     main: 
     def inputFileChannel = params.input ?: params.tobealigned 
@@ -41,11 +42,11 @@ workflow ALIGN_TO_REF_GENOME {
 	    AlignReadsToRef (ref_gen_channel, indexes.collect(),READS )		   	
 	    AssignReadGroup (AlignReadsToRef.out.sorted_bam)
 	    MarkDuplicates  (AssignReadGroup.out.sorted_labeled_bam)
-	    IndexBam        (MarkDuplicates.out.sorted_markduplicates_bam) 
-	      	
+	    IndexBam        (MarkDuplicates.out.sorted_markduplicates_bam)
+	    BamCoverage     ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out),bedtarget ) 
+	    
 	    if (params.report ) {
 	    	GenerateStat	    ( AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
-		BamCoverage 	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 		BigWig		    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    	BigWigCoveragePlots ( BigWig.out, params.mindepth, params.saveImg)
 		AlignmentMetrics    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
@@ -82,10 +83,10 @@ workflow ALIGN_TO_REF_GENOME {
 	    AssignReadGroup	    ( AlignReadsToRefBwaMem2.out )
 	    MarkDuplicates	    ( AssignReadGroup.out )
 	    IndexBam		    ( MarkDuplicates.out.sorted_markduplicates_bam )
+	    BamCoverage             ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out),bedtarget )  
 	    
 	    if (params.report ) {
 	    	GenerateStat	    ( AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
-		BamCoverage 	    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 		BigWig		    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) )
 	    	BigWigCoveragePlots ( BigWig.out, params.mindepth, params.saveImg)
 		AlignmentMetrics    ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out) , ref_gen_channel )
