@@ -8,7 +8,7 @@ This page outlines the software, system, and data requirements needed to success
 
 The following tools must be **available on your system**. Installation instructions are provided in the [Quickstart](1quickstart.md).
 
-- **Nextflow** (≥ 21.04.0)
+- **Nextflow**  (≤ v25.x)
 - Either:
   - **Conda** or **Mamba** (for managing software environments)
   - **Docker** or **Singularity/Apptainer** (for containerized execution)
