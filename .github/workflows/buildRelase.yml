@@ -4,7 +4,7 @@ on:
   push:
     branches: [release-GUI]
     paths: ['DelMoro-UI.py', 'fullmode/fullmodefullParams.py', 'stepmode/stepmodefullParams.py', 'stepmode/stepmodejsonFile.py']
-    
+
 permissions:
   contents: write
 
@@ -45,21 +45,19 @@ jobs:
       - name: Generate version
         id: version
         run: |
-          echo "RELEASE_VERSION=GUI-v1.0.0-$(date -u +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=v1.0.0-$(date -u +'%Y.%m.%d')" >> $GITHUB_OUTPUT
 
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.RELEASE_VERSION }}
-          target_commitish: release-GUI  # Ensures source archives match release branch
+          target_commitish: release-GUI
           name: "${{ steps.version.outputs.RELEASE_VERSION }}"
           body: |
-            This is the first release of the DelMoro Graphical user interface 
-            
             ### Ready-to-Run
             ```bash
-            chmod +x DelMoro-UI  # Make sure it's executable 
-            ./DelMoro-UI         # Pre-set with execute permissions
+            chmod +x DelMoro-UI
+            ./DelMoro-UI
             ```
 
             ### Complete Source Code
