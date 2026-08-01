@@ -40,7 +40,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git add dist/ build/ DelMoro-UI.spec
           git commit -m "Add PyInstaller build outputs" || echo "No changes to commit"
-          git push origin release
+          git push origin release-GUI
 
       - name: Generate version
         id: version
