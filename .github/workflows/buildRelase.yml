@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout release branch
+      - name: Checkout release-GUI branch
         uses: actions/checkout@v4
         with:
-          ref: release
+          ref: release-GUI
           fetch-depth: 0
 
       - name: Set up Python
@@ -51,7 +51,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.RELEASE_VERSION }}
-          target_commitish: release  # Ensures source archives match release branch
+          target_commitish: release-GUI  # Ensures source archives match release branch
           name: "${{ steps.version.outputs.RELEASE_VERSION }}"
           body: |
             This is the first release of the DelMoro Graphical user interface 
