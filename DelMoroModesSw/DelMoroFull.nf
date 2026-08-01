@@ -30,7 +30,8 @@ workflow DelMoroFullSw {
 		    ALIGN_TO_REF_GENOME(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
-		        ReadsToBeAligned
+		        ReadsToBeAligned,
+		        Target
 		    ) 
 		    
 		    BASE_QU_SCO_RECA(
@@ -63,7 +64,8 @@ workflow DelMoroFullSw {
 		    ALIGN_TO_REF_GENOME(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
-		        ReadsToBeAligned
+		        ReadsToBeAligned,
+		        Target
 		    )
 			 
 		    CALL_VARIANT_GATK(
@@ -88,7 +90,8 @@ workflow DelMoroFullSw {
 		    ALIGN_TO_REF_GENOME(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
-		        ReadsToBeAligned
+		        ReadsToBeAligned,
+		        Target
 		    ) 
 		    
 		    BASE_QU_SCO_RECA(
@@ -121,7 +124,8 @@ workflow DelMoroFullSw {
 		    ALIGN_TO_REF_GENOME(
 		        INDEXING_REF_GENOME.out.reference_fasta,
 		        INDEXING_REF_GENOME.out.combinedIdx.collect(),
-		        ReadsToBeAligned
+		        ReadsToBeAligned,
+		        Target
 		    )
 			 
 		    CALL_VARIANT_DEEPVARIANT(
