@@ -45,7 +45,7 @@ jobs:
       - name: Generate version
         id: version
         run: |
-          echo "RELEASE_VERSION=v1.0.0-$(date -u +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=GUI-v1.0.0-$(date -u +'%Y.%m.%d')" >> $GITHUB_OUTPUT
 
       - name: Create release
         uses: softprops/action-gh-release@v1
@@ -54,6 +54,7 @@ jobs:
           target_commitish: release-GUI
           name: "${{ steps.version.outputs.RELEASE_VERSION }}"
           body: |
+            This is DelMoro Graphical User Inerface release
             ### Ready-to-Run
             ```bash
             chmod +x DelMoro-UI
