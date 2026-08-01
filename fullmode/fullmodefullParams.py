@@ -756,4 +756,5 @@ class fMFullParamsPage(QWidget):
             QMessageBox.critical(self, "Error", "Pipeline failed! Check the log for details.")
             self.logOutput.append("\nPipeline failed.")
 
+
 __all__ = ['fMFullParamsPage']
