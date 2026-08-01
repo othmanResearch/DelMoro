@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 
-
 class PipelineRunnerThread(QThread):
     logSignal = pyqtSignal(str)
     finishedSignal = pyqtSignal(bool)
