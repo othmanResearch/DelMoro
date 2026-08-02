@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you used this pipeline, please cite it as below."
+authors:
+- family-names: "Zemzem"
+  given-names: "Firas"
+  orcid: "https://orcid.org/0009-0004-7791-6364"
+- family-names: "H'mida"
+  given-names: "Dorra"
+  orcid: "https://orcid.org/0000-0002-7365-8124"
+- family-names: "Othman"
+  given-names: "houcemeddine"
+  orcid: "https://orcid.org/0000-0002-1159-6482"
+title: "DelMoro : A Nextflow Pipeline for Variant Calling and  Streamlined Reporting in Clinical Genomics"
+version: 1.0.0
+#doi: 00.0000/host.0000
+date-released: 2026-08-01
+url: "https://github.com/othmanResearch/DelMoro"
