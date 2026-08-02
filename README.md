@@ -1,66 +1,28 @@
 ![mainWlcPipeline](./.DelMoroWlc.png)
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.5-23aa62.svg)](https://www.nextflow.io/)
+---
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A425.x-23aa62.svg)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
----
+
 ## Introduction 
 
-<div style="text-align: justify;">
-DelMoro is a Nextflow pipeline for genome/exome variant detection across species, offering two modes: (1) stepmode for modular execution of 8 subworkflows and (2) fullmode for automated end-to-end analysis. Built for reproducibility with Conda/Mamba/Docker/Singuilarity and wave support, it enables both granular optimization and high-throughput processing. The dual architecture supports diverse applications from exploratory research with iterative refinement to clinical grade batch analysis,while maintaining GATK best practices.This balance between stepmode and fullmode offers adaptability and standardization which makes DelMoro suitable for both developmental genomics and production-scale variant calling.
-</div>
----
-
-## Pipelines Tools 
-1. Raw Data Quality Control : Ensures input FASTQ files are high quality using tools like:
-- [FastQC]()
-- [MultiQC]()
-
-2. Read Trimming : Trims adapters and low-quality bases with your choice of:
-- [Trimmomatic]()
-- [Fastp]()
-- [BBDuk]()
-
-3. Alignment Aligns reads to a reference genome using:
-- [BWA]()
-- [BWA-MEM2]()
-
-Metrics:
-- [CollectAlignmentSummaryMetrics]()
-- [CollectInsertSizeMetrics]()
-- [CollectGcBiasMetrics]()
-- [QualiMap]()
-
-BigWigs:
-- [bamCoverage]()
-
-BigWigs Plotting:
-- [pyBigWig]()
-
-4. Base Recalibration Applies GATK's best practices with:
-- [GATK]()
-- Metrics, BigWigs, and plotting
-
-5. Variant Calling Detects SNPs and indels using:
-- [GATK]() HaplotypeCaller
-- [DEEPVARIANT]() HaplotypeCaller
-
-6. Variant Filtering 
-- [GATK]() HaplotypeCaller
-
-7. Variant Annotation Annotates variants using:
-- [Variant Effect Predictor]() 
-
-8. Reportin with :
-- [Reportlab]()
-
-### Workflow
+DelMoro is a Nextflow pipeline for genome/exome variant detection across species specifically used in Human clinical genomics, offering two modality executions. As it can be executed as a complete end-to-end workflow or as a collection of independent analysis modules : (I) stepmode for modular execution of 9 subworkflows and (II) fullmode for automated end-to-end analysis.
 
 ![Pipeline](./pipelineDelMoro.png)
 
----
+The complete list of software used by DelMoro, together with the corresponding citations, is provided in [TOOLS.md](./TOOLS.md).
+
 ##  Usage
+
+> [!WARNING]
+> Please use Nextflow v25.x or earlier. The pipeline is not compatible with Nextflow v26.x. or later.
+---
+
+Detailed documentation, including installation instructions, pipeline configuration, input requirements, and execution examples, is available at: [documentation link]()
+
+---
 
 > [!NOTE]
 > Please make sure to check help menu with `--help` before running the workflow on actual data.
@@ -91,7 +53,7 @@ nextflow run main.nf
 
 ~~~
 
-### Executing stepmode :  
+#### Executing stepmode :  
 
 ~~~
 nextflow run main.nf  
@@ -112,3 +74,26 @@ Module  : - rawqc       : Check           quality      of     raw           read
 ~~~
 
 
+
+## Graphical User Interface
+DelMoro graphical user interface (GUI) is available in the [Releases section](https://github.com/othmanResearch/DelMoro/releases/tag/GUI-v1.0.0-2026.08.01) of this repository. To use it, download the [executable GUI file](https://github.com/othmanResearch/DelMoro/releases/download/GUI-v1.0.0-2026.08.01/DelMoro-UI).
+
+![DelMoro-GUI](./.DelMoro-GUI.png)
+
+## Citations 
+If you use this pipeline in your research, please cite this GitHub repository.
+
+> Zemzem, F., H'mida, D., & Othman, H. (2026). DelMoro : A Nextflow Pipeline for Variant Calling and  Streamlined Reporting in Clinical Genomics (Version 1.0.0) [Computer software]. https://github.com/othmanResearch/DelMoro 
+
+~~~bash
+@software{Zemzem_DelMoro_A_2026,
+author = {Zemzem, Firas and H'mida, Dorra and Othman, houcemeddine},
+month = aug,
+title = {{DelMoro : A Nextflow Pipeline for Variant Calling and  Streamlined Reporting in Clinical Genomics}},
+url = {https://github.com/othmanResearch/DelMoro},
+version = {1.0.0},
+year = {2026}
+}
+~~~
+
+## Licence
