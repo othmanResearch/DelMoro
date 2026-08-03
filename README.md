@@ -17,7 +17,7 @@ The complete list of software used by DelMoro, together with the corresponding c
 ##  Usage
 
 > [!WARNING]
-> The pipeline is not compatible with Nextflow v26.x or earlier.
+> The pipeline is compatible with Nextflow v26.x or earlier.
 ---
 
 Detailed documentation, including installation instructions, pipeline configuration, input requirements, and execution examples, is available at: [documentation link]()
