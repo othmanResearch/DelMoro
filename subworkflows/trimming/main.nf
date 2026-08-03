@@ -20,33 +20,18 @@ workflow TRIM_READS {
 	Trimmomatic	( rawReads 		  )			   	
 	TrimmedQC	( Trimmomatic.out.paired  )	              
 	MultiqcTrimmed	( TrimmedQC.out.collect() )
-	     
-	emit: 
-	trimmedReads = Trimmomatic.out.paired.collect()
-	trimmedQc    = TrimmedQC.out.collect()
-	multiQcccc   = MultiqcTrimmed.out.multiqcHtml.collect() 	
     
     } else if (params.tobetrimmed != null && params.fastp) {
 	Fastp		( rawReads.map { patient_id, R1, R2, MINLEN, LEADING, TRAILING, SLIDINGWINDOW -> [patient_id, R1, R2] } ) 			   	
 	TrimmedQC	( Fastp.out.fastpFastq )	              
 	MultiqcTrimmed	( TrimmedQC.out.collect() )
-	    
-	emit : 
-	trimmedReads = Fastp.out.fastpFastq.collect()
-	trimmedQc    = TrimmedQC.out.collect()
-	multiQcccc   = MultiqcTrimmed.out.multiqcHtml.collect()
-    
+
     } else if (params.tobetrimmed != null && params.bbduk) {
 
 	Bbduk		( rawReads.map { patient_id, R1, R2, MINLEN, LEADING, TRAILING, SLIDINGWINDOW -> [patient_id, R1, R2] } ) 			   	
 	TrimmedQC 	( Bbduk.out.bbdukFastq )	              
 	MultiqcTrimmed	( TrimmedQC.out.collect() )
-  
-	emit : 
-	trimmedReads = Bbduk.out.bbdukFastq.collect()
-	trimmedQc    = TrimmedQC.out.collect()
-	multiQcccc   = MultiqcTrimmed.out.multiqcHtml.collect()
-    
+
     }else { 
 	print("\033[31m Error: Invalid or missing parameters.\n"                                        )
 	print("\033[31m Please specify valid parameters:\n"					  	)
@@ -57,6 +42,11 @@ workflow TRIM_READS {
         print("   >>  View the help menu: nextflow main.nf --help\n"			)
 	print("   >>  Check parameters: nextflow main.nf --params\n\033[37m"		)  
     }
+    
+    emit :
+    trimmedReads  = params.trimmomatic ? Trimmomatic.out.paired.collect() :
+                    params.fastp ? Fastp.out.fastpFastq.collect() :
+                    params.bbduk ? Bbduk.out.bbdukFastq.collect() : Channel.empty()
 } 
 
 

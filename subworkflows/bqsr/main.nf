@@ -74,12 +74,8 @@ workflow BASE_QU_SCO_RECA {
 	    GcBiasMetrics	(ApplyBQSR.out.recal_bam.join(IndexRecalBam.out), ref_gen_channel) 
 	    Qualimap		(ApplyBQSR.out.recal_bam.join(IndexRecalBam.out) )
     	}
-    
-    emit:
-    reaclBam = ApplyBQSR.out.recal_bam   
-    reaclIdx = IndexRecalBam.out
-    reaclBamWithIdx = reaclBam.join(reaclIdx)
-    } else if ( params.ivcf1		!= null && 
+
+  } else if ( params.ivcf1		!= null && 
     		params.ivcf2 		!= null && 
       		params.knownsite1 	== null && 
       		params.knownsite2 	== null ) {
@@ -116,12 +112,8 @@ workflow BASE_QU_SCO_RECA {
 	    GcBiasMetrics	(ApplyBQSR.out.recal_bam.join(IndexRecalBam.out), ref_gen_channel) 
 	    Qualimap		(ApplyBQSR.out.recal_bam.join(IndexRecalBam.out) )
 	    }
-	    
-	emit:
-	reaclBam = ApplyBQSR.out.recal_bam   
-	reaclIdx = IndexRecalBam.out
-        reaclBamWithIdx = reaclBam.join(reaclIdx)
-    } else { 
+
+  } else { 
           error("\033[31m ERROR: Missing required BAM input.\n\n Please specify valid parameters:\n\n " +
                 " --reference option (--reference reference)\n\n" +
                 " --bam option (--bam CSVs/4_samplesheetForBamFiles.csv)\n\n" +
@@ -133,10 +125,10 @@ workflow BASE_QU_SCO_RECA {
                 " For more information:\n\n" +
                 "   >> View the help menu: nextflow main.nf --help\n\n" +
                 "   >> Check parameters: nextflow main.nf --params\n\n \033[37m ")
-}
+  }
     emit:
     reaclBam = ApplyBQSR.out.recal_bam   
     reaclIdx = IndexRecalBam.out  
-    reaclBamWithIdx = reaclBam.join(reaclIdx)
+    reaclBamWithIdx = (ApplyBQSR.out.recal_bam).join(IndexRecalBam.out)
 }
 

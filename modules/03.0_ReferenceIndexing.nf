@@ -3,12 +3,21 @@
 
 //         RETRIEVE IGENOMES
 ////////////////////////////////////////////////////
-
+    
 process DownloadIgenomes {
     tag "Downloading ${params.igenome} from iGenomes reference ${params.IGENOMES[params.igenome]}"
-    publishDir "${file(params.igenome).getParent()}/Reference_Genome", mode: 'copy'
-    storeDir   "${file(params.igenome).getParent()}/Reference_Genome"
-
+    publishDir(
+    params.igenome
+        ? "${file(params.igenome).parent}/Reference_Genome"
+        : "${params.outdir}/Reference_Genome",
+    mode: 'copy'
+    )
+    storeDir(
+        params.igenome
+            ? "${file(params.igenome).parent}/Reference_Genome"
+            : "${params.outdir}/Reference_Genome"
+    )
+    
     conda "conda-forge::awscli=2.23.6"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://xueshanf/awscli:alpine-3.16"
@@ -31,16 +40,21 @@ process DownloadIgenomes {
 
 process CreateIndex {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA"
-    def isRemoteRef = ( params.reference?.startsWith('http' ))
     publishDir(
-        path: isRemoteRef ? "${params.outdir}/Reference_Genome"
-                          : ( params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" ),
+        params.reference?.startsWith('http') ? "${params.outdir}/Reference_Genome" :
+        params.reference ? "${file(params.reference).parent}/" :
+        params.igenome ? "${file(params.igenome).parent}/Reference_Genome" :
+        "${params.outdir}/Reference_Genome",
         mode: 'copy',
         overwrite: false
     )
-    storeDir  { isRemoteRef ? "${params.outdir}/Reference_Genome"
-                            : ( params.reference  ? file(params.reference).getParent()  : "${file(params.igenome).getParent()}/Reference_Genome"  ) }
-    
+    storeDir(
+        params.reference?.startsWith('http') ? "${params.outdir}/Reference_Genome" :
+        params.reference ? "${file(params.reference).parent}/" :
+        params.igenome ? "${file(params.igenome).parent}/Reference_Genome" :
+        "${params.outdir}/Reference_Genome"
+    )
+   
     conda "bioconda::bwa=0.7.18"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://firaszemzem/bwa-samtools:latest"
@@ -60,16 +74,20 @@ process CreateIndex {
 
 process CreateIndexBwaMem2 {
     tag "CREATING INDEX FOR REF GENOME FOR ALIGNER BWA-MEM2"
-    def isRemoteRef = ( params.reference?.startsWith('http' ))
     publishDir(
-        path: isRemoteRef ? "${params.outdir}/Reference_Genome"
-                          : ( params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" ),
+        params.reference?.startsWith('http') ? "${params.outdir}/Reference_Genome" :
+        params.reference ? "${file(params.reference).parent}/" :
+        params.igenome ? "${file(params.igenome).parent}/Reference_Genome" :
+        "${params.outdir}/Reference_Genome",
         mode: 'copy',
         overwrite: false
     )
-    storeDir  { isRemoteRef ? "${params.outdir}/Reference_Genome"
-                            : ( params.reference  ? file(params.reference).getParent()  : "${file(params.igenome).getParent()}/Reference_Genome"  ) }
-    
+    storeDir(
+        params.reference?.startsWith('http') ? "${params.outdir}/Reference_Genome" :
+        params.reference ? "${file(params.reference).parent}/" :
+        params.igenome ? "${file(params.igenome).parent}/Reference_Genome" :
+        "${params.outdir}/Reference_Genome"
+    )  
     conda "bioconda::bwa-mem2=2.2.1"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://firaszemzem/bwamem2-samtools:latest"
@@ -92,16 +110,20 @@ process CreateIndexBwaMem2 {
 
 process CreateDictionary {
     tag "GENERATE DICTIONARY"
-    def isRemoteRef = ( params.reference?.startsWith('http' ))
     publishDir(
-        path: isRemoteRef ? "${params.outdir}/Reference_Genome"
-                          : ( params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" ),
+        params.reference?.startsWith('http') ? "${params.outdir}/Reference_Genome" :
+        params.reference ? "${file(params.reference).parent}/" :
+        params.igenome ? "${file(params.igenome).parent}/Reference_Genome" :
+        "${params.outdir}/Reference_Genome",
         mode: 'copy',
         overwrite: false
     )
-    storeDir  { isRemoteRef ? "${params.outdir}/Reference_Genome"
-                            : ( params.reference  ? file(params.reference).getParent()  : "${file(params.igenome).getParent()}/Reference_Genome"  ) }
-    
+    storeDir(
+        params.reference?.startsWith('http') ? "${params.outdir}/Reference_Genome" :
+        params.reference ? "${file(params.reference).parent}/" :
+        params.igenome ? "${file(params.igenome).parent}/Reference_Genome" :
+        "${params.outdir}/Reference_Genome"
+    )  
     conda "bioconda::gatk4=4.4"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://broadinstitute/gatk:latest"
@@ -125,16 +147,20 @@ process CreateDictionary {
 
 process CreateIndexSamtools {
     tag "GENERATE INDEX BY SAMTOOLS"
-    def isRemoteRef = ( params.reference?.startsWith('http' ))
     publishDir(
-        path: isRemoteRef ? "${params.outdir}/Reference_Genome"
-                          : ( params.reference ? file(params.reference).getParent() : "${file(params.igenome).getParent()}/Reference_Genome" ),
+        params.reference?.startsWith('http') ? "${params.outdir}/Reference_Genome" :
+        params.reference ? "${file(params.reference).parent}/" :
+        params.igenome ? "${file(params.igenome).parent}/Reference_Genome" :
+        "${params.outdir}/Reference_Genome",
         mode: 'copy',
         overwrite: false
     )
-    storeDir  { isRemoteRef ? "${params.outdir}/Reference_Genome"
-                            : ( params.reference  ? file(params.reference).getParent()  : "${file(params.igenome).getParent()}/Reference_Genome"  ) }
-        
+    storeDir(
+        params.reference?.startsWith('http') ? "${params.outdir}/Reference_Genome" :
+        params.reference ? "${file(params.reference).parent}/" :
+        params.igenome ? "${file(params.igenome).parent}/Reference_Genome" :
+        "${params.outdir}/Reference_Genome"
+    )      
     conda "bioconda::samtools=1.21"
     container "${workflow.containerEngine == 'singularity'
         ? "docker://firaszemzem/bwa-samtools:latest"

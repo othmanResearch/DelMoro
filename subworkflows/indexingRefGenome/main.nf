@@ -22,27 +22,13 @@ workflow INDEXING_REF_GENOME {
             CreateIndex(ref_gen_channel)
             CreateDictionary(ref_gen_channel)
             CreateIndexSamtools(ref_gen_channel)
-
-            emit:
-            reference_fasta = ref_gen_channel
-            bwaIndex = CreateIndex.out.bwaIndex
-            gatkDict = CreateDictionary.out.gatkDict
-            samtoolsIndex = CreateIndexSamtools.out.samtoolsIndex
-            combinedIdx = bwaIndex.combine(gatkDict).combine(samtoolsIndex)
-         
+ 
         // Case 2: Use BWA-MEM2 aligner with reference as input
         } else if (params.aligner == "bwamem2") {
             CreateIndexBwaMem2(ref_gen_channel)
             CreateDictionary(ref_gen_channel)
             CreateIndexSamtools(ref_gen_channel)
-
-            emit:
-            reference_fasta = ref_gen_channel
-            bwa2Index = CreateIndexBwaMem2.out.bwaIndex
-            gatkDict = CreateDictionary.out.gatkDict
-            samtoolsIndex = CreateIndexSamtools.out.samtoolsIndex
-            combinedIdx = bwa2Index.combine(gatkDict).combine(samtoolsIndex)
-            
+      
         } else {
             DelMoroWelcome()
             error("\033[31m Please specify valid parameters:\n\n" +
@@ -63,27 +49,13 @@ workflow INDEXING_REF_GENOME {
             CreateDictionary(DownloadIgenomes.out.igenome_ch)
             CreateIndexSamtools(DownloadIgenomes.out.igenome_ch)
 
-            emit:
-            reference_fasta = DownloadIgenomes.out.igenome_ch
-            bwaIndex = CreateIndex.out.bwaIndex
-            gatkDict = CreateDictionary.out.gatkDict
-            samtoolsIndex = CreateIndexSamtools.out.samtoolsIndex
-            combinedIdx = bwaIndex.combine(gatkDict).combine(samtoolsIndex)
-
         // Case 4: Use BWA-MEM2 aligner with igenome as input
         } else if (params.aligner == "bwamem2") {
             DownloadIgenomes()
             CreateIndexBwaMem2(DownloadIgenomes.out.igenome_ch)
             CreateDictionary(DownloadIgenomes.out.igenome_ch)
             CreateIndexSamtools(DownloadIgenomes.out.igenome_ch)
-
-            emit:
-            reference_fasta = DownloadIgenomes.out.igenome_ch
-            bwa2Index = CreateIndexBwaMem2.out.bwaIndex
-            gatkDict = CreateDictionary.out.gatkDict
-            samtoolsIndex = CreateIndexSamtools.out.samtoolsIndex
-            combinedIdx = bwa2Index.combine(gatkDict).combine(samtoolsIndex)
-            
+ 
         } else { 
             DelMoroWelcome()
             error("\033[31m Please specify valid parameters:\n\n" +               
@@ -106,10 +78,10 @@ workflow INDEXING_REF_GENOME {
     
     emit:
     reference_fasta = params.igenome ? DownloadIgenomes.out.igenome_ch : ref_gen_channel
-    alignerIdx = (params.aligner == "bwamem2") ? bwa2Index : bwaIndex
+    alignerIdx = (params.aligner == "bwamem2") ? CreateIndexBwaMem2.out.bwaIndex : CreateIndex.out.bwaIndex
     gatkDict = CreateDictionary.out.gatkDict
     samtoolsIndex = CreateIndexSamtools.out.samtoolsIndex
-    combinedIdx = alignerIdx.combine(gatkDict).combine(samtoolsIndex)
+    combinedIdx = ((params.aligner == "bwamem2") ? CreateIndexBwaMem2.out.bwaIndex : CreateIndex.out.bwaIndex).combine(CreateDictionary.out.gatkDict).combine(CreateIndexSamtools.out.samtoolsIndex)
 }
 
 

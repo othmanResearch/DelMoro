@@ -112,8 +112,8 @@ process BaseRecalibrator {
     path fai
     //path sor_md_bam_file
     tuple val(patient_id), path(sor_md_bam_file), path(bamidx)
-    tuple val(fileName), path (knownsiteFile1), path (IDXknsF1)  // knsite1 + index 
-    tuple val(fileName), path (knownsiteFile2), path (IDXknsF2)  // knsite2 + index
+    tuple val(idx1fileName), path (knownsiteFile1), path (IDXknsF1)  // knsite1 + index 
+    tuple val(idx2fileName), path (knownsiteFile2), path (IDXknsF2)  // knsite2 + index
 
     output:
     tuple val(patient_id), path("*bqsr.table"), emit: "BQSR_Table"

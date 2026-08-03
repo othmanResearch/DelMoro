@@ -5,7 +5,6 @@
 process FastqQc {
     tag "GENERATING QUALITY FOR RAW READS"
     publishDir "${params.outdir}/QualityControl/RAW/", mode: 'copy'
-    errorStrategy 'ignore'
 
     conda "bioconda::fastqc=0.12.1"
     container "${workflow.containerEngine == 'singularity'

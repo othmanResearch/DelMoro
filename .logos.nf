@@ -359,10 +359,10 @@ log.info"""
 \033[32m ✔ Available Cpus =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus  =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus   =\033[37m ${params.pcpus}
-\033[32m ✔ Max Forks      =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks      =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Raw QC         =\033[37m ${PWD}/${params.outdir}/QualityControl/RAW/
-\033[32m ✔ Raw Multi QC   =\033[37m ${PWD}/${params.outdir}/QualityControl/RAW/multiqc/
+\033[32m ✔ Raw QC         =\033[37m ${workflow.launchDir}/${params.outdir}/QualityControl/RAW/
+\033[32m ✔ Raw Multi QC   =\033[37m ${workflow.launchDir}/${params.outdir}/QualityControl/RAW/multiqc/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -376,11 +376,11 @@ log.info"""
 \033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
-\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Trimmed Reads        =\033[37m ${PWD}/${params.outdir}/TrimmedREADS/
-\033[32m ✔ Trimmed QC           =\033[37m ${PWD}/${params.outdir}/QualityControl/TRIMMED/
-\033[32m ✔ Trimmed Multi QC     =\033[37m ${PWD}/${params.outdir}/QualityControl/TRIMMED/multiqc/
+\033[32m ✔ Trimmed Reads        =\033[37m ${workflow.launchDir}/${params.outdir}/TrimmedREADS/
+\033[32m ✔ Trimmed QC           =\033[37m ${workflow.launchDir}/${params.outdir}/QualityControl/TRIMMED/
+\033[32m ✔ Trimmed Multi QC     =\033[37m ${workflow.launchDir}/${params.outdir}/QualityControl/TRIMMED/multiqc/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -397,7 +397,7 @@ log.info"""
 \033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
-\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -414,11 +414,11 @@ log.info"""
 \033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
 \033[32m ✔ Mapping Max Forks    =\033[37m 2
-\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Mapped reads         =\033[37m ${PWD}/${params.outdir}/Mapping
-\033[32m ✔ Mapped reads metrics =\033[37m ${PWD}/${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes     =\033[37m ${PWD}/${params.outdir}/Indexes/BamFiles
+\033[32m ✔ Mapped reads         =\033[37m ${workflow.launchDir}/${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics =\033[37m ${workflow.launchDir}/${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes     =\033[37m ${workflow.launchDir}/${params.outdir}/Indexes/BamFiles
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -435,13 +435,13 @@ log.info"""
 \033[32m ✔ Max Used Cpus                =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
 \033[32m ✔ Mapping Max Forks            =\033[37m 2
-\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Known Sites (ivcf 1)         =\033[37m ./knownsites/${params.ivcf1}
 \033[32m ✔ Known Sites (ivcf 2)         =\033[37m ./knownsites/${params.ivcf2}
 \033[32m ✔ Known Sites (local vcf 1)    =\033[37m ${params.knownsite1}
 \033[32m ✔ Known Sites (local vcf 2)    =\033[37m ${params.knownsite2}
-\033[32m ✔ Base Recalibration           =\033[37m ${PWD}/${params.outdir}/Mapping
+\033[32m ✔ Base Recalibration           =\033[37m ${workflow.launchDir}/${params.outdir}/Mapping
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -457,10 +457,10 @@ log.info"""
 \033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
-\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m ✔ Caller               =\033[37m ${params.caller ? "deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ VCF Files            =\033[37m ${PWD}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
+\033[32m ✔ VCF Files            =\033[37m ${workflow.launchDir}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -475,9 +475,9 @@ log.info"""
 \033[32m ✔ Available Cpus       =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus        =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus         =\033[37m ${params.pcpus}
-\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks            =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ VCF Files            =\033[37m ${PWD}/${params.outdir}/Voutdir/Variants/filtered/
+\033[32m ✔ VCF Files            =\033[37m ${workflow.launchDir}/${params.outdir}/Voutdir/Variants/filtered/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -536,7 +536,7 @@ log.info"""
 \033[32m ✔ Cache Type 			=\033[37m ${params.cachetype}
 \033[32m ✔ Assembly			=\033[37m ${params.assembly}
 \033[32m ✔ Cache Directory 		=\033[37m ${params.cachedir}
-\033[32m ✔ Annotated Files   		=\033[37m ${PWD}/${params.outdir}/annotation/
+\033[32m ✔ Annotated Files   		=\033[37m ${workflow.launchDir}/${params.outdir}/annotation/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""
 	}
@@ -567,18 +567,18 @@ log.info"""
 \033[32m ✔ Input 		        =\033[37m ${params.input}
 \033[32m ✔ Reference 		        =\033[37m ${params.reference ? params.reference : params.igenome} 
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Mapped reads 		=\033[37m ${PWD}/${params.outdir}/Mapping
-\033[32m ✔ Mapped reads metrics  	=\033[37m ${PWD}/${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes		=\033[37m ${PWD}/${params.outdir}/Mapping/
+\033[32m ✔ Mapped reads 		=\033[37m ${workflow.launchDir}/${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics  	=\033[37m ${workflow.launchDir}/${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes		=\033[37m ${workflow.launchDir}/${params.outdir}/Mapping/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ VCF Files 			=\033[37m ${PWD}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
+\033[32m ✔ VCF Files 			=\033[37m ${workflow.launchDir}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
 \033[32m ✔ Caller                       =\033[37m ${params.caller ? "deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus                =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
 \033[32m ✔ Mapping Max Forks            =\033[37m 2
-\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  	"""
 }
@@ -592,24 +592,24 @@ log.info"""
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ outdir                       =\033[37m ${params.outdir}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ Mapped reads                 =\033[37m ${PWD}/${params.outdir}/Mapping
-\033[32m ✔ Mapped reads metrics         =\033[37m ${PWD}/${params.outdir}/Mapping/Metrics
-\033[32m ✔ Bam file indexes             =\033[37m ${PWD}/${params.outdir}/Mapping/
+\033[32m ✔ Mapped reads                 =\033[37m ${workflow.launchDir}/${params.outdir}/Mapping
+\033[32m ✔ Mapped reads metrics         =\033[37m ${workflow.launchDir}/${params.outdir}/Mapping/Metrics
+\033[32m ✔ Bam file indexes             =\033[37m ${workflow.launchDir}/${params.outdir}/Mapping/
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Known Sites (ivcf 1)         =\033[37m ./knownsites/${params.ivcf1}
 \033[32m ✔ Known Sites (ivcf 2)         =\033[37m ./knownsites/${params.ivcf2}
 \033[32m ✔ Known Sites (local vcf 1)    =\033[37m ${params.knownsite1}
 \033[32m ✔ Known Sites (local vcf 2)    =\033[37m ${params.knownsite2}
-\033[32m ✔ Base Recalibration           =\033[37m ${PWD}/${params.outdir}/Mapping
+\033[32m ✔ Base Recalibration           =\033[37m ${workflow.launchDir}/${params.outdir}/Mapping
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\033[32m ✔ VCF Files 			=\033[37m ${PWD}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
+\033[32m ✔ VCF Files 			=\033[37m ${workflow.launchDir}/${params.outdir}/Variants/${params.caller ? "deepvariant" : "gatk"}/
 \033[32m ✔ Caller                       =\033[37m ${params.caller ? "deepvariant" : "gatk" }
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \033[32m ✔ Available Cpus               =\033[37m ${ params.detectedCpus }
 \033[32m ✔ Max Used Cpus                =\033[37m ${ params.mcpus ?: params.pcpus}
 \033[32m ✔ Process Cpus                 =\033[37m ${params.pcpus}
 \033[32m ✔ Mapping Max Forks            =\033[37m 2
-\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? params.mcpus.intdiv(params.pcpus) : 1}
+\033[32m ✔ Max Forks                    =\033[37m ${params.mcpus ? Math.floorDiv(params.mcpus as int, params.pcpus as int) : 1}
 \033[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  	"""
 }

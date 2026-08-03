@@ -68,11 +68,6 @@ workflow ALIGN_TO_REF_GENOME {
                   "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m ") 
         }       
        
-        emit: 	
-        bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
-        bamIdx = IndexBam.out
-        bamWithIdx = bams.join(bamIdx)
-    
     } else  if ( params.aligner == "bwamem2" ) {
  
         if ( referFileChannel 	!= null && 
@@ -107,11 +102,7 @@ workflow ALIGN_TO_REF_GENOME {
 	    	  "   >>  View the help menu: nextflow main.nf --help\n\n" +
 	    	  "   >>  Check parameters: nextflow main.nf --params\n\n \033[37m")  
         }
-      emit:	
-      bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
-      bamIdx = IndexBam.out
-      bamWithIdx = bams.join(bamIdx)    
-    
+
     } else {  
         error("\033[31m Error: Invalid or missing parameters.\n\n" +
               " Please specify valid parameters:\n\n" +
@@ -127,6 +118,6 @@ workflow ALIGN_TO_REF_GENOME {
     emit : 
     bams = MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }
     bamIdx = IndexBam.out
-    bamWithIdx = bams.join(bamIdx)
+    bamWithIdx = ( MarkDuplicates.out.sorted_markduplicates_bam.toSortedList { a, b -> a[0] <=> b[0] }.flatMap { it }).join(IndexBam.out)
 
 }

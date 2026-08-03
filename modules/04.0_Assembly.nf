@@ -152,7 +152,7 @@ process GenerateStat {
 
     input:
     tuple val(patient_id), path (sorted_labeled_bam)
-    tuple val(patient_id), path (sorted_markduplicates_bam)
+    tuple val(patientid), path (sorted_markduplicates_bam)
 
     output:
     tuple val(patient_id), path ("*.flagstat")

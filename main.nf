@@ -6,14 +6,23 @@ nextflow.enable.dsl = 2
 
 // Interactive Design while Running DelMoro
 
-include {DelMoroWelcome	}	from './.logos' 
-include {DelMoroParams	}	from './.logos' 
-include {DelMoroHelp	} 	from './.logos' 
-
+include {DelMoroWelcome	}	from './.logos.nf' 
+include {DelMoroParams	}	from './.logos.nf' 
+include {DelMoroHelp	} 	from './.logos.nf' 
 	       			             	 	
+
+// subworkflows 
+
+include { DelMoroSteps 		} from './DelMoroModesSw/DelMoroSteps.nf'
+include { DelMoroFullSw 	} from './DelMoroModesSw/DelMoroFull.nf'
+params.params = null
+params.help = null
+
+workflow {
+
 // channels 
   // prepare required csv from an intial csv
-  PrepareCsv 		= params.basedon	? Channel.fromPath(params.basedon, checkIfExists: true)   			: Channel.empty()   	
+  PrepareCsv 	= params.basedon	? Channel.fromPath(params.basedon, checkIfExists: true)   			: Channel.empty()   	
  
   // Raw Reads to quality check 
   RawReads 		= params.rawreads 	? Channel.fromPath(params.rawreads, checkIfExists: true)       	
@@ -178,17 +187,14 @@ include {DelMoroHelp	} 	from './.logos'
     							  						   		def indexFile = tbi.exists() ? tbi : idx.exists() ? idx : null
     							  						   		tuple(row.patient_id, vcFile, indexFile) } 				: Channel.empty()
   // Reporting 
-     	// Function to parse YAML file
-	import groovy.yaml.YamlSlurper
 
- 	def parseYamlFile(yamlFile) { new YamlSlurper().parse(yamlFile) }
     // DelMoro Logo Channel
     delmoroLogoCh 	= params.delmoroLogo	? Channel.fromPath(params.delmoroLogo)						: Channel.empty()
     // Patients Metadata with annotated Vcf paths Combined to Logo Channel
     metaPatiLogCh 	= params.metaPatients	? Channel.fromPath(params.metaPatients)
 							  .splitCsv(header: true)
 							   .map { row ->
-							    	metaPatients = [
+							    	def metaPatients = [
 								    Identifier: row.Identifier,
 								    SampleID: row.SampleID,
 								    Sex: row.Gender,
@@ -199,24 +205,16 @@ include {DelMoroHelp	} 	from './.logos'
 							    	[metaPatients, file(row.vcFile)]   
 								}.combine(delmoroLogoCh)					: Channel.empty()
 
-    // Pipeline Executions step with Physician Metadata Parsing
+    // Pipeline Executions step with Physician Metadata Parsing // Function to parse YAML file
     pipeExecYamlCh 	= params.metaYaml	? Channel.fromPath(params.metaYaml)
-        						  .map { file -> parseYamlFile(file) }					: Channel.empty()
+        						  .map { file ->  new groovy.yaml.YamlSlurper().parse(file) }					: Channel.empty()
  
     // Combine both channels ( metaPatiLogCh with  pipeExecYamlCh ) 
     metaPipeExecYaml = params.metaPatients && params.metaYaml ? metaPatiLogCh.combine(pipeExecYamlCh)
-                        						      .map { metaPatients, vcFile, delmoroLogo, pipeExecYamlCh -> 
-										    [metaPatients, vcFile, delmoroLogo, pipeExecYamlCh]  
+                        						      .map { metaPatients, vcFile, delmoroLogo, pipeExecYaml_Ch -> 
+										    [metaPatients, vcFile, delmoroLogo, pipeExecYaml_Ch]  
 										}						: Channel.empty()
-        
-// subworkflows 
 
-include { DelMoroSteps 		} from './DelMoroModesSw/DelMoroSteps.nf'
-include { DelMoroFullSw 	} from './DelMoroModesSw/DelMoroFull.nf'
-params.params = null
-params.help = null
-workflow {
-        
     if (params.fullmode) {	 
 	 	
 	DelMoroFullSw(   RefGenChannel

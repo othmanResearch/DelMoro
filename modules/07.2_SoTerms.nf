@@ -4,8 +4,8 @@
 
 process ExtractImpactVariant {
     tag "${fileName} - ${term} (${impact})"
-    publishDir "outdir/annotation/seqOnto/${fileName}/${impact}/", mode: 'copy'
-
+    publishDir { "outdir/annotation/seqOnto/${fileName}/${impact}/" }, mode: 'copy'
+    
     input:
     tuple val(fileName), val(term), val(impact), path(vcf_file)
 
