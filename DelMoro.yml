@@ -11,6 +11,7 @@ dependencies:
   - bcftools=1.21
   - vcftools=0.1.16  
   - gatk4=4.4.0.0
+  - glnexus=1.4.1
   - picard=3.2.0
   - bwa=0.7.18
   - bwa-mem2=2.2.1 
