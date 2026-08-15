@@ -64,6 +64,19 @@ process FilterSNP {
         --filter-expression "ReadPosRankSum < ${params.ReadPosRankSumSNP}" --filter-name "ReadPosRankSum-${params.ReadPosRankSumSNP}" \\
         --output ${variants.getSimpleName()}.SNP.strict-filtered.vcf.gz
     """
+    else if ( params.gatkFilter ) 
+    """
+    gatk VariantFiltration \\
+        --variant ${variants} \\
+        --filter-expression "QD < ${params.QD}" --filter-name "QD${params.QD}" \\
+        --filter-expression "QUAL < ${params.QUAL}" --filter-name "QUAL${params.QUAL}" \\
+        --filter-expression "SOR > ${params.SOR}" --filter-name "SOR${params.SOR}" \\
+        --filter-expression "FS > ${params.FSSNP}" --filter-name "FS${params.FSSNP}" \\
+        --filter-expression "MQ < ${params.MQ}" --filter-name "MQ${params.MQ}" \\
+        --filter-expression "MQRankSum < ${params.MQRankSum}" --filter-name "MQRankSum-${params.MQRankSum}" \\
+        --filter-expression "ReadPosRankSum < ${params.ReadPosRankSumSNP}" --filter-name "ReadPosRankSum-${params.ReadPosRankSumSNP}" \\
+        --output ${variants.getSimpleName()}.SNP.gatk-strict-filtered.vcf.gz
+    """
     else
     """
     gatk VariantFiltration \\
@@ -71,7 +84,7 @@ process FilterSNP {
         --genotype-filter-expression "GQ < ${params.GQ}" --genotype-filter-name "GQ${params.GQ}" \\
         --genotype-filter-expression "DP < ${params.DP}" --genotype-filter-name "DP${params.DP}" \\
         --genotype-filter-expression "(AB < ${params.ABmin} || AB > ${params.ABmax})" --genotype-filter-name "AB${params.ABmin}-${params.ABmax}" \\
-        --output ${variants.getSimpleName()}.SNP.filtered.vcf.gz
+        --output ${variants.getSimpleName()}.SNP.onlyGenotype.filtered.vcf.gz
     """
 }
 
@@ -134,6 +147,16 @@ process FilterINDEL {
         --filter-expression "ReadPosRankSum < ${params.ReadPosRankSumINDEL}" --filter-name "ReadPosRankSum-${params.ReadPosRankSumINDEL}" \\
         --output ${variants.getSimpleName()}.INDEL.strict-filtered.vcf.gz
     """
+    else if ( params.gatkFilter ) 
+    """ 
+    gatk VariantFiltration \\
+        --variant ${variants} \\
+        --filter-expression "QD < ${params.QD}" --filter-name "QD${params.QD}" \\
+        --filter-expression "QUAL < ${params.QUAL}" --filter-name "QUAL${params.QUAL}" \\
+        --filter-expression "FS > ${params.FSINDEL}" --filter-name "FS${params.FSINDEL}" \\
+        --filter-expression "ReadPosRankSum < ${params.ReadPosRankSumINDEL}" --filter-name "ReadPosRankSum-${params.ReadPosRankSumINDEL}" \\
+        --output ${variants.getSimpleName()}.INDEL.gatk-strict-filtered.vcf.gz
+    """
     else
     """
     gatk VariantFiltration \\
@@ -141,7 +164,7 @@ process FilterINDEL {
         --genotype-filter-expression "GQ < ${params.GQ}" --genotype-filter-name "GQ${params.GQ}" \\
         --genotype-filter-expression "DP < ${params.DP}" --genotype-filter-name "DP${params.DP}" \\
         --genotype-filter-expression "(AB < ${params.ABmin} || AB > ${params.ABmax})" --genotype-filter-name "AB${params.ABmin}-${params.ABmax}" \\
-        --output ${variants.getSimpleName()}.INDEL.filtered.vcf.gz
+        --output ${variants.getSimpleName()}.INDEL.onlyGenotype.filtered.vcf.gz
     """
 }
 
@@ -184,15 +207,16 @@ process mergeVCFs {
     tuple val(patient_id), path(snpsVcf), path(snpsIdx), path(indelsVcf), path(indelIdx)
 
     output:
-    tuple val(patient_id), path("${patient_id}.filtered-merged.vcf.gz"), path("${patient_id}.filtered-merged.vcf.gz.{tbi,idx}")
+    tuple val(patient_id), path("${patient_id}.*-merged.vcf.gz"), path("${patient_id}.*-merged.vcf.gz.{tbi,idx}")
 
     script:
+    def suffix = params.gatkFilter  ? "gatk-strict-filtered"  : (params.strictFilter ? "strict-filtered" : "onlyGenotype")
     """
     bcftools concat -a -Oz \\
-    -o ${patient_id}.filtered-merged.vcf.gz \\
+    -o ${patient_id}.${suffix}-merged.vcf.gz \\
     ${snpsVcf} ${indelsVcf}
 
-    tabix -p vcf ${patient_id}.filtered-merged.vcf.gz
+    tabix -p vcf ${patient_id}.${suffix}-merged.vcf.gz
     """
 }
 
