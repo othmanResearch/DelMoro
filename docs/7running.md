@@ -108,10 +108,9 @@ Requirements :
      callvar       Detect SNPs from aligned reads.
                    require  : --reference   <path-to-ref>
                             : --tovarcall   <path-to-bam-csv)
-                            : --mode onlyvcf [ optional ]
                             : --caller deepvariant [ optional ]
                             : --rsid <path-to-vcf> [ optional ]
-  		   	                : --splitAllele  [ optional ]
+  		   	                : --splitSample  [ optional ] ; only for cohort mode
                    output   : .vcf
                             : .table
   -- Annotation	  
@@ -168,7 +167,7 @@ The **DelMoro full mode** follows a standard workflow, requiring an `--input` CS
 In this mode, the pipeline performs **reference indexing**, **mapping**, and **variant calling**, applying the same sub-options for each step:  
 - **Reference**: `igenome/reference`  
 - **Aligner**: `bwa` or `bwamem2`  
-- **Mode**: `onlyvcf` or `null` ( By default, DelMoro generates a cohort vcf file)  
+- **Mode**: `cohort` or `null` ( By default, DelMoro generates a vcf file for each patient)  
 
 You can optionally enable **Base Quality Score Recalibration (BQSR)** by adding the `--bqsr` parameter, which requires either:  
 - Local known sites: `--knownsite1`, `--knownsite2`  
@@ -184,7 +183,7 @@ nextflow run main.nf \
     [--bqsr] \
     [--knownsite1 <path>,--knownsite2 <path>|--ivcf1 <str>,--ivcf2 <str>] \ 
     [ --caller deepvariant --modelType <WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ> ] \
-    [--mode onlyvcf] 
+    [--mode cohort] 
 
 </code></pre>
 </div>
@@ -496,8 +495,8 @@ You can modify the output behavior using the `--mode` flag:
     - To check required option please refer to [parameters page](5parameters.md/#variant-calling ) 
     - <span style="color:red ;">Default variant id is set to chrName_position_REF_ALT</span>
 
-???+ note " 💡 **Splitting Multi Allelic sites:** `--splitAllele parameter`"
-    - To use add rs id , specify `--splitAllele`    
+???+ note " 💡 **Splitting cohort vcf to different samples:** `--splitSample parameter`"
+    - To use add rs id , specify `--splitSample`    
     - To check required option please refer to [parameters page](5parameters.md/#variant-calling ) 
 
 ---
@@ -525,7 +524,7 @@ You can modify the output behavior using the `--mode` flag:
 
 <div id="cmd-filtering" class="step-command">
 <pre><code>nextflow main.nf --stepmode --exec filter \
-  --tofilter CSVs/tofilter.csv [ `--QUAL 50` ]
+  --tofilter CSVs/tofilter.csv [ --gatkFilter `--QUAL 50` ]
 </code></pre>
 </div>
 

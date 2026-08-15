@@ -75,11 +75,14 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--keepinter` =  Keep intermediate vcf files <span title="[Optional] - Default: false">⊕</span>
 - `--mode` = Output type: onlyvcf to generate a vcf for each input <span title="Default: null : generates a cohort gvcf ">⊕</span>  
 - `--caller` = Specify deepvariant caller which also requires `--modelType` <span title="Default: null : only for deepvariant caller ">⊕</span>
-- `--rsid` = Add rs identifiant for vcf reference file <span title="[Optional] - path to vcf">⊕</span>
-- `splitAllele` = Split multi Allelic sites <span title="[Optional] - Default: false">⊕</span>
+- `--rsid` = Add rs identifiant for vcf reference file. <span title="[Optional] - path to vcf">⊕</span>
+- `--splitSample` = Split cohort vcf to multi-samples files.<span title="[Optional] - Default: false">⊕</span>
 
 ## Filtering 
 - `--tofilter` = Path to the CSV file containing variants to filter. <span title="Default: null ">⊕</span>
+- `--skipFilter` = Parameter to skip filtering in fullmode. <span title="Default: null ">⊕</span>
+- `--strictFilter` = Parameter to enable strict filter ( gatk & AB based filters ). <span title="Default: null ">⊕</span>
+- `--gatkFilter` = Parameter to enable only GATK filters. <span title="Default: null ">⊕</span>
 - `--QD` = Quality by Depth: variant confidence normalized by depth. <span title="Default: 2.0">⊕</span>
 - `--QUAL` = Overall variant quality score. <span title="Default: 30.0">⊕</span>
 - `--SOR` = Strand Odds Ratio: measures strand bias. <span title="Default: 3.0">⊕</span>
@@ -89,7 +92,10 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--ReadPosRankSumSNP` = Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (SNPs). <span title="Default: -8.0">⊕</span>
 - `--FSINDEL` = Fisher Strand p-value for strand bias (INDELs). <span title="Default: 200.0">⊕</span>
 - `--ReadPosRankSumINDEL` = Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (INDELs). <span title="Default: -20.0">⊕</span>
-
+- `--GQ` = Minimum genotype quality threshold. <span title="Default: 20">⊕</span>
+- `--DP` = Minimum read depth threshold. <span title="Default: 10">⊕</span>
+- `--ABmin` = Minimum allele balance threshold. <span title="Default: 0.2">⊕</span>
+- `--ABmax` = Maximum allele balance threshold. <span title="Default: 0.8">⊕</span>
 ## Annotation (VEP)
 - `--species` = Species name for VEP cache. <span title="Default: null">⊕</span>  
 - `--cachetype` = VEP cache type (`refseq` or `merged`). <span title="Default: null">⊕</span>  
