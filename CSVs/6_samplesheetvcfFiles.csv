@@ -1,4 +1,4 @@
 patient_id,vcFile
-fatherID,./outdir/Variants/gatk/fatherID_delMoro.recal.full.HC.vcf.gz
-motherID,./outdir/Variants/gatk/motherID_delMoro.recal.full.HC.vcf.gz
-sonID,./outdir/Variants/gatk/sonID_delMoro.recal.full.HC.vcf.gz
+fatherID,./outdir/Variants/gatk/fatherID_delMoro.recal.full.HC.id.sorted.norm.AB.vcf.gz
+motherID,./outdir/Variants/gatk/motherID_delMoro.recal.full.HC.id.sorted.norm.AB.vcf.gz
+sonID,./outdir/Variants/gatk/sonID_delMoro.recal.full.HC.id.sorted.norm.AB.vcf.gz

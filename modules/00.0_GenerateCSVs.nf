@@ -174,7 +174,7 @@ process WriteVcfCSV {
 
         for row in csvreader:
             patient_id = row[0]
-            vcf_file = f'{bam_path}{patient_id}_delMoro.recal.full.HC.vcf.gz'
+            vcf_file = f'{bam_path}{patient_id}_delMoro.recal.full.HC.id.sorted.norm.AB.vcf.gz'
             csvwriter_for_vcf_files.writerow([patient_id, vcf_file])
     EOF
     """
