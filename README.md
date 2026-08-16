@@ -1,6 +1,6 @@
 ![mainWlcPipeline](./.DelMoroWlc.png)
 ---
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A425.x-23aa62.svg)](https://www.nextflow.io/)
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A426.x-23aa62.svg)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
@@ -79,6 +79,9 @@ Module  : - rawqc       : Check           quality      of     raw           read
 DelMoro graphical user interface (GUI) is available in the [Releases section](https://github.com/othmanResearch/DelMoro/releases/tag/GUI-v1.0.0-2026.08.01) of this repository. To use it, download the [executable GUI file](https://github.com/othmanResearch/DelMoro/releases/download/GUI-v1.0.0-2026.08.01/DelMoro-UI).
 
 ![DelMoro-GUI](./.DelMoro-GUI.png)
+
+>[!TIP]
+> Please inspect the GUI execution instructions in [GUI release branch](https://github.com/othmanResearch/DelMoro/tree/release-GUI)
 
 ## Citations 
 If you use this pipeline in your research, please cite this GitHub repository.
