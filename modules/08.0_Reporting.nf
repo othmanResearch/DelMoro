@@ -304,249 +304,6 @@ order_info(c, width, height, metaYaml)
 
 ##################################################################################
 
-# Constants
-SO_IMPACT_MAP = {
-    "transcript_ablation": "HIGH",
-    "splice_acceptor_variant": "HIGH",
-    "splice_donor_variant": "HIGH",
-    "stop_gained": "HIGH",
-    "frameshift_variant": "HIGH",
-    "stop_lost": "HIGH",
-    "start_lost": "HIGH",
-    "transcript_amplification": "HIGH",
-    "feature_elongation": "HIGH",
-    "feature_truncation": "HIGH",
-    "inframe_insertion": "MODERATE",
-    "inframe_deletion": "MODERATE",
-    "missense_variant": "MODERATE",
-    "protein_altering_variant": "MODERATE",
-    "splice_donor_5th_base_variant": "LOW",
-    "splice_region_variant": "LOW",
-    "splice_donor_region_variant": "LOW",
-    "splice_polypyrimidine_tract_variant": "LOW",
-    "incomplete_terminal_codon_variant": "LOW",
-    "start_retained_variant": "LOW",
-    "stop_retained_variant": "LOW",
-    "synonymous_variant": "LOW",
-    "coding_sequence_variant": "MODIFIER",
-    "mature_miRNA_variant": "MODIFIER",
-    "5_prime_UTR_variant": "MODIFIER",
-    "3_prime_UTR_variant": "MODIFIER",
-    "non_coding_transcript_exon_variant": "MODIFIER",
-    "intron_variant": "MODIFIER",
-    "NMD_transcript_variant": "MODIFIER",
-    "non_coding_transcript_variant": "MODIFIER",
-    "coding_transcript_variant": "MODIFIER",
-    "upstream_gene_variant": "MODIFIER",
-    "downstream_gene_variant": "MODIFIER",
-    "TFBS_ablation": "MODIFIER",
-    "TFBS_amplification": "MODIFIER",
-    "TF_binding_site_variant": "MODIFIER",
-    "regulatory_region_ablation": "MODIFIER",
-    "regulatory_region_amplification": "MODIFIER",
-    "regulatory_region_variant": "MODIFIER",
-    "intergenic_variant": "MODIFIER",
-    "sequence_variant": "MODIFIER"
-}
-
-def extract_consequence_record_counts(vcf_file):
-    csq_format = None
-    consequence_records = defaultdict(int)
-
-    with gzip.open(vcf_file, 'rt') as f:
-        for line in f:
-            if line.startswith('##INFO=<ID=CSQ'):
-                match = re.search(r'Format: (.+)">', line)
-                if match:
-                    csq_format = match.group(1).strip().split('|')
-                continue
-            if line.startswith('#'):
-                continue
-
-            fields = line.strip().split('\t')
-            info_field = fields[7]
-            info_dict = dict(item.split('=', 1) if '=' in item else (item, '') for item in info_field.split(';'))
-            csq_entries = info_dict.get('CSQ', '')
-
-            present_terms = set()
-            for entry in csq_entries.split(','):
-                values = entry.split('|')
-                consequence_field = values[csq_format.index('Consequence')]
-                for cons in consequence_field.split('&'):
-                    if cons in SO_IMPACT_MAP:
-                        present_terms.add(cons)
-
-            for cons in present_terms:
-                consequence_records[cons] += 1
-    # Set table style
-    c.setStrokeColor(colors.black)
-    c.setLineWidth(0.5)
-
-    df = pd.DataFrame.from_dict(consequence_records, orient='index', columns=['Record_Count'])
-    df.index.name = 'Consequence'
-    df['Impact'] = df.index.map(SO_IMPACT_MAP)
-    return df.reset_index().sort_values(by=['Impact', 'Record_Count'], ascending=[True, False])
-
-def draw_consequence_table(c, df, y_position, start_x=40):
-    # ----------------- Vertical Line -----------------
-    c.setStrokeColor(colors.red)
-    c.line(125, height - 160, 125, 60)
-    c.setStrokeColor(colors.black)
-    # -------------------------------------------------
-
-    data = [list(df.columns)] + df.values.tolist()
-    col_widths = [140, 70, 70]
-    row_height = 15
-    table_width = sum(col_widths)
-
-    # Draw title
-    c.setFont("Courier-BoldOblique", 10)
-    c.drawString(50 , y_position - 5, "Var Summary")
-
-    # Draw header
-    c.setFont("Helvetica-Bold", 9)
-    c.setFillColor(colors.white)
-    c.rect(start_x, y_position - 30, table_width, row_height, fill=1, stroke=1)
-    c.setFillColor(colors.HexColor('#2C3E50'))
-    for i, (col, width) in enumerate(zip(data[0], col_widths)):
-        c.drawCentredString(start_x + sum(col_widths[:i]) + width/2, y_position - 22, col)
-
-    # Draw rows
-    # Set table style
-    c.setStrokeColor(colors.black)
-    c.setLineWidth(0.5)
-    c.setFont("Helvetica", 8)
-
-    for row_idx, row in enumerate(data[1:], start=1):
-        y = y_position - 30 - row_idx * row_height
-        impact = row[2]
-        c.setFillColor(colors.HexColor({
-            "HIGH": "#F1948A",
-            "MODERATE": "#F7DC6F",
-            "LOW": "#85C1E9",
-            "MODIFIER": "#D5F5E3"
-        }.get(impact, "#FFFFFF")))
-        c.rect(start_x, y, table_width, row_height, fill=1, stroke=1)
-        c.setFillColor(colors.black)
-        for i, (cell, width) in enumerate(zip(row, col_widths)):
-            c.drawCentredString(start_x + sum(col_widths[:i]) + width/2, y + 4, str(cell))
-
-    return y_position - 30 - len(data) * row_height - 10
-
-c.showPage()
-# Draw consequences table (position adjustable)
-df_consequences = extract_consequence_record_counts("${vcFile}")
-current_y = 625  # Vertical start position
-table_start_x = 150  # Horizontal start position (adjust as needed)
-
-# Draw consequence table and get its ending y-position
-consequence_table_end_y = draw_consequence_table(c, df_consequences, current_y, table_start_x)
-##################################################################################
-ACMG_COLORS = {
-    'Pathogenic': '#F1948A',
-    'Likely Pathogenic': '#F7DC6F',
-    'VUS': '#85C1E9',
-    'Likely Benign': '#D5F5E3',
-    'Benign': '#A9DFBF'
-}
-
-def extract_acmg_classifications(vcf_file):
-    acmg_counts = {
-        'Pathogenic': 0,
-        'Likely Pathogenic': 0,
-        'VUS': 0,
-        'Likely Benign': 0,
-        'Benign': 0
-    }
-
-    patterns = {
-        'Pathogenic': ['ACMG=5', 'pathogenic'],
-        'Likely Pathogenic': ['ACMG=4', 'likely_pathogenic'],
-        'VUS': ['ACMG=3', 'uncertain_significance'],
-        'Likely Benign': ['ACMG=2', 'likely_benign'],
-        'Benign': ['ACMG=1', 'benign']
-    }
-
-    for category, terms in patterns.items():
-        # Fix: Use raw string (r prefix) for the regex pattern
-        cmd = f"zgrep -c -E '{terms[0]}|{terms[1]}' {vcf_file}"
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-        acmg_counts[category] = int(result.stdout.strip() or 0)
-
-    data = []
-    for cat, count in acmg_counts.items():
-        data.append({'Classification': cat, 'Count': count})
-
-    return pd.DataFrame(data).sort_values('Count', ascending=False)
-
-
-def draw_acmg_table(c, df, x, y):
-    if df.empty:
-        data = [['ACMG Classification', 'Count'], ['No ACMG classifications found', '']]
-    else:
-        data = [['ACMG Classification', 'Count']] + df.values.tolist()
-
-    row_colors = [colors.HexColor(ACMG_COLORS.get(row[0], '#FFFFFF')) for row in data[1:]]
-
-    style = TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#2C3E50')),
-        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
-        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
-        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0,0), (-1,0), 9),
-        ('FONTSIZE', (0,1), (-1,-1), 8),
-        ('GRID', (0,0), (-1,-1), 0.5, colors.black),
-        ('ROWBACKGROUNDS', (0,1), (-1,-1), row_colors)
-    ])
-
-    table = Table(data, colWidths=[110, 55])
-    table.setStyle(style)
-    table.wrapOn(c, 400, 600)
-    table.drawOn(c, x, y - len(data)*18)
-    return y - len(data)*18 - 30
-
-df_acmg = extract_acmg_classifications("${vcFile}")
-# Right after consequence table with spacing : sum of conseq table columns size and space
-draw_acmg_table(c, df_acmg, 440, 234)
-
-# Create impact distribution plot
-
-def create_impact_distribution_plot(df_consequences, sample_plot_dir, sample_id):
-    # Ensure we're using the correct column name (Record_Count instead of Count)
-    impact_counts = df_consequences.groupby('Impact')['Record_Count'].sum().reset_index()
-
-    plt.figure(figsize=(6, 4))
-    ax = sns.barplot(x='Impact', y='Record_Count', data=impact_counts,
-                palette={'HIGH': '#F1948A', 'MODERATE': '#F7DC6F',
-                         'LOW': '#85C1E9', 'MODIFIER': '#D5F5E3'})
-
-    # Add value labels on top of bars
-    for p in ax.patches:
-        ax.annotate(f"{int(p.get_height())}",
-                   (p.get_x() + p.get_width() / 2., p.get_height()),
-                   ha='center', va='center', xytext=(0, 5), textcoords='offset points')
-
-    plt.title('Variant Impact Distribution')
-    plt.xlabel('Impact Level')
-    plt.ylabel('Number of Variants')
-    plt.tight_layout()
-
-    plot_path = f"{sample_plot_dir}/impact_distribution.png"
-    plt.savefig(plot_path, bbox_inches='tight', dpi=300)
-    plt.close()
-
-    return plot_path
-
-# Generate and add impact plot below the tables
-impact_plot = create_impact_distribution_plot(df_consequences, sample_plot_dir, metadata['SampleID'])
-plot_width = 160  # Width of plot in PDF
-plot_height = 185  # Height of plot in PDF
-
-# Position plot below the tables with some spacing
-plot_y = current_y - 30  # Add 30 points spacing below tables
-c.drawImage(impact_plot, 440, plot_y - plot_height,
-            width=plot_width, height=plot_height)
-
 ##################################################################################
 # Function to add a plot to the PDF
 def add_plot_to_pdf(plot_file, c, width, height, plot_index):
@@ -611,31 +368,7 @@ def create_variant_type_plot(df, sample_plot_dir, vcf_basename):
     plt.ylabel('Count')
 
     # Save the plot
-    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f1.png")
-    plt.savefig(plot_file)
-    plt.close()
-
-    return plot_file
-
-##################################################################################
-
-# Function to create the variant type distribution plot
-def create_variant_type_plot(df, sample_plot_dir, vcf_basename):
-    # Count variant types
-    variant_counts = df['variant_type'].value_counts()
-
-    # Create a bar plot with count labels above the bars
-    plt.figure(figsize=(10, 8))
-    bars = plt.bar(variant_counts.index, variant_counts.values, color=['blue', 'green', 'orange'])
-    for bar in bars:
-        yval = bar.get_height()
-        plt.text(bar.get_x() + bar.get_width() / 2, yval + 0.1, str(int(yval)), ha='center', va='bottom')
-    plt.title(f'Distribution of Variant Types for {vcf_basename}')
-    plt.xlabel('Variant Type')
-    plt.ylabel('Count')
-
-    # Save the plot
-    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f1.png")
+    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f1_VarType.png")
     plt.savefig(plot_file)
     plt.close()
 
@@ -668,7 +401,7 @@ def create_indel_size_plot(df, sample_plot_dir, vcf_basename):
         plt.ylabel('Count')
 
         # Save plot with the base filename included
-        plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f2.png")
+        plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f2_indelSize.png")
         plt.savefig(plot_file)
         plt.close()
 
@@ -709,7 +442,7 @@ def create_depth_per_position_plot(df, sample_plot_dir, vcf_basename):
     plt.tight_layout()
 
     # Save the plot
-    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f3.png")
+    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f3_DpPerPos.png")
     plt.savefig(plot_file)
     plt.close()
 
@@ -762,7 +495,7 @@ def create_transitions_transversions_plot(df, sample_plot_dir, vcf_basename):
     plt.ylabel('Count')
 
     # Save the plot
-    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f5.png")
+    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f5_TiTv.png")
     plt.savefig(plot_file)
     plt.close()
 
@@ -805,7 +538,7 @@ def create_specific_mutations_plot(df, sample_plot_dir, vcf_basename):
     plt.ylabel('Mutation Type')
 
     # Save the plot
-    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f6.png")
+    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f6_mutations_plot.png")
     plt.savefig(plot_file)
     plt.close()
 
@@ -834,15 +567,267 @@ def create_depth_per_chromosome_plot(df, sample_plot_dir, vcf_basename):
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
 
     # Save the plot
-    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_depth_per_chromosome.png")
+    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f7_depth_per_chromosome.png")
     plt.savefig(plot_file, bbox_inches="tight")
     plt.close()
 
     return plot_file
 
-
 ##################################################################################
 
+def create_allele_balance_plot(df, sample_plot_dir, vcf_basename):
+
+    # Extract AB from FORMAT/SAMPLE
+    def extract_ab(row):
+        format_fields = str(row['FORMAT']).split(':')
+        sample_fields = str(row['SAMPLE']).split(':')
+
+        format_dict = dict(zip(format_fields, sample_fields))
+
+        try:
+            return float(format_dict.get('AB', np.nan))
+        except (ValueError, TypeError):
+            return np.nan
+
+    # Extract existing AB field
+    ab_df = df.copy()
+    ab_df['AB'] = ab_df.apply(extract_ab, axis=1)
+
+    # Remove missing or invalid AB values
+    ab_df = ab_df.dropna(subset=['AB'])
+    ab_df = ab_df[
+        (ab_df['AB'] >= 0) &
+        (ab_df['AB'] <= 1)
+    ]
+
+    # Plot allele balance distribution
+    plt.figure(figsize=(8, 6))
+
+    plt.hist(
+        ab_df['AB'],
+        bins=20,
+        edgecolor='black'
+    )
+
+    # Expected allele balance for a heterozygous variant
+    plt.axvline(
+        0.5,
+        linestyle='--',
+        linewidth=2,
+        label='Expected heterozygous AB = 0.50'
+    )
+
+    plt.title(f'Allele Balance Distribution for {vcf_basename}')
+    plt.xlabel('Allele Balance (AB)')
+    plt.ylabel('Variant Count')
+    plt.xlim(0, 1)
+    plt.legend()
+    plt.tight_layout()
+
+    # Save plot
+    # Save plot
+    plot_file = os.path.join(sample_plot_dir,f"{vcf_basename}_f8_AB.png")
+
+    plt.savefig(plot_file,dpi=300,bbox_inches='tight'
+    )
+
+    plt.close()
+
+    return plot_file
+
+##################################################################################
+def create_genotype_representation_plot(df, sample_plot_dir, vcf_basename):
+
+    # Extract GT from FORMAT/SAMPLE
+    def extract_gt(row):
+        format_fields = str(row['FORMAT']).split(':')
+        sample_fields = str(row['SAMPLE']).split(':')
+
+        format_dict = dict(zip(format_fields, sample_fields))
+
+        return format_dict.get('GT', np.nan)
+
+    # Extract genotype
+    gt_df = df.copy()
+    gt_df['GT'] = gt_df.apply(extract_gt, axis=1)
+
+    # Remove missing genotypes
+    gt_df = gt_df.dropna(subset=['GT'])
+    gt_df = gt_df[gt_df['GT'].astype(str) != '.']
+
+    # Classify genotypes
+    def classify_genotype(gt):
+
+        gt = str(gt).replace('|', '/')
+
+        # Homozygous reference
+        if gt == '0/0':
+            return 'Homozygous Reference'
+
+        # Heterozygous
+        elif gt in ['0/1', '1/0']:
+            return 'Heterozygous'
+
+        # Homozygous alternate
+        elif gt == '1/1':
+            return 'Homozygous Alternate'
+
+        # Other genotypes
+        else:
+            return 'Other'
+
+    gt_df['Genotype_Class'] = gt_df['GT'].apply(classify_genotype)
+
+    # Count each genotype class
+    genotype_counts = (
+        gt_df['Genotype_Class']
+        .value_counts()
+        .reindex(
+            [
+                'Homozygous Reference',
+                'Heterozygous',
+                'Homozygous Alternate',
+                'Other'
+            ],
+            fill_value=0
+        )
+    )
+
+    # Create the plot
+    plt.figure(figsize=(10, 8))
+
+    bars = plt.bar(
+        genotype_counts.index,
+        genotype_counts.values,
+        color=[
+            '#4C78A8',  # Homozygous Reference - blue
+            '#F2CF5B',  # Heterozygous - yellow
+            '#E45756',  # Homozygous Alternate - red
+            '#72B7B2'   # Other - teal
+        ],
+        edgecolor='black'
+    )
+    # Add value labels above bars
+    for bar, value in zip(bars, genotype_counts.values):
+        plt.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height(),
+            f'{value}',
+            ha='center',
+            va='bottom',
+            fontsize=10
+        )
+
+    # Plot labels and title
+    plt.title(
+        f'Genotype Representation for {vcf_basename}'
+    )
+    plt.xlabel('Genotype Class')
+    plt.ylabel('Variant Count')
+
+    plt.xticks(rotation=20)
+
+    plt.tight_layout()
+
+    # Save plot
+    plot_file = os.path.join(
+        sample_plot_dir,
+        f"{vcf_basename}_f9_genotypeRepresentation.png"
+    )
+
+    plt.savefig(
+        plot_file,
+        dpi=300,
+        bbox_inches='tight'
+    )
+
+    plt.close()
+
+    return plot_file
+##################################################################################
+def create_pass_filtered_variants_plot(df, sample_plot_dir, vcf_basename):
+
+    # Extract FILTER
+    filter_df = df.copy()
+
+    # Handle missing FILTER values
+    filter_df['FILTER'] = filter_df['FILTER'].fillna('.').astype(str)
+
+    # Classify variants
+    def classify_filter(filter_value):
+
+        # PASS variants
+        if filter_value == 'PASS':
+            return 'PASS'
+
+        # Filtered variants
+        else:
+            return 'Filtered'
+
+    filter_df['Filter_Class'] = filter_df['FILTER'].apply(
+        classify_filter
+    )
+
+    # Count each filter class
+    filter_counts = (
+        filter_df['Filter_Class']
+        .value_counts()
+        .reindex(
+            [
+                'PASS',
+                'Filtered'
+            ],
+            fill_value=0
+        )
+    )
+
+    # Create the plot
+    plt.figure(figsize=(8, 6))
+
+    bars = plt.bar(
+        filter_counts.index,
+        filter_counts.values,
+        color=['#2E8B57', '#D9534F'],
+        edgecolor='black'
+    )
+
+    # Add value labels above bars
+    for bar, value in zip(bars, filter_counts.values):
+        plt.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height(),
+            f'{value}',
+            ha='center',
+            va='bottom',
+            fontsize=10
+        )
+
+    # Plot labels and title
+    plt.title(
+        f'PASS vs Filtered Variants for {vcf_basename}'
+    )
+    plt.xlabel('Variant Filter Status')
+    plt.ylabel('Variant Count')
+
+    plt.tight_layout()
+
+    # Save plot
+    plot_file = os.path.join(
+        sample_plot_dir,
+        f"{vcf_basename}_f10_pass_vs_filtered.png"
+    )
+
+    plt.savefig(
+        plot_file,
+        dpi=300,
+        bbox_inches='tight'
+    )
+
+    plt.close()
+
+    return plot_file
+
+##################################################################################
 # Main script
 # Load the extracted VCF TSV file with proper headers
 df = pd.read_csv("${vcFile}", sep="\\t", header=None, names=[
@@ -908,6 +893,22 @@ add_plot_to_pdf(plot_file_f6, c, width, height, 5)
 plot_file_f7 = create_depth_per_chromosome_plot(df, sample_plot_dir, vcf_basename)
 add_plot_to_pdf(plot_file_f7, c, width, height, 6)
 ##################################################################################
+# Create the Allele balance Plot
+plot_file_f8 = create_allele_balance_plot(df, sample_plot_dir, vcf_basename)
+add_plot_to_pdf(plot_file_f8, c, width, height, 7 )
+
+##################################################################################
+# Create genotype representation plot
+plot_file_f9 = create_genotype_representation_plot(df,sample_plot_dir,vcf_basename)
+
+add_plot_to_pdf(plot_file_f9,c,width, height, 8)
+
+##################################################################################
+# Create PASS vs filtered variants plot
+plot_file_f10 = create_pass_filtered_variants_plot(df, sample_plot_dir,vcf_basename)
+add_plot_to_pdf(plot_file_f10, c, width, height, 9)
+
+##################################################################################
 #                 Below a test of plots to be deleted later                      #
 ##################################################################################
 # Create the average depth per chromosome plot
@@ -919,3 +920,4 @@ add_plot_to_pdf(plot_file_f7, c, width, height, 6)
 c.save()
     """
 }
+
