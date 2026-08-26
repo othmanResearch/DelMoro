@@ -2,3 +2,5 @@
 work/
 outdir/
 CSVs/*
+.idea/
+DelMoro-UI
