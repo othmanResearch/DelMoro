@@ -20,6 +20,7 @@ include { BigWig   		  } from '../../modules/04.2_BamToBigWig.nf'
 include { BigWigCoveragePlots	  } from '../../modules/04.3_BigWigPlotting.nf'
 
 include { BamCoverage	 	  } from '../../modules/04.4_CoverageStat.nf' 
+include { BamCoveReport           } from '../../modules/04.4_CoverageStat.nf' 
 
 workflow ALIGN_TO_REF_GENOME {
      take:
@@ -43,7 +44,8 @@ workflow ALIGN_TO_REF_GENOME {
 	    AssignReadGroup (AlignReadsToRef.out.sorted_bam)
 	    MarkDuplicates  (AssignReadGroup.out.sorted_labeled_bam)
 	    IndexBam        (MarkDuplicates.out.sorted_markduplicates_bam)
-	    BamCoverage     ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out),bedtarget ) 
+	    BamCoverage     ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out),bedtarget )
+	    BamCoveReport   (BamCoverage.out,bedtarget)
 	    
 	    if (params.report ) {
 	    	GenerateStat	    ( AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
@@ -78,7 +80,8 @@ workflow ALIGN_TO_REF_GENOME {
 	    AssignReadGroup	    ( AlignReadsToRefBwaMem2.out )
 	    MarkDuplicates	    ( AssignReadGroup.out )
 	    IndexBam		    ( MarkDuplicates.out.sorted_markduplicates_bam )
-	    BamCoverage             ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out),bedtarget )  
+	    BamCoverage             ( MarkDuplicates.out.sorted_markduplicates_bam.join(IndexBam.out),bedtarget )
+	    BamCoveReport           (BamCoverage.out,bedtarget)    
 	    
 	    if (params.report ) {
 	    	GenerateStat	    ( AssignReadGroup.out.sorted_labeled_bam, MarkDuplicates.out.sorted_markduplicates_bam) 
