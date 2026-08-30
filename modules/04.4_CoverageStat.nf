@@ -38,6 +38,12 @@ process BamCoveReport {
     tag "GENERATE A HTML REPORT FROM THE BED COVERAGE FILE"
     publishDir "${params.outdir}/Mapping/BamCoverage/", mode: 'copy'
 
+    conda "conda-forge::python=3.12.3"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://firaszemzem/pyreportlab-toolkit:1.0"
+        : "firaszemzem/pyreportlab-toolkit:1.0"}"
+
+
     input:
     tuple val(patient_id), path(bedcov)
     path(bedtarget)
