@@ -30,8 +30,6 @@ process BamCoverage {
 }
 
 // GENERATE A HTML REPORT FROM THE BED COVERAGE FILE
-///////////////////////:
-
 
 process BamCoveReport {
 
