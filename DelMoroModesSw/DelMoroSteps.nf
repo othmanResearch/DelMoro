@@ -113,7 +113,7 @@ workflow DelMoroSteps {
                
     } else if (params.exec == 'reporting') {
   	              
-    REPORTING(metaPipeExecYaml)
+    REPORTING(metaPipeExecYaml,Target)
   	              	
     } else if ( params.exec == 'help'){
              

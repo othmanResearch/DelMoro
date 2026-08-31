@@ -1,2 +1,2 @@
-Identifier,SampleID,Gender,Dob,Ethnicity,Diagnosis,vcFile
-SRR13-FVXF,SRR13-FVXF,female,2025-06-01,African,WES,./outdir/annotation/SRR13_vep.vcf.gz
+Identifier,SampleID,Gender,Dob,Ethnicity,Diagnosis,BamFile,vcFile
+SRR13-FVXF,SRR13-FVXF,female,2025-06-01,./outdir/Mapping/fatherID_delMoro.recal.bam,./outdir/Variants/gatk/fatherID_delMoro.recal.full.HC.id.sorted.norm.AB.vcf.gz

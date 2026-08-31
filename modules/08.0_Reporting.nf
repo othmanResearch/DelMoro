@@ -1,7 +1,34 @@
 // Module files for DelMoro pipeline
 
-// Reporting Module with reportlab
+// Extract coverage bed from bam file
+process ReportBamCov {
+    tag "GENERATE BED COVERAGE FROM BAMS"
+    publishDir "${params.outdir}/Reporting/BamCoverage/", mode: 'copy'
 
+    conda "bioconda::bamtocov=2.7.0"
+    container "${workflow.containerEngine == 'singularity'
+        ? "docker://quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2"
+        : "quay.io/biocontainers/bamtocov:2.7.0--h6ead514_2"}"
+
+    input:
+    tuple val(patient_id), path(BamFile), path(bamidx)
+    path bedtarget    
+    
+    output:
+    tuple val(patient_id), path("*_coverage.bed"), emit: bedCov
+
+    script:
+    def prefix = BamFile.baseName.takeWhile { it != '_' }
+    def outfile = (bedtarget.name == "NO_FILE") ? "${prefix}_coverage.bed" : "${prefix}_${bedtarget.baseName}_coverage.bed"
+    def target_option = (bedtarget.name == "NO_FILE") ? "" : "-r ${bedtarget}"
+    
+    """
+    echo -e "Chromosome\tStart\tEnd\tCoverage" > ${outfile}
+    bamtocov ${target_option} ${BamFile} >> ${outfile}
+    """
+}
+
+// Reporting Module with reportlab
 process GenerateReports {
     tag "GeNERATE PDF REPORTS "
     publishDir "${params.outdir}/Reporting/", mode: 'copy'
@@ -12,7 +39,8 @@ process GenerateReports {
         : "firaszemzem/pyreportlab-toolkit:1.0"}"
 
     input:
-    tuple val(metadata), path(vcFile), path(delmorologo), val(metaYaml)
+    tuple val(metadata), path(vcFile), path(delmorologo), val(metaYaml), path(bamBedFile) 
+    path bedTaget
 
     output:
     path "${metadata.SampleID}.pdf"
@@ -29,7 +57,9 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
-from reportlab.platypus import Table, TableStyle
+from reportlab.platypus import Table, TableStyle, Paragraph 
+from reportlab.lib.styles import getSampleStyleSheet
+coverage_styles = getSampleStyleSheet()
 from datetime import datetime
 import os
 import pandas as pd
@@ -59,6 +89,8 @@ metadata = {
 # Define the DelMoro logo path (this should come from the Nextflow workflow)
 delmorologo = "${delmorologo}"
 vcFile = "${vcFile}"
+bamBedFile = "${bamBedFile}"
+bedTargetFile = "${bedTaget}"
 
 # Create a directory for the sample plots
 sample_plot_dir = f"plots/{metadata['SampleID']}"
@@ -178,23 +210,1062 @@ def draw_header_to_footer(c, width, height, metadata, delmorologo):
 
 ##################################################################################
 
+
 def extract_assembly_reference(vcFile):
 
-   assembly_pattern = r'assembly=([^>\s,]+)'
-   try:
-       # Handle both gzipped and uncompressed VCF files
-       opener = gzip.open if vcFile.endswith('.gz') else open
-       with opener(vcFile, 'rt') as vcf:
-           for line in vcf:
-               if line.startswith('##'):
-                   match = re.search(assembly_pattern, line)
-                   if match:
-                       return match.group(1).strip('"')  
-               elif line.startswith('#'):
-                   break
-       return 'unknown'
-   except Exception as e:
-       return 'unknown'
+    assembly_pattern = r'assembly=([^> ,]+)'
+    try:
+        # Handle both gzipped and uncompressed VCF files
+        opener = gzip.open if vcFile.endswith('.gz') else open
+        with opener(vcFile, 'rt') as vcf:
+            for line in vcf:
+                if line.startswith('##'):
+                    match = re.search(assembly_pattern, line)
+                    if match:
+                        return match.group(1).strip('"')
+                elif line.startswith('#'):
+                    break
+        return 'unknown'
+    except Exception as e:
+        return 'unknown'
+
+
+##################################################################################
+# COVERAGE REPORT
+##################################################################################
+
+THRESHOLDS = [1, 10, 20, 30, 50, 100]
+
+
+def create_coverage_accumulator():
+    return {
+        "total_bases": 0,
+        "depth_bases": 0.0,
+        "threshold_bases": {threshold: 0 for threshold in THRESHOLDS},
+        "depth_histogram": defaultdict(int),
+    }
+
+
+def add_coverage_depth(accumulator, length, depth):
+    if length <= 0:
+        return
+
+    accumulator["total_bases"] += length
+    accumulator["depth_bases"] += length * depth
+    accumulator["depth_histogram"][depth] += length
+
+    for threshold in THRESHOLDS:
+        if depth >= threshold:
+            accumulator["threshold_bases"][threshold] += length
+
+
+def read_target_bed(filename):
+    
+    #Read target BED and merge overlapping/adjacent intervals.
+    #Expected:
+    #    chromosome start end
+    #Additional BED columns are ignored.
+
+    targets = defaultdict(list)
+
+    if filename is None:
+        return None
+
+    with open(filename, "r", encoding="utf-8") as fh:
+
+        for line_number, line in enumerate(fh, 1):
+
+            line = line.strip()
+
+            if not line:
+                continue
+
+            if line.startswith("#"):
+                continue
+
+            fields = line.split()
+
+            if len(fields) < 3:
+                raise ValueError(
+                    f"Invalid target BED line {line_number}: "
+                    f"expected at least 3 columns"
+                )
+
+            # Common BED header
+            if (
+                fields[0].lower() in {"chrom", "chromosome"}
+                and fields[1].lower() == "start"
+                and fields[2].lower() == "end"
+            ):
+                continue
+
+            chrom = fields[0]
+
+            try:
+                start = int(fields[1])
+                end = int(fields[2])
+            except ValueError as e:
+                raise ValueError(
+                    f"Invalid target coordinates on line {line_number}: "
+                    f"{line}"
+                ) from e
+
+            if start < 0:
+                raise ValueError(
+                    f"Negative target coordinate on line {line_number}: "
+                    f"{line}"
+                )
+
+            if end <= start:
+                raise ValueError(
+                    f"Invalid target interval on line {line_number}: "
+                    f"{line}"
+                )
+
+            targets[chrom].append((start, end))
+    # --------------------------------------------------------------
+    # Sort and merge overlapping/adjacent intervals
+    # --------------------------------------------------------------
+
+    merged_targets = {}
+
+    for chrom, intervals in targets.items():
+
+        intervals.sort()
+
+        merged = []
+
+        for start, end in intervals:
+
+            if merged and start <= merged[-1][1]:
+
+                merged[-1] = (
+                    merged[-1][0],
+                    max(merged[-1][1], end)
+                )
+
+            else:
+
+                merged.append((start, end))
+
+        merged_targets[chrom] = merged
+
+    return merged_targets
+    return merged_targets
+
+
+def calculate_target_territory(targets):
+
+    if targets is None:
+        return 0
+
+    total = 0
+
+    for intervals in targets.values():
+
+        for start, end in intervals:
+            total += end - start
+
+    return total
+
+
+def finalize_coverage_statistics(accumulator):
+
+    total_bases = accumulator["total_bases"]
+
+    if total_bases == 0:
+
+        return {
+            "total_bases": 0,
+            "mean_depth": 0.0,
+            "median_depth": 0.0,
+            "pct_0x": 0.0,
+            "pct_lt10x": 0.0,
+            "pct_lt20x": 0.0,
+            "pct_1x": 0.0,
+            "pct_10x": 0.0,
+            "pct_20x": 0.0,
+            "pct_30x": 0.0,
+            "pct_50x": 0.0,
+            "pct_100x": 0.0,
+        }
+
+    # --------------------------------------------------------------
+    # Mean
+    # --------------------------------------------------------------
+
+    mean_depth = (
+        accumulator["depth_bases"] / total_bases
+    )
+
+    # --------------------------------------------------------------
+    # Weighted median
+    # --------------------------------------------------------------
+
+    midpoint = total_bases / 2
+
+    cumulative = 0
+
+    median_depth = 0.0
+
+    for depth in sorted(accumulator["depth_histogram"]):
+
+        cumulative += accumulator["depth_histogram"][depth]
+
+        if cumulative >= midpoint:
+
+            median_depth = depth
+            break
+
+    # --------------------------------------------------------------
+    # Threshold percentages
+    # --------------------------------------------------------------
+
+    pct = {}
+
+    for threshold in THRESHOLDS:
+
+        covered = accumulator["threshold_bases"][threshold]
+
+        pct[threshold] = (
+            covered / total_bases * 100
+        )
+
+    return {
+
+        "total_bases": total_bases,
+
+        "mean_depth": mean_depth,
+
+        "median_depth": median_depth,
+
+        "pct_0x": max(
+            0.0,
+            100.0 - pct[1]
+        ),
+
+        "pct_lt10x": max(
+            0.0,
+            100.0 - pct[10]
+        ),
+
+        "pct_lt20x": max(
+            0.0,
+            100.0 - pct[20]
+        ),
+
+        "pct_1x": pct[1],
+
+        "pct_10x": pct[10],
+
+        "pct_20x": pct[20],
+
+        "pct_30x": pct[30],
+
+        "pct_50x": pct[50],
+
+        "pct_100x": pct[100],
+    }
+
+def process_coverage_file(coverage_file, targets=None):
+
+    overall = create_coverage_accumulator()
+
+    chromosome_data = defaultdict(
+        create_coverage_accumulator
+    )
+
+    target_index = defaultdict(int)
+
+    with open(
+        coverage_file,
+        "r",
+        encoding="utf-8"
+    ) as fh:
+
+        for line_number, line in enumerate(fh, 1):
+
+            line = line.strip()
+
+            if not line:
+                continue
+
+            if line.startswith("#"):
+                continue
+
+            fields = line.split()
+
+            if len(fields) < 4:
+
+                raise ValueError(
+                    f"Invalid coverage line {line_number}: "
+                    f"expected at least 4 columns"
+                )
+
+            # Header
+            if (
+                fields[0].lower() in {
+                    "chrom",
+                    "chromosome"
+                }
+                and fields[1].lower() == "start"
+                and fields[2].lower() == "end"
+                and fields[3].lower() in {
+                    "coverage",
+                    "depth"
+                }
+            ):
+                continue
+
+            chrom = fields[0]
+
+            try:
+
+                start = int(fields[1])
+                end = int(fields[2])
+                depth = float(fields[3])
+
+            except ValueError as e:
+
+                raise ValueError(
+                    f"Invalid coverage values on line "
+                    f"{line_number}: {line}"
+                ) from e
+
+            if start < 0:
+
+                raise ValueError(
+                    f"Negative coverage start on line "
+                    f"{line_number}: {line}"
+                )
+
+            if end <= start:
+                continue
+
+            if depth < 0:
+
+                raise ValueError(
+                    f"Negative coverage on line "
+                    f"{line_number}: {depth}"
+                )
+
+            # ======================================================
+            # NO TARGET BED
+            # ======================================================
+
+            if targets is None:
+
+                length = end - start
+
+                add_coverage_depth(
+                    overall,
+                    length,
+                    depth
+                )
+
+                add_coverage_depth(
+                    chromosome_data[chrom],
+                    length,
+                    depth
+                )
+
+                continue
+
+            # ======================================================
+            # TARGET BED MODE
+            # ======================================================
+
+            if chrom not in targets:
+                continue
+
+            chrom_targets = targets[chrom]
+
+            i = target_index[chrom]
+
+            # Skip target intervals completely before
+            # the current coverage interval.
+            while (
+                i < len(chrom_targets)
+                and chrom_targets[i][1] <= start
+            ):
+                i += 1
+
+            target_index[chrom] = i
+
+            # ------------------------------------------------------
+            # Intersect coverage interval with target intervals
+            # ------------------------------------------------------
+
+            while (
+                i < len(chrom_targets)
+                and chrom_targets[i][0] < end
+            ):
+
+                target_start, target_end = chrom_targets[i]
+
+                overlap_start = max(
+                    start,
+                    target_start
+                )
+
+                overlap_end = min(
+                    end,
+                    target_end
+                )
+
+                if overlap_end > overlap_start:
+
+                    length = (
+                        overlap_end - overlap_start
+                    )
+
+                    add_coverage_depth(
+                        overall,
+                        length,
+                        depth
+                    )
+
+                    add_coverage_depth(
+                        chromosome_data[chrom],
+                        length,
+                        depth
+                    )
+
+                if target_end <= end:
+
+                    i += 1
+                    target_index[chrom] = i
+
+                else:
+
+                    break
+
+    return overall, chromosome_data
+##################################################################################
+def draw_coverage_report(
+    c,
+    width,
+    height,
+    bam_bed_file,
+    target_bed_file
+):
+
+    # ==============================================================
+    # Page layout
+    # ==============================================================
+
+    left = 30
+    right = 30
+    top = height - 155
+    bottom = 65
+
+    body_width = width - left - right
+
+    # ==============================================================
+    # Read target BED
+    # ==============================================================
+
+    target_mode = (
+        target_bed_file is not None
+        and os.path.basename(str(target_bed_file)) != "NO_FILE"
+    )
+
+    if target_mode:
+        targets = read_target_bed(target_bed_file)
+        target_territory = calculate_target_territory(targets)
+    else:
+        targets = None
+        target_territory = None
+
+    # ==============================================================
+    # Process coverage
+    # ==============================================================
+
+    overall_accumulator, chromosome_accumulators = (
+        process_coverage_file(
+            bam_bed_file,
+            targets
+        )
+    )
+
+    overall = finalize_coverage_statistics(
+        overall_accumulator
+    )
+
+    chromosome_stats = {}
+
+    for chrom, accumulator in chromosome_accumulators.items():
+        chromosome_stats[chrom] = finalize_coverage_statistics(
+            accumulator
+        )
+
+    # ==============================================================
+    # TITLE
+    # ==============================================================
+
+    c.setFillColor(colors.HexColor("#2c3e50"))
+    c.setFont("Helvetica-Bold", 16)
+
+    c.drawString(
+        left,
+        top,
+        "Coverage Report"
+    )
+
+    top -= 20
+
+    c.setFillColor(colors.HexColor("#666666"))
+    c.setFont("Helvetica", 8)
+
+    description = (
+        "Coverage restricted to target/capture BED"
+        if target_mode
+        else
+        "All bases represented in coverage BED"
+    )
+
+    c.drawString(
+        left,
+        top,
+        description
+    )
+
+    top -= 16
+
+    # ==============================================================
+    # COVERAGE INFORMATION TABLE
+    # ==============================================================
+
+    info_data = [
+        [
+            Paragraph("<b>Coverage file</b>", coverage_styles["Normal"]),
+            Paragraph(
+str(os.path.basename(str(bam_bed_file))),
+coverage_styles["Normal"]
+            )
+        ],
+
+        [
+            Paragraph("<b>Target BED</b>", coverage_styles["Normal"]),
+            Paragraph(
+str(os.path.basename(str(target_bed_file)))
+if target_mode else
+"Not supplied",
+coverage_styles["Normal"]
+            )
+        ],
+
+        [
+            Paragraph("<b>Analysis</b>", coverage_styles["Normal"]),
+            Paragraph(
+description,
+coverage_styles["Normal"]
+            )
+        ],
+
+        [
+            Paragraph("<b>Bases evaluated</b>", coverage_styles["Normal"]),
+            Paragraph(
+f"{overall['total_bases']:,} bp",
+coverage_styles["Normal"]
+            )
+        ],
+    ]
+
+    if target_mode:
+        info_data.append(
+            [
+Paragraph(
+    "<b>Target territory</b>",
+    coverage_styles["Normal"]
+),
+Paragraph(
+    f"{target_territory:,} bp",
+    coverage_styles["Normal"]
+)
+            ]
+        )
+
+    info_table = Table(
+        info_data,
+        colWidths=[
+            100,
+            body_width - 100
+        ]
+    )
+
+    info_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#f9f9f9") ),
+            ("LINEBEFORE", (0, 0), (0, -1), 4, colors.HexColor("#4CAF50") ),
+            ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#dddddd") ),
+            ("VALIGN", (0, 0), (-1, -1), "TOP" ),
+            ( "LEFTPADDING", (0, 0), (-1, -1), 7 ),
+            ( "RIGHTPADDING", (0, 0), (-1, -1), 7 ),
+            ( "TOPPADDING", (0, 0), (-1, -1), 4 ),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 4 ),
+        ])
+    )
+
+    iw, ih = info_table.wrap(
+        body_width,
+        150
+    )
+
+    info_table.drawOn(
+        c,
+        left,
+        top - ih
+    )
+
+    top -= ih + 12
+
+    # ==============================================================
+    # OVERALL + WES SUMMARY TABLES
+    # ==============================================================
+    #
+    # IMPORTANT:
+    # Use explicit X positions and widths that add up exactly
+    # to the available page width.
+    #
+    # ==============================================================
+    
+    gap = 15
+
+    overall_width = 190
+    summary_x = left + overall_width + gap
+    summary_width = body_width - overall_width - gap
+
+    # --------------------------------------------------------------
+    # Overall coverage
+    # --------------------------------------------------------------
+
+    c.setFillColor(colors.HexColor("#34495e"))
+    c.setFont("Helvetica-Bold", 11)
+
+    c.drawString(
+        left,
+        top,
+        "Overall Coverage"
+    )
+
+    overall_data = [
+        ["Metric", "Value"],
+        ["Bases evaluated", f"{overall['total_bases']:,}" ],
+        ["Mean Coverage", f"{overall['mean_depth']:.2f}×" ],
+        ["Median Coverage", f"{overall['median_depth']:.2f}×"],
+        ["0× Coverage", f"{overall['pct_0x']:.2f}%" ],
+        ["<10× Coverage", f"{overall['pct_lt10x']:.2f}%"],
+        ["<20× Coverage", f"{overall['pct_lt20x']:.2f}%"],
+        ["≥1× Coverage", f"{overall['pct_1x']:.2f}%"],
+        ["≥10× Coverage", f"{overall['pct_10x']:.2f}%"],
+        ["≥20× Coverage", f"{overall['pct_20x']:.2f}%"],
+        ["≥30× Coverage",f"{overall['pct_30x']:.2f}%"],
+        ["≥50× Coverage",f"{overall['pct_50x']:.2f}%"],
+        ["≥100× Coverage",f"{overall['pct_100x']:.2f}%"],
+    ]
+
+    overall_table = Table(
+        overall_data,
+        colWidths=[
+            overall_width - 65,
+            65
+        ]
+    )
+
+    overall_table.setStyle(
+        TableStyle([
+
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4CAF50") ),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white ),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#cccccc") ),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f2f2f2") ]),
+            ("ALIGN", (1, 1), (1, -1), "RIGHT"),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("FONTSIZE", (0, 0), (-1, -1), 7 ),
+            ("LEFTPADDING", (0, 0), (-1, -1), 5),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 5 ),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ])
+        )
+
+    ow, oh = overall_table.wrap(overall_width, 300 )
+    overall_table.drawOn( c, left, top - 14 - oh)
+
+    # --------------------------------------------------------------
+    # WES summary
+    # --------------------------------------------------------------
+
+    c.setFillColor(colors.HexColor("#34495e"))
+    c.setFont("Helvetica-Bold", 11)
+
+    c.drawString(
+        summary_x,
+        top,
+        "WES Coverage Summary"
+    )
+
+    summary_data = [
+        ["Metric", "Value"],
+        ["Mean depth", f"{overall['mean_depth']:.2f}×"],
+        ["Median depth", f"{overall['median_depth']:.2f}×"],
+        ["≥20×",f"{overall['pct_20x']:.2f}%" ],
+        ["≥30×",f"{overall['pct_30x']:.2f}%"],
+        ["≥50×",f"{overall['pct_50x']:.2f}%"],
+        ["≥100×",f"{overall['pct_100x']:.2f}%" ],
+        ["0×",f"{overall['pct_0x']:.2f}%"],
+        ["<10×",f"{overall['pct_lt10x']:.2f}%"],
+    ]
+
+    summary_table = Table(
+        summary_data,
+        colWidths=[
+            summary_width - 65,
+            65
+        ]
+    )
+
+    summary_table.setStyle(
+        TableStyle([
+
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#2e7d32")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white ),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#e8f5e9")),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#bdbdbd")),
+            ("ALIGN", (1, 1), (1, -1), "RIGHT"),
+            ( "VALIGN",(0, 0),(-1, -1), "MIDDLE"),
+            ("FONTSIZE", (0, 0), (-1, -1), 7 ),
+            ("LEFTPADDING", (0, 0), (-1, -1), 5),
+            ("RIGHTPADDING", (0, 0),(-1, -1), 5),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1),3),
+        ])
+    )
+
+    sw, sh = summary_table.wrap(summary_width, 250 )
+    summary_table.drawOn(c, summary_x, top - 14 - sh )
+
+    # ==============================================================
+    # PER-CHROMOSOME SECTION
+    # ==============================================================
+
+    chromosome_y = top - 14 - max(oh, sh) - 18
+
+    c.setFillColor(colors.HexColor("#34495e"))
+    c.setFont("Helvetica-Bold", 11)
+
+    c.drawString(
+        left,
+        chromosome_y,
+        "Per-Chromosome Coverage"
+    )
+
+    chromosome_y -= 14
+
+    c.setFillColor(colors.HexColor("#666666"))
+    c.setFont("Helvetica", 6.5)
+
+    explanation = (
+        "Only target BED bases are included in the statistics."
+        if target_mode
+        else
+        "Statistics represent intervals contained in the supplied coverage BED."
+    )
+
+    c.drawString(
+        left,
+        chromosome_y,
+        explanation
+    )
+
+    chromosome_y -= 8
+
+    # ==============================================================
+    # Chromosome table
+    # ==============================================================
+
+    chromosome_data = [[
+        "Chromosome",
+        "Bases",
+        "Mean",
+        "Median",
+        "0×",
+        "≥10×",
+        "≥20×",
+        "≥30×",
+        "≥50×",
+        "≥100×"
+    ]]
+
+    for chrom in sorted(chromosome_stats):
+
+        stats = chromosome_stats[chrom]
+
+        chromosome_data.append([
+            str(chrom),
+            f"{stats['total_bases']:,}",
+            f"{stats['mean_depth']:.2f}×",
+            f"{stats['median_depth']:.2f}×",
+            f"{stats['pct_0x']:.2f}%",
+            f"{stats['pct_10x']:.2f}%",
+            f"{stats['pct_20x']:.2f}%",
+            f"{stats['pct_30x']:.2f}%",
+            f"{stats['pct_50x']:.2f}%",
+            f"{stats['pct_100x']:.2f}%"
+        ])
+
+    # --------------------------------------------------------------
+    # FIXED WIDTH
+    #
+    # Total = 526 pt, safely inside 552 pt body width.
+    # --------------------------------------------------------------
+
+    chromosome_col_widths = [
+        65,
+        65,
+        52,
+        52,
+        48,
+        48,
+        48,
+        48,
+        48,
+        52
+    ]
+
+    chromosome_table = Table(
+        chromosome_data,
+        colWidths=chromosome_col_widths,
+        repeatRows=1
+    )
+
+    chromosome_table.setStyle(
+        TableStyle([
+
+            (
+"BACKGROUND",
+(0, 0),
+(-1, 0),
+colors.HexColor("#4CAF50")
+            ),
+
+            (
+"TEXTCOLOR",
+(0, 0),
+(-1, 0),
+colors.white
+            ),
+
+            (
+"GRID",
+(0, 0),
+(-1, -1),
+0.35,
+colors.HexColor("#cccccc")
+            ),
+
+            (
+"ROWBACKGROUNDS",
+(0, 1),
+(-1, -1),
+[
+    colors.white,
+    colors.HexColor("#f2f2f2")
+]
+            ),
+
+            (
+"ALIGN",
+(1, 1),
+(-1, -1),
+"RIGHT"
+            ),
+
+            (
+"VALIGN",
+(0, 0),
+(-1, -1),
+"MIDDLE"
+            ),
+
+            (
+"FONTSIZE",
+(0, 0),
+(-1, -1),
+6.2
+            ),
+
+            (
+"LEFTPADDING",
+(0, 0),
+(-1, -1),
+2
+            ),
+
+            (
+"RIGHTPADDING",
+(0, 0),
+(-1, -1),
+2
+            ),
+
+            (
+"TOPPADDING",
+(0, 0),
+(-1, -1),
+2.5
+            ),
+
+            (
+"BOTTOMPADDING",
+(0, 0),
+(-1, -1),
+2.5
+            ),
+        ])
+    )
+
+    cw, ch = chromosome_table.wrap(
+        body_width,
+        height
+    )
+
+    # ==============================================================
+    # If chromosome table does not fit:
+    # split automatically across pages
+    # ==============================================================
+
+    available_height = chromosome_y - bottom
+
+    if ch <= available_height:
+
+        chromosome_table.drawOn(
+            c,
+            left,
+            chromosome_y - ch
+        )
+
+        chromosome_bottom = chromosome_y - ch
+
+    else:
+
+        # Split table into chunks that fit on the current page
+        remaining_table = chromosome_table
+        current_y = chromosome_y
+
+        while remaining_table:
+
+            available_height = current_y - bottom
+
+            table_parts = remaining_table.split(
+                body_width,
+                available_height
+            )
+
+            if not table_parts:
+                break
+
+            current_part = table_parts[0]
+
+            part_w, part_h = current_part.wrap(
+                body_width,
+                available_height
+            )
+
+            current_part.drawOn(
+                c,
+                left,
+                current_y - part_h
+            )
+
+            remaining_table = (
+                table_parts[1]
+                if len(table_parts) > 1
+                else None
+            )
+
+            if remaining_table:
+
+                c.showPage()
+
+                draw_header_to_footer(
+                    c,
+                    width,
+                    height,
+                    metadata,
+                    delmorologo
+                )
+
+                current_y = height - 155
+
+                c.setFillColor(
+                    colors.HexColor("#34495e")
+                )
+
+                c.setFont(
+                    "Helvetica-Bold",
+                    11
+                )
+
+                c.drawString(
+                    left,
+                    current_y,
+                    "Per-Chromosome Coverage (continued)"
+                )
+
+                current_y -= 18
+
+        chromosome_bottom = bottom
+        
+    # ==============================================================
+    # INTERPRETATION BOX
+    # ==============================================================
+
+    warning_text = (
+        "<b>Interpretation:</b> "
+        "For WES, target-restricted coverage is preferred when "
+        "the capture/target BED is available. "
+        "If no target BED is supplied, this report describes "
+        "the bases represented by the supplied coverage file "
+        "and should not be interpreted as a formal "
+        "capture-target coverage metric."
+    )
+
+    warning_table = Table(
+        [[
+            Paragraph(
+              warning_text,
+              coverage_styles["Normal"]
+            )
+        ]],
+        colWidths=[
+            body_width
+        ]
+    )
+
+    warning_table.setStyle(
+        TableStyle([
+
+            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#fff3e0") ),
+            ("LINEBEFORE", (0, 0), (0, -1),4, colors.HexColor("#ef6c00") ),
+            ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#ef6c00") ),
+            ("LEFTPADDING", (0, 0), (-1, -1), 8),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+            ("TOPPADDING", (0, 0), (-1, -1), 5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ])
+    )
+
+    ww, wh = warning_table.wrap( body_width, 100 )
+
+    warning_y = chromosome_bottom - 12
+
+    # Only draw warning box when it fits.
+    if warning_y - wh >= bottom:
+        warning_table.drawOn( c, left, warning_y - wh )
+        
+
 ##################################################################################
 # Draw header, patient info, and footer on the first page
 draw_header_to_footer(c, width, height, metadata, delmorologo)
@@ -304,46 +1375,62 @@ order_info(c, width, height, metaYaml)
 
 ##################################################################################
 
+c.showPage()
+draw_header_to_footer( c, width, height, metadata, delmorologo )
+draw_coverage_report( c, width, height, bamBedFile, bedTargetFile )
 ##################################################################################
+
 # Function to add a plot to the PDF
 def add_plot_to_pdf(plot_file, c, width, height, plot_index):
     # Define margins (top, bottom, left, right)
     margin_left = 30
     margin_right = 30
-    margin_top = 150  # Reduced to fit more plots
-    margin_bottom = 60  # Reduced to fit more plots
+    margin_top = 150
+    margin_bottom = 60
 
     # Define grid structure
     plots_per_row = 3
-    num_rows_per_page = 4  # Ensures 4 rows fit per page
-    plots_per_page = plots_per_row * num_rows_per_page  # 12 plots per page
+    num_rows_per_page = 4
+    plots_per_page = plots_per_row * num_rows_per_page
 
     # Calculate plot dimensions
-    plot_width = (width - margin_left - margin_right) / plots_per_row
-    plot_height = (height - margin_top - margin_bottom) / num_rows_per_page  # Ensures 5 rows fit
+    plot_width = ( width - margin_left - margin_right) / plots_per_row
+    plot_height = ( height - margin_top - margin_bottom ) / num_rows_per_page
 
-    # Compute the row and column for the current plot
-    page_index = plot_index // plots_per_page  # Determine current page number
-    index_in_page = plot_index % plots_per_page  # Position within the current page
-    row = index_in_page // plots_per_row  # Row within page (0-4)
-    col = index_in_page % plots_per_row  # Column (0-2)
+    # Compute the row and column
+    page_index = plot_index // plots_per_page
+    index_in_page = plot_index % plots_per_page
+    row = index_in_page // plots_per_row
+    col = index_in_page % plots_per_row
 
-    # Compute position on the page
-    x = margin_left + col * plot_width
-    y = height - margin_top - (row + 1) * plot_height  # Row-wise positioning
-
-    # If this is the first plot on a new page (not the first page), create a new page
+    # If this is the first plot on a new page
     if index_in_page == 0 and plot_index > 0:
-        c.showPage()  # Start a new page
-        draw_header_to_footer(c, width, height, metadata, delmorologo)  # Add header/footer
+        c.showPage()
+        draw_header_to_footer(c, width, height, metadata, delmorologo )
 
-    # Draw the plot image
-    c.drawImage(plot_file, x, y, width=plot_width, height=plot_height, preserveAspectRatio=True)
+    # --------------------------------------------------------------
+    # Add text before the first plot
+    # --------------------------------------------------------------
+
+    if plot_index == 0:
+        c.setFillColor(colors.HexColor("#2c3e50"))
+        c.setFont("Helvetica-Bold",14)
+        c.drawString(margin_left,height - 145,"Variant scope: Whole VCF")
+
+    # --------------------------------------------------------------
+    # Compute plot position
+    # --------------------------------------------------------------
+
+    x = ( margin_left + col * plot_width )
+    y = ( height - margin_top - (row + 1) * plot_height )
+
+    # Draw the plot
+    c.drawImage( plot_file, x, y, width=plot_width, height=plot_height, preserveAspectRatio=True )
 
 ##################################################################################
 
 # Draw header, patient info, and footer on the first page
-draw_header_to_footer(c, width, height, metadata, delmorologo)
+#draw_header_to_footer(c, width, height, metadata, delmorologo)
 
 # Save the current page
 c.showPage()
@@ -472,34 +1559,74 @@ def create_quality_distribution_plot(df, sample_plot_dir, vcf_basename):
 ##################################################################################
 
 # Function to create the transitions vs transversions plot
+
 def create_transitions_transversions_plot(df, sample_plot_dir, vcf_basename):
-    # Drop rows where REF or ALT is missing
-    df = df.dropna(subset=['REF', 'ALT'])
+    df = df.dropna(subset=['REF', 'ALT']).copy()
 
-    # Determine mutation type (transition or transversion)
-    df['mutation_type'] = df.apply(lambda row: 'Transition' if row['REF'] + row['ALT'] in {'AG', 'GA', 'CT', 'TC'} else 'Transversion', axis=1)
+    df['REF'] = df['REF'].astype(str).str.upper()
+    df['ALT'] = df['ALT'].astype(str).str.upper()
 
-    # Count mutation types
-    mutation_counts = df['mutation_type'].value_counts()
+    # Keep only biallelic SNPs
+    df = df[
+        (df['REF'].str.len() == 1) &
+        (df['ALT'].str.len() == 1) &
+        (df['REF'].isin(['A', 'C', 'G', 'T'])) &
+        (df['ALT'].isin(['A', 'C', 'G', 'T']))
+    ].copy()
 
-    # Plot transitions vs transversions
-    plt.figure(figsize=(10, 8))
-    bars = plt.bar(mutation_counts.index, mutation_counts.values, color=['green', 'red'])
+    transitions = {'AG', 'GA', 'CT', 'TC'}
 
-    # Add counts above bars
-    for i, value in enumerate(mutation_counts.values):
-        plt.text(i, value + 0.1, str(value), ha='center', va='bottom')
+    df['mutation_type'] = (df['REF'] + df['ALT']).apply(
+        lambda x: 'Transition' if x in transitions else 'Transversion'
+    )
 
-    plt.title(f'Transitions vs Transversions for {vcf_basename}')
-    plt.xlabel('Mutation Type')
-    plt.ylabel('Count')
+    transition_count = (df['mutation_type'] == 'Transition').sum()
+    transversion_count = (df['mutation_type'] == 'Transversion').sum()
 
-    # Save the plot
-    plot_file = os.path.join(sample_plot_dir, f"{vcf_basename}_f5_TiTv.png")
-    plt.savefig(plot_file)
-    plt.close()
+    titv = (
+        transition_count / transversion_count
+        if transversion_count > 0
+        else float('inf')
+    )
+
+    categories = ['Transition', 'Transversion']
+    counts = [transition_count, transversion_count]
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    
+    bars = ax.bar(categories, counts, color=['green', 'red'] )
+
+    max_count = max(counts) if counts else 0
+
+    for bar, count in zip(bars, counts):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            count + max_count * 0.02 if max_count > 0 else 0.1,
+            f'{count:,}',
+            ha='center',
+            va='bottom'
+        )
+
+    ax.set_title(f'Transitions vs Transversions for {vcf_basename}')
+    ax.set_xlabel('Mutation Type')
+    ax.set_ylabel('Count')
+
+    titv_text = f'Ti/Tv = {titv:.2f}' if transversion_count > 0 else 'Ti/Tv = ∞'
+
+    ax.text(0.5, 0.95, titv_text, transform=ax.transAxes, ha='center', va='top', fontsize=13, fontweight='bold')
+
+    ax.set_ylim(0, max_count * 1.15 if max_count > 0 else 1)
+
+    os.makedirs(sample_plot_dir, exist_ok=True)
+
+    plot_file = os.path.join(sample_plot_dir,f'{vcf_basename}_f5_TiTv.png')
+
+    fig.tight_layout()
+    fig.savefig(plot_file, dpi=300, bbox_inches='tight')
+    plt.close(fig)
 
     return plot_file
+
 
 ##################################################################################
 
@@ -684,10 +1811,10 @@ def create_genotype_representation_plot(df, sample_plot_dir, vcf_basename):
         .value_counts()
         .reindex(
             [
-                'Homozygous Reference',
-                'Heterozygous',
-                'Homozygous Alternate',
-                'Other'
+'Homozygous Reference',
+'Heterozygous',
+'Homozygous Alternate',
+'Other'
             ],
             fill_value=0
         )
@@ -774,8 +1901,8 @@ def create_pass_filtered_variants_plot(df, sample_plot_dir, vcf_basename):
         .value_counts()
         .reindex(
             [
-                'PASS',
-                'Filtered'
+            'PASS',
+            'Filtered'
             ],
             fill_value=0
         )
@@ -839,10 +1966,12 @@ df = df.dropna(subset=['ALT'])
 
 # Determine variant type (SNP, MNV, or INDEL)
 df['variant_type'] = df.apply(lambda row: 'SNP' if len(row['REF']) == 1 and len(row['ALT']) == 1 else
-                                      'MNV' if len(row['REF']) > 1 and len(row['ALT']) > 1 and len(row['REF']) == len(row['ALT']) else
-                                      'INDEL', axis=1)
+      'MNV' if len(row['REF']) > 1 and len(row['ALT']) > 1 and len(row['REF']) == len(row['ALT']) else
+      'INDEL', axis=1)
 
 vcf_basename = os.path.basename("${vcFile}").split(".")[0]
+
+
 
 ##################################################################################
 
@@ -909,7 +2038,7 @@ plot_file_f10 = create_pass_filtered_variants_plot(df, sample_plot_dir,vcf_basen
 add_plot_to_pdf(plot_file_f10, c, width, height, 9)
 
 ##################################################################################
-#                 Below a test of plots to be deleted later                      #
+# Below a test of plots to be deleted later      #
 ##################################################################################
 # Create the average depth per chromosome plot
 # plot_file_f7 = create_depth_per_chromosome_plot(df, sample_plot_dir, vcf_basename)

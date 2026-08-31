@@ -202,7 +202,7 @@ workflow {
 								    Ethnicity: row.Ethnicity,
 								    Diagnosis: row.Diagnosis,
 							    	]
-							    	[metaPatients, file(row.vcFile)]   
+							    	[metaPatients, file(row.BamFile), file(row.vcFile) ]   
 								}.combine(delmoroLogoCh)					: Channel.empty()
 
     // Pipeline Executions step with Physician Metadata Parsing // Function to parse YAML file
@@ -211,8 +211,8 @@ workflow {
  
     // Combine both channels ( metaPatiLogCh with  pipeExecYamlCh ) 
     metaPipeExecYaml = params.metaPatients && params.metaYaml ? metaPatiLogCh.combine(pipeExecYamlCh)
-                        						      .map { metaPatients, vcFile, delmoroLogo, pipeExecYaml_Ch -> 
-										    [metaPatients, vcFile, delmoroLogo, pipeExecYaml_Ch]  
+                        						      .map { metaPatients, bamFile, vcFile, delmoroLogo, pipeExecYaml_Ch -> 
+										    [metaPatients, bamFile, vcFile, delmoroLogo, pipeExecYaml_Ch]  
 										}						: Channel.empty()
 
     if (params.fullmode) {	 
