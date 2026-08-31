@@ -739,50 +739,30 @@ def draw_coverage_report(
     info_data = [
         [
             Paragraph("<b>Coverage file</b>", coverage_styles["Normal"]),
-            Paragraph(
-str(os.path.basename(str(bam_bed_file))),
-coverage_styles["Normal"]
-            )
+            Paragraph(str(os.path.basename(str(bam_bed_file))),coverage_styles["Normal"])
         ],
 
         [
             Paragraph("<b>Target BED</b>", coverage_styles["Normal"]),
-            Paragraph(
-str(os.path.basename(str(target_bed_file)))
-if target_mode else
-"Not supplied",
-coverage_styles["Normal"]
-            )
+            Paragraph(str(os.path.basename(str(target_bed_file)))if target_mode else "Not supplied", coverage_styles["Normal"])
         ],
 
         [
             Paragraph("<b>Analysis</b>", coverage_styles["Normal"]),
-            Paragraph(
-description,
-coverage_styles["Normal"]
-            )
+            Paragraph(description, coverage_styles["Normal"] )
         ],
 
         [
             Paragraph("<b>Bases evaluated</b>", coverage_styles["Normal"]),
-            Paragraph(
-f"{overall['total_bases']:,} bp",
-coverage_styles["Normal"]
-            )
+            Paragraph(f"{overall['total_bases']:,} bp", coverage_styles["Normal"])
         ],
     ]
 
     if target_mode:
         info_data.append(
             [
-Paragraph(
-    "<b>Target territory</b>",
-    coverage_styles["Normal"]
-),
-Paragraph(
-    f"{target_territory:,} bp",
-    coverage_styles["Normal"]
-)
+            Paragraph("<b>Target territory</b>", coverage_styles["Normal"] ),
+            Paragraph(f"{target_territory:,} bp", coverage_styles["Normal"])
             ]
         )
 
