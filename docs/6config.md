@@ -121,9 +121,9 @@ To automatically generate all required CSV files as part of the setup, consult t
 
 ### Patients Metadata csv Template  
 ???+ note "💡 **CSVs/7_metaPatients.csv**"
-    Header: `csvIdentifier,SampleID,Gender,Dob,Ethnicity,Diagnosis,vcFile`
+    Header: `csvIdentifier,SampleID,Gender,Dob,Ethnicity,Diagnosis,BamFile,vcFile`
     ```
-    SRR13-FVXF,SRR13-FVXF,female,2025-06-01,African,WES,./outdir/annotation/SRR13_vep.vcf.gz
+    SRR13-FVXF,SRR13-FVXF,female,2025-06-01,African,WES,./outdir/Mapping/SRR13_DelMoro.bam,./outdir/annotation/SRR13_vep.vcf.gz
     ```
 
 

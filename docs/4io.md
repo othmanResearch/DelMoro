@@ -10,17 +10,18 @@
 
 ## Inputs
 
-| Module                 | Description                                                                                                                                              |
-|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Quality Control**    | A CSV file listing the raw FASTQ files to be assessed. Supports only paired-end reads.                                                                   |
+| Module                 | Description                                                                                                                                               |
+|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Quality Control**    | A CSV file listing the raw FASTQ files to be assessed. Supports only paired-end reads.                                                                    |
 | **Trimming**           | A CSV of reads to be trimmed. Includes optional adapter sequence file. Users may choose from various trimming tools such as Trimmomatic, fastp, or bbduk. |
-| **Reference Indexing** | A reference genome in FASTA format. Optionally, a preconfigured iGenomes identifier may be used.                                                         |
-| **Read Alignment**     | A reference genome and a set of trimmed FASTQ files. Alignment is performed per sample.                                                                  |
-| **BQSR**               | Two known-site VCF files used for recalibration, along with a list of BAM files to be processed.                                                         |
-| **Variant Calling**    | Aligned BAM files and corresponding reference genome. Used to identify SNPs and other variants.                                                          |
-| **Variant Filtering**  | Variants calling format files to be filtered based on SNP and INDEL thresholds.                                                                |
-| **VEP Cache Setup**    | Species name to retrieve the appropriate VEP cache. Assembly and cache type may also be specified if needed.                                             |
-| **VEP Annotation**     | A set of VCF files or a list of variant files to be annotated. Requires reference genome, species, and optional cache parameters.                        |
+| **Reference Indexing** | A reference genome in FASTA format. Optionally, a preconfigured iGenomes identifier may be used.                                                          |
+| **Read Alignment**     | A reference genome and a set of trimmed FASTQ files. Alignment is performed per sample.                                                                   |
+| **BQSR**               | Two known-site VCF files used for recalibration, along with a list of BAM files to be processed.                                                          |
+| **Variant Calling**    | Aligned BAM files and corresponding reference genome. Used to identify SNPs and other variants.                                                           |
+| **Variant Filtering**  | Variants calling format files to be filtered based on SNP and INDEL thresholds.                                                                           |
+| **Reporting**          | Bam and Vcf file with patients metadata                                                                                                                   |
+| **VEP Cache Setup**    | Species name to retrieve the appropriate VEP cache. Assembly and cache type may also be specified if needed.                                              |
+| **VEP Annotation**     | A set of VCF files or a list of variant files to be annotated. Requires reference genome, species, and optional cache parameters.                         |
 
 **Configuration and Usage:** 🔗 [Parameter Details](5parameters.md) 🔗 [Configuration Files](6config.md)
  🔗 [Running the Pipeline](7running.md)
@@ -38,7 +39,8 @@
 | **Read Alignment**  | Sorted BAM files, index files (`.bai`), alignment QC metrics, and genome coverage data      | Aligned reads with statistics for coverage and mapping quality          |
 | **BQSR**            | Indexed known-site VCFs, recalibration table, and recalibrated BAM files                    | Improves accuracy of base quality scores used in variant calling        |
 | **Variant Calling** | Raw VCF files containing variant calls, and a summary table                                 | Identified SNPs and indels per sample                                   |
-| **Variant Filtering**  | One merged sorted filtered vcf file , or SNP and INDEL filtered separated files          | Filtered VCFs including all or SNPs or INDELs                           |
+| **Variant Filtering**  | One merged sorted filtered vcf file , or SNP and INDEL filtered separated files             | Filtered VCFs including all or SNPs or INDELs                           |
+| **Reporting**          | pdf report including bam xdepth and vcf metrics plots                                       |
 | **VEP Cache Setup** | Directory containing locally stored VEP cache                                               | Enables fast, offline variant annotation                                |
 | **VEP Annotation**  | Annotated VCF files (`.vcf.gz`), index files, and an HTML annotation report                 | Functionally annotated variants with summaries accessible via browser   |
 

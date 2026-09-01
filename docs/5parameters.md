@@ -103,7 +103,7 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--cachedir` = Path to VEP cache directory. <span title="Default: .vepcachedir">⊕</span>
 
 ## Reporting 
-- `--metaPatients` = Csv of patiens' Metadata + vcf paths <span title="Default: null">⊕</span>
+- `--metaPatients` = Csv of patiens' Metadata + bam paths + vcf paths <span title="Default: null">⊕</span>
 - `--metaYaml` = Yaml file of Physician metadata + executions steps info <span title="Default: null">⊕</span>
 
 

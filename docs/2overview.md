@@ -20,8 +20,8 @@
 6. **Variant Calling** – Identify genomic variants from aligned reads.
 7. **Variant Filtering** – Filter Variant ( SNP and INDEL ) with a hard filter and dynamic options.  
 8. **Functional Annotation** – Interpret variants with an annotation process split into:
-   - **Cache Preparation** (for reproducibility and offline use)
-   - **Variant Annotation** (functional characterization of variants)
+    - **Cache Preparation** (for reproducibility and offline use)
+    - **Variant Annotation** (functional characterization of variants)
 9. **Report Generation** – Produce summaries, metrics, and optional **depth-coverage visualizations**.
 
 ### Key Features
