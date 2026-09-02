@@ -1,0 +1,195 @@
+<!DOCTYPE html><html class="writer-html5" lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Firas Zemzem"><link rel="canonical" href="https://yourusername.github.io/DelMoro/1quickstart/">
+      <link rel="shortcut icon" href="../img/favicon.ico">
+    <title>Quickstart - DelMoro</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/theme_extra.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+        <link href="../css/custom.css" rel="stylesheet">
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Quickstart";
+        var mkdocs_page_input_path = "1quickstart.md";
+        var mkdocs_page_url = "/DelMoro/1quickstart/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+        </style></head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> DelMoro
+        </a><div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here">
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Quickstart</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#clone-the-pipeline">Clone the Pipeline</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#install-all-dependencies-via-conda">Install All Dependencies via Conda</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Pipeline Overview</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../2overview/">Workflow Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../3requirements/">Requirements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../4io/">Inputs &amp; Outputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../5parameters/">Parameters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../6config/">Config Files</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../7running/">Running the Pipeline</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Graphical User Interface</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../8GUI/">GUI Overview</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../9changelog/">Changelog</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../10about/">About</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">DelMoro</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Quickstart</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/othmanResearch/DelMoro.git/edit/master/docs/1quickstart.md">Edit on othmanResearch/DelMoro</a>
+    </li>
+  </ul>
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="installing-and-managing-dependencies">Installing and Managing Dependencies<a class="headerlink" href="#installing-and-managing-dependencies" title="Permanent link">¶</a></h1>
+<div style="text-align: justify;">
+
+<p>This guide helps you set up the required tools, configure your environment, and run the pipeline on your sequencing data. The software dependencies required to execute the various stages of the DelMoro workflow are specified in the `DelMoro.yml` file.</p>
+
+</div>
+
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h2>
+<p>Before running DelMoro, make sure the following tools are installed:</p>
+<ul>
+<li><strong>Nextflow</strong> – <a href="https://www.nextflow.io/">nextflow.io</a></li>
+<li><strong>Conda</strong> or <strong>Mamba</strong> – <a href="https://docs.conda.io/en/latest/miniconda.html">Conda</a> or <a href="https://mamba.readthedocs.io/en/latest/">Mamba</a></li>
+<li><strong>Docker</strong> – <a href="https://docs.docker.com/get-docker/">docs.docker.com</a></li>
+<li><strong>Singularity / Apptainer</strong> – <a href="https://apptainer.org/">apptainer.org</a></li>
+</ul>
+<h2 id="clone-the-pipeline">Clone the Pipeline<a class="headerlink" href="#clone-the-pipeline" title="Permanent link">¶</a></h2>
+<p>Clone the DelMoro repository from GitHub:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/othmanResearch/DelMoro.git
+<span class="nb">cd</span><span class="w"> </span>DelMoro
+</code></pre></div>
+<h2 id="install-all-dependencies-via-conda">Install All Dependencies via Conda<a class="headerlink" href="#install-all-dependencies-via-conda" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>DelMoro.yml
+conda<span class="w"> </span>activate<span class="w"> </span>DelMoro
+</code></pre></div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../2overview/" class="btn btn-neutral float-right" title="Workflow Structure">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/othmanResearch/DelMoro.git" class="fa fa-code-fork" style="color: #fcfcfc"> othmanResearch/DelMoro</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">« Previous</a></span>
+    
+    
+      <span><a href="../2overview/" style="color: #fcfcfc">Next »</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+      <script src="../assets/scripts.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+
+
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+</script></body></html>

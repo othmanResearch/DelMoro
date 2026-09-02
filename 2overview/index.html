@@ -1,0 +1,240 @@
+<!DOCTYPE html><html class="writer-html5" lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Firas Zemzem"><link rel="canonical" href="https://yourusername.github.io/DelMoro/2overview/">
+      <link rel="shortcut icon" href="../img/favicon.ico">
+    <title>Workflow Structure - DelMoro</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/theme_extra.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+        <link href="../css/custom.css" rel="stylesheet">
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Workflow Structure";
+        var mkdocs_page_input_path = "2overview.md";
+        var mkdocs_page_url = "/DelMoro/2overview/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+        </style></head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> DelMoro
+        </a><div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here">
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../1quickstart/">Quickstart</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Pipeline Overview</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Workflow Structure</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#stepmode">Stepmode</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#subworkflows">Subworkflows</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#key-features">Key Features</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#fullmode">Fullmode</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#characteristics">Characteristics</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#workflow-adaptability-example-use-cases">Workflow Adaptability &amp; Example Use Cases</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../3requirements/">Requirements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../4io/">Inputs &amp; Outputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../5parameters/">Parameters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../6config/">Config Files</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../7running/">Running the Pipeline</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Graphical User Interface</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../8GUI/">GUI Overview</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../9changelog/">Changelog</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../10about/">About</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">DelMoro</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Pipeline Overview</li>
+      <li class="breadcrumb-item active">Workflow Structure</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/othmanResearch/DelMoro.git/edit/master/docs/2overview.md">Edit on othmanResearch/DelMoro</a>
+    </li>
+  </ul>
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="workflow-structure">Workflow Structure<a class="headerlink" href="#workflow-structure" title="Permanent link">¶</a></h1>
+<div style="text-align: justify;">
+<p><b>DelMoro</b> operates in two operational modes <b>stepmode</b> and <b>fullmode</b>. </p>
+
+<p>The full mode is designed to run the workflow with minimal user intervention, requiring the user to focus primarily on ensuring the quality of the input data. This mode follows a hands-off approach, handling all downstream processes automatically. </p> 
+<p>In step mode, users can execute individual stages of the workflow independently. This mode is particularly useful for targeted tasks such as performing variant calling from pre-aligned BAM files, annotating existing VCF files, or debugging specific workflow components. </p>
+</div>
+
+<ul>
+<li><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../img/pipelineDelMoro.png" data-desc-position="bottom"><img alt="pipelineDelMoro.png" src="../img/pipelineDelMoro.png"></a> </li>
+</ul>
+<h2 id="stepmode">Stepmode<a class="headerlink" href="#stepmode" title="Permanent link">¶</a></h2>
+<p><strong>Stepmode</strong> decomposes the workflow into <strong>eight discrete, sequential subworkflows</strong>, allowing users to execute, customize, and refine each stage independently.</p>
+<h3 id="subworkflows">Subworkflows<a class="headerlink" href="#subworkflows" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Raw Read Quality Control</strong> – Assess sequencing read quality prior to downstream processing.</li>
+<li><strong>Adapter Trimming</strong> – Remove sequencing adapters using a selectable trimming algorithm.</li>
+<li><strong>Reference Genome Indexing</strong> – Prepare genome index files for efficient alignment.</li>
+<li><strong>Read Alignment</strong> – Map reads to the reference genome using <strong>BWA</strong> or <strong>BWA-MEM2</strong>.</li>
+<li><strong>Base Quality Score Recalibration (BQSR)</strong> – Adjust quality scores for improved variant calling accuracy.</li>
+<li><strong>Variant Calling</strong> – Identify genomic variants from aligned reads.</li>
+<li><strong>Variant Filtering</strong> – Filter Variant ( SNP and INDEL ) with a hard filter and dynamic options.  </li>
+<li><strong>Functional Annotation</strong> – Interpret variants with an annotation process split into:<ul>
+<li><strong>Cache Preparation</strong> (for reproducibility and offline use)</li>
+<li><strong>Variant Annotation</strong> (functional characterization of variants)</li>
+</ul>
+</li>
+<li><strong>Report Generation</strong> – Produce summaries, metrics, and optional <strong>depth-coverage visualizations</strong>.</li>
+</ol>
+<h3 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Fine-grained control</strong> over each step.</li>
+<li><strong>Method selection</strong> (e.g., trimming algorithms, alignment tools).</li>
+<li><strong>Optional outputs</strong> (e.g., coverage depth plots).</li>
+<li><strong>Isolated execution</strong> of individual components.</li>
+</ul>
+<h2 id="fullmode">Fullmode<a class="headerlink" href="#fullmode" title="Permanent link">¶</a></h2>
+<p><strong>Fullmode</strong> consolidates all pipeline steps into a <strong>single, integrated execution</strong>, ensuring maximum automation while preserving configurable parameters.</p>
+<h3 id="characteristics">Characteristics<a class="headerlink" href="#characteristics" title="Permanent link">¶</a></h3>
+<ul>
+<li>End-to-end processing from raw reads to final annotated report.</li>
+<li>Configurable parameters for:</li>
+<li>Reference genome sourcing</li>
+<li>Alignment methodology (<strong>BWA</strong> or <strong>BWA-MEM2</strong>)</li>
+<li>Optional BQSR inclusion</li>
+<li>Suitble for production phases in high-throughput sequncing analyses.</li>
+</ul>
+<h2 id="workflow-adaptability-example-use-cases">Workflow Adaptability &amp; Example Use Cases<a class="headerlink" href="#workflow-adaptability-example-use-cases" title="Permanent link">¶</a></h2>
+<p><strong>Stepmode</strong> is best suited for <strong>iterative refinement</strong> and <strong>developmental genomics</strong>, where individual stages may require repeated tweaking.<br>
+Typical use cases include:
+- Testing or rechecking multiple samples without re-running upstream processes.
+- Adjusting trimming thresholds for challenging datasets.
+- Re-annotating variants with updated databases.</p>
+<p><strong>Fullmode</strong> is optimized for <strong>production-grade, reproducible analyses</strong> with minimal manual intervention.<br>
+Typical use cases include:
+- Clinical pipelines requiring standardized, reproducible runs.
+- Population-scale variant discovery projects.
+- High-throughput genomics where automation is critical.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../1quickstart/" class="btn btn-neutral float-left" title="Quickstart"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../3requirements/" class="btn btn-neutral float-right" title="Requirements">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/othmanResearch/DelMoro.git" class="fa fa-code-fork" style="color: #fcfcfc"> othmanResearch/DelMoro</a>
+        </span>
+    
+    
+      <span><a href="../1quickstart/" style="color: #fcfcfc">« Previous</a></span>
+    
+    
+      <span><a href="../3requirements/" style="color: #fcfcfc">Next »</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+      <script src="../assets/scripts.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+
+
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+</script></body></html>

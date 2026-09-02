@@ -1,0 +1,312 @@
+<!DOCTYPE html><html class="writer-html5" lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Firas Zemzem"><link rel="canonical" href="https://yourusername.github.io/DelMoro/5parameters/">
+      <link rel="shortcut icon" href="../img/favicon.ico">
+    <title>Parameters - DelMoro</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/theme_extra.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+        <link href="../css/custom.css" rel="stylesheet">
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Parameters";
+        var mkdocs_page_input_path = "5parameters.md";
+        var mkdocs_page_url = "/DelMoro/5parameters/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+        </style></head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> DelMoro
+        </a><div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here">
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../1quickstart/">Quickstart</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Pipeline Overview</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../2overview/">Workflow Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../3requirements/">Requirements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../4io/">Inputs &amp; Outputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Parameters</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#general-settings">General Settings</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#initialize-my-pipeline">Initialize my pipeline</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#input-csv-files">Input Csv Files</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#raw-reads-quality-check">Raw Reads Quality Check</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#trimming-options">Trimming Options</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#indexing-reference-file">Indexing Reference File</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#alignment">Alignment</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#base-quality-score-recalibration">Base Quality Score Recalibration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#variant-calling">Variant Calling</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#filtering">Filtering</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#annotation-vep">Annotation (VEP)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reporting">Reporting</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../6config/">Config Files</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../7running/">Running the Pipeline</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Graphical User Interface</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../8GUI/">GUI Overview</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../9changelog/">Changelog</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../10about/">About</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">DelMoro</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">Parameters</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/othmanResearch/DelMoro.git/edit/master/docs/5parameters.md">Edit on othmanResearch/DelMoro</a>
+    </li>
+  </ul>
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="pipeline-parameters">Pipeline Parameters<a class="headerlink" href="#pipeline-parameters" title="Permanent link">¶</a></h1>
+<div style="text-align: justify;"> 
+
+This section provides a comprehensive overview of all configurable parameters available in the pipeline. Each parameter can be set via the command line or a configuration file to customize the behavior of the workflow. Default values are indicated alongside a ⊕ icon, and brief descriptions are provided to help guide proper usage based on your data and analysis goals.
+
+</div>
+
+<hr>
+<h2 id="general-settings">General Settings<a class="headerlink" href="#general-settings" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--mcpus</code> = Maximum number of CPUs available to the entire pipeline. <span title="Default: 1">⊕</span></li>
+<li><code>--pcpus</code> = Number of CPUs allocated per process. <span title="Default: 1">⊕</span></li>
+<li><code>--outdir</code> = Directory where all outputs will be saved. <span title="Default: ./outdir">⊕</span></li>
+</ul>
+<details class="note" open="open">
+<summary>💡 Explanation</summary>
+<ul>
+<li>
+<p>If the user only specifies <code>--pcpus</code>, then <code>mcpus</code> is set equal to <code>pcpus</code>.<br>
+  This means the pipeline will execute tasks <strong>sequentially</strong>, using the top available CPUs per process.  </p>
+</li>
+<li>
+<p>If <code>--mcpus</code> is greater than <code>2 x pcpus</code>, the <code>maxForks</code> will be set to 2, allowing <strong>up to 2 tasks to run in parallel</strong>.</p>
+</li>
+</ul>
+</details>
+<h2 id="initialize-my-pipeline">Initialize my pipeline<a class="headerlink" href="#initialize-my-pipeline" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--generate</code> = CSV <span title="Prepare pre-required csv files for the pipeline">⊕</span></li>
+<li><code>--basedon</code> = CSV to generate other input CSVs from. <span title="Default: ./CSVs/1_samplesheetForRawQC.csv">⊕</span>  </li>
+</ul>
+<h2 id="input-csv-files">Input Csv Files<a class="headerlink" href="#input-csv-files" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--rawreads</code> = CSV file with raw read file paths. <span title="Default: ./CSVs/1_samplesheetForRawQC.csv">⊕</span>  </li>
+<li><code>--tobetrimmed</code> = CSV with read paths + trimming parameters. <span title="Default: ./CSVs/2_SamplesheetForTrimming.csv">⊕</span>  </li>
+<li><code>--tobealigned</code> = CSV with trimmed read paths. <span title="Default: ./CSVs/3_samplesheetForAssembly.csv">⊕</span>  </li>
+<li><code>--bam</code> = CSV with BAM file paths. <span title="Default: ./CSVs/4_samplesheetForBamFiles.csv">⊕</span>  </li>
+<li><code>--tovarcall</code> = CSV with recalibrated BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">⊕</span>  </li>
+<li><code>--toannotate</code> = CSV with VCF file paths. <span title="Default: ./CSVs/6_samplesheetvcfFiles.csv">⊕</span></li>
+</ul>
+<h2 id="raw-reads-quality-check">Raw Reads Quality Check<a class="headerlink" href="#raw-reads-quality-check" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--rawreads</code> = CSV file with raw read file paths. <span title="Default: ./CSVs/1_samplesheetForRawQC.csv">⊕</span>  </li>
+</ul>
+<h2 id="trimming-options">Trimming Options<a class="headerlink" href="#trimming-options" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--tobetrimmed</code> = CSV with read paths + trimming parameters. <span title="Default: ./CSVs/2_SamplesheetForTrimming.csv">⊕</span>  </li>
+<li><code>--trimmomatic</code> = Enable trimming with Trimmomatic. <span title="Default: false">⊕</span>  </li>
+<li><code>--fastp</code> = Enable trimming with Fastp. <span title="Default: false">⊕</span>  </li>
+<li><code>--bbduk</code> = Enable trimming with BBDuk. <span title="Default: false">⊕</span>  </li>
+<li><code>--adapters</code> = Path to adapter file for trimming tools. <span title="[Optional] - Default: null">⊕</span></li>
+</ul>
+<h2 id="indexing-reference-file">Indexing Reference File<a class="headerlink" href="#indexing-reference-file" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--reference</code> = Path to reference genome FASTA file. <span title="Default: ./Reference_Genome/*.fa">⊕</span>  </li>
+<li><code>--igenome</code> = iGenomes key to download reference data. <span title="Default: null">⊕</span>  </li>
+</ul>
+<h2 id="alignment">Alignment<a class="headerlink" href="#alignment" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--reference</code> = Path to reference genome FASTA file. <span title="Default: ./Reference_Genome/*.fa">⊕</span>  </li>
+<li><code>--tobealigned</code> = CSV with trimmed read paths. <span title="Default: ./CSVs/3_samplesheetForAssembly.csv">⊕</span>  </li>
+<li><code>--aligner</code> = Alignment tool to use (<code>bwa</code>, <code>bwamem2</code>, etc.). <span title="Default: null (bwa)">⊕</span></li>
+<li><code>--bedtarget</code> = BED file for coverage extraction. <span title="[Optional] - Default: null">⊕</span></li>
+<li><code>--keepinter</code> =  Keep intermediate BAM files derived from alignment. <span title="[Optional] - Default: false">⊕</span></li>
+<li><code>--report</code> = Enables Metrics-bigwigs-html summary for Bam files. <span title="[Optional] - Default: false">⊕</span>   </li>
+<li><code>--depth</code> = Minimum depth in coverage bin plots <span title="[Optional] - Default: 0 ">⊕</span>  </li>
+<li><code>--saveImg</code> = Save images( plots ) from bigwig files <span title="[Optional] - Default: false">⊕</span>  </li>
+</ul>
+<h2 id="base-quality-score-recalibration">Base Quality Score Recalibration<a class="headerlink" href="#base-quality-score-recalibration" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--bam</code> = CSV with BAM file paths. <span title="Default: ./CSVs/4_samplesheetForBamFiles.csv">⊕</span>  </li>
+<li><code>--reference</code> = Path to reference genome FASTA file. <span title="Default: ./Reference_Genome/*.fa">⊕</span>  </li>
+<li><code>--knownsite1</code> = First known variants VCF file (for BQSR). <span title="Default: ./knownsites/1000g_gold_standard.indels.filtered.vcf">⊕</span>  </li>
+<li><code>--knownsite2</code> = Second known variants VCF file. <span title="Default: ./knownsites/GCF.38.filtered.renamed.vcf">⊕</span></li>
+<li><code>--ivcf1</code> = VCF resource for BQSR (downloaded). <span title="[Optional] - Default: null">⊕</span>  </li>
+<li><code>--ivcf2</code> = Second VCF resource for BQSR. <span title="[Optional] - Default: null">⊕</span></li>
+<li><code>--report</code> = Enables Metrics-bigwigs-html summary for Bam files. <span title="[Optional] - Default: false">⊕</span>   </li>
+<li><code>--depth</code> = Minimum depth in coverage bin plots <span title="[Optional] - Default: 0 ">⊕</span>  </li>
+<li><code>--saveImg</code> = Save images( plots ) from bigwig files <span title="[Optional] - Default: false">⊕</span>  </li>
+</ul>
+<h2 id="variant-calling">Variant Calling<a class="headerlink" href="#variant-calling" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--reference</code> = Path to reference genome FASTA file. <span title="Default: path to fasta file">⊕</span>  </li>
+<li><code>--tovarcall</code> = CSV with recalibrated BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">⊕</span>  </li>
+<li><code>--keepinter</code> =  Keep intermediate vcf files <span title="[Optional] - Default: false">⊕</span></li>
+<li><code>--mode</code> = Output type: onlyvcf to generate a vcf for each input <span title="Default: null : generates a cohort gvcf ">⊕</span>  </li>
+<li><code>--caller</code> = Specify deepvariant caller which also requires <code>--modelType</code> <span title="Default: null : only for deepvariant caller ">⊕</span></li>
+<li><code>--rsid</code> = Add rs identifiant for vcf reference file. <span title="[Optional] - path to vcf">⊕</span></li>
+<li><code>--splitSample</code> = Split cohort vcf to multi-samples files.<span title="[Optional] - Default: false">⊕</span></li>
+</ul>
+<h2 id="filtering">Filtering<a class="headerlink" href="#filtering" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--tofilter</code> = Path to the CSV file containing variants to filter. <span title="Default: null ">⊕</span></li>
+<li><code>--skipFilter</code> = Parameter to skip filtering in fullmode. <span title="Default: null ">⊕</span></li>
+<li><code>--strictFilter</code> = Parameter to enable strict filter ( gatk &amp; AB based filters ). <span title="Default: null ">⊕</span></li>
+<li><code>--gatkFilter</code> = Parameter to enable only GATK filters. <span title="Default: null ">⊕</span></li>
+<li><code>--QD</code> = Quality by Depth: variant confidence normalized by depth. <span title="Default: 2.0">⊕</span></li>
+<li><code>--QUAL</code> = Overall variant quality score. <span title="Default: 30.0">⊕</span></li>
+<li><code>--SOR</code> = Strand Odds Ratio: measures strand bias. <span title="Default: 3.0">⊕</span></li>
+<li><code>--FSSNP</code> = Fisher Strand p-value for strand bias (SNPs). <span title="Default: 60.0">⊕</span></li>
+<li><code>--MQ</code> = RMS Mapping Quality of reads supporting the variant. <span title="Default: 40.0">⊕</span></li>
+<li><code>--MQRankSum</code> = Z-score from Wilcoxon rank sum test of Alt vs Ref read mapping qualities. <span title="Default: -12.5">⊕</span></li>
+<li><code>--ReadPosRankSumSNP</code> = Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (SNPs). <span title="Default: -8.0">⊕</span></li>
+<li><code>--FSINDEL</code> = Fisher Strand p-value for strand bias (INDELs). <span title="Default: 200.0">⊕</span></li>
+<li><code>--ReadPosRankSumINDEL</code> = Z-score from Wilcoxon rank sum test of Alt vs Ref read position within reads (INDELs). <span title="Default: -20.0">⊕</span></li>
+<li><code>--GQ</code> = Minimum genotype quality threshold. <span title="Default: 20">⊕</span></li>
+<li><code>--DP</code> = Minimum read depth threshold. <span title="Default: 10">⊕</span></li>
+<li><code>--ABmin</code> = Minimum allele balance threshold. <span title="Default: 0.2">⊕</span></li>
+<li><code>--ABmax</code> = Maximum allele balance threshold. <span title="Default: 0.8">⊕</span></li>
+</ul>
+<h2 id="annotation-vep">Annotation (VEP)<a class="headerlink" href="#annotation-vep" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--species</code> = Species name for VEP cache. <span title="Default: null">⊕</span>  </li>
+<li><code>--cachetype</code> = VEP cache type (<code>refseq</code> or <code>merged</code>). <span title="Default: null">⊕</span>  </li>
+<li><code>--assembly</code> = Genome assembly version. <span title="Default: null">⊕</span>  </li>
+<li><code>--cachedir</code> = Path to VEP cache directory. <span title="Default: .vepcachedir">⊕</span></li>
+</ul>
+<h2 id="reporting">Reporting<a class="headerlink" href="#reporting" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>--metaPatients</code> = Csv of patiens' Metadata + bam paths + vcf paths <span title="Default: null">⊕</span></li>
+<li><code>--metaYaml</code> = Yaml file of Physician metadata + executions steps info <span title="Default: null">⊕</span></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../4io/" class="btn btn-neutral float-left" title="Inputs &amp; Outputs"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../6config/" class="btn btn-neutral float-right" title="Config Files">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/othmanResearch/DelMoro.git" class="fa fa-code-fork" style="color: #fcfcfc"> othmanResearch/DelMoro</a>
+        </span>
+    
+    
+      <span><a href="../4io/" style="color: #fcfcfc">« Previous</a></span>
+    
+    
+      <span><a href="../6config/" style="color: #fcfcfc">Next »</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+      <script src="../assets/scripts.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+
+
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+</script></body></html>
