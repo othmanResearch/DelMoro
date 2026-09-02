@@ -5,16 +5,12 @@ site_author: Firas Zemzem
 
 theme:
   name: readthedocs
-  theme:
-     - content.code.copy
-     - content.tabs
-     - content.toggle
-
 
 extra_css:
   - css/custom.css
 
 extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js
   - assets/scripts.js
 
 nav:
@@ -27,10 +23,12 @@ nav:
   - Configuration:
       - Parameters: 5parameters.md
       - Config Files: 6config.md
-  - Running the Pipeline: 7running.md
+      - Running the Pipeline: 7running.md
+  - Graphical User Interface:
+      - GUI Overview: 8GUI.md
   - Development:
-      - Changelog: 8changelog.md
-      - About: 9about.md
+      - Changelog: 9changelog.md
+      - About: 10about.md
 
 repo_url: https://github.com/othmanResearch/DelMoro.git
 repo_name: othmanResearch/DelMoro
@@ -38,6 +36,7 @@ repo_name: othmanResearch/DelMoro
 plugins:
   - search
   - glightbox
+
 markdown_extensions:
   - toc:
       permalink: true
@@ -46,6 +45,9 @@ markdown_extensions:
   - footnotes
   - tables
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
   - pymdownx.highlight
-

@@ -4,3 +4,7 @@ function toggleCommand(id, checkbox) {
     cmd.style.display = checkbox.checked ? 'block' : 'none';
   }
 }
+
+mermaid.run({
+    querySelector: ".mermaid"
+});
