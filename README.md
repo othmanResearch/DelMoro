@@ -1,5 +1,9 @@
-![mainWlcPipeline](./.DelMoroWlc.png)
+<p align="center">
+  <img src="./.DelMoroWlc.png" alt="mainWlcPipeline">
+</p>
+
 ---
+
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A426.x-23aa62.svg)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
