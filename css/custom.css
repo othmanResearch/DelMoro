@@ -1,0 +1,35 @@
+/* Change the background color of the sidebar */
+.wy-side-nav-search {
+    background-color: #930e7b;  /* Deep purple for the top search section */
+}
+
+.wy-nav-side {
+    background-color: #1f1022;  /* Sidebar main background */
+}
+
+/* Optional: Change link colors inside the sidebar */
+.wy-menu-vertical a {
+    color: #d8b4f8;  /* Soft pastel purple for links */
+}
+
+/* Highlight the active link */
+.wy-menu-vertical a.current {
+    background-color: #3e1c4b;  /* Slightly lighter purple for active item */
+    color: #ffffff;
+}
+
+/*
+ * Toggleable command block style
+ * Used to show/hide Nextflow command snippets when a checkbox is selected.
+ * Linked to the "toggleCommand()" function in scripts.js.
+ */
+
+.step-command {
+  display: none;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #007acc;
+  border-radius: 4px;
+  font-family: monospace;
+}

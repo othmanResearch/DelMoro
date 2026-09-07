@@ -1,0 +1,817 @@
+<!DOCTYPE html><html class="writer-html5" lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Firas Zemzem"><link rel="canonical" href="https://yourusername.github.io/DelMoro/7running/">
+      <link rel="shortcut icon" href="../img/favicon.ico">
+    <title>Running the Pipeline - DelMoro</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/theme_extra.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+        <link href="../css/custom.css" rel="stylesheet">
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Running the Pipeline";
+        var mkdocs_page_input_path = "7running.md";
+        var mkdocs_page_url = "/DelMoro/7running/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+        </style></head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> DelMoro
+        </a><div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here">
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../1quickstart/">Quickstart</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Pipeline Overview</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../2overview/">Workflow Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../3requirements/">Requirements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../4io/">Inputs &amp; Outputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../5parameters/">Parameters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../6config/">Config Files</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Running the Pipeline</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#help-menu">Help Menu</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#full-mode">full mode</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-mode">Step mode</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-initialize-the-pipeline">Step 1: Initialize the Pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-quality-control">Step 2: Quality Control</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-read-trimming">Step 3: Read Trimming</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#trimmomatic">Trimmomatic</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#fastp">fastp</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#bbduk">BBDuk</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-4-index-the-reference-genome">Step 4: Index the Reference Genome</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#local-reference">Local Reference</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#igenomes-reference">iGenomes Reference</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#aligner-option">Aligner Option</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-5-alignment">Step 5: Alignment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-6-base-quality-score-recalibration">Step 6: Base Quality Score Recalibration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#local-known-sites-vcf-files">Local Known Sites (VCF files)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#auto-download-known-sites">Auto-Download Known Sites</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-7-variant-calling">Step 7: Variant Calling</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#default-mode">Default Mode</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#generate-cohort-vcf">Generate cohort VCF</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#targeted-chromosome-variant-calling">Targeted chromosome variant Calling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-8-filtering">Step 8: Filtering</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-9-variant-annotation">Step 9: Variant Annotation</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#vep-cache-downloading">VEP Cache Downloading</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#vep-annotation">VEP Annotation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-10-reporting">Step 10: Reporting</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Graphical User Interface</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../8GUI/">GUI Overview</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../9changelog/">Changelog</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../10about/">About</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">DelMoro</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">Running the Pipeline</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/othmanResearch/DelMoro.git/edit/master/docs/7running.md">Edit on othmanResearch/DelMoro</a>
+    </li>
+  </ul>
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="running-the-pipeline">Running the Pipeline<a class="headerlink" href="#running-the-pipeline" title="Permanent link">¶</a></h1>
+<p>This guide allows you to interactively select the pipeline steps you want to run and view the corresponding command.</p>
+<hr>
+<h2 id="help-menu">Help Menu<a class="headerlink" href="#help-menu" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>Program : DelMoro (Bioinformatics Tool Used In Clinical Genomics)
+Version : v1.00 
+Github  : https://github.com/othmanResearch/DelMoro
+Documentation : - 
+
+
+Usage   : nextflow run main.nf &lt;modality&gt; [--exec &lt;module&gt;] &lt;params&gt;
+
+Modality: - --fullmode  : Executing   full   mode from fastq until vaiant calling.
+          - --stepmode  : Executing   different   modules   in   standalone  mode.
+
+
+
+Executing fullmode :  
+nextflow run main.nf  
+    --fullmode
+    --input  
+    --reference   | [--igenome ]   
+    [--aligner bwamem2 ]  
+    [--bqsr ]  
+    [--knownsite1 ,--knownsite2 |--ivcf1 ,--ivcf2 ]
+    [ --caller deepvariant --modelType &lt;WGS|WES|PACBIO|ONT_R104|HYBRID_PACBIO_ILLUMINA|MASSEQ&gt; ]
+    [--mode cohort ]  
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Executing stepmode :  
+nextflow run main.nf  
+    --stepmode
+    --exec &lt;module&gt;
+
+
+
+Module  : - rawqc       : Check           quality      of     raw           reads. 
+          - trim        : Remove low-quality bp and adapters &amp; checks its quality.
+          - refidx      : Index   the    reference   genome    for      alignment.
+          - align       : Align     reads      to     the     reference    genome.
+          - bqsr        : Base         Quality          Score       recalibration.
+          - callvar     : Detect           SNPs      from      aligned      reads.
+          - annotate    : annotate                    vfc                    file.
+          - reporting   : Auto      Generate   PDF    of          vcf     reports.
+          - filter      : Filter    vcfs          to      SNP      and     INDELS.
+          - help    
+          - version  
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Requirements :
+  -- Quality Control
+     rawqc     Check quality of raw reads. 
+                   require  : --rawreads &lt;path-to-csv&gt;
+                   output   : .html reads 
+                            : .html multiqc 
+
+  -- Trimming
+     trim          Remove low-quality bp and adapters &amp; checks its quality.
+                   require  : --tobetrimmed &lt;path-to-csv&gt;
+                            : --trimmomatic, --fastp, --bbduk 
+                            : --adapters &lt;path-to-adapter-file&gt; [ optional ]
+                   output   : .fastq trimmed 
+                            : .html trimmed reads 
+                            : .html multiqc  
+
+  -- Indexing
+     refidx        Index reference genome for alignment.
+                   require  : --reference &lt;path-to-ref&gt;
+                            : --igenome &lt;value-from-IGENOMES&gt; [ optional ]
+                   output   : .dict 
+                            : .fai  
+                            : .{.0123,amb,ann,bwt.2bit.64,pac} 
+
+  -- Mapping       
+     align         Align reads to reference genome.
+                   require  : --reference   &lt;path-to-ref&gt;
+                            : --Tobealigned &lt;path-to-trimmed-csv&gt;
+                            : --report    [ optional ]
+                            : --mindepth [ optional ] 
+                            : --saveImg  [ optional ] 
+                   output   : .bam
+                            : .bai
+                            : .flagstat
+                            : .coverage.bed
+                            : .bw
+
+    -- BQSR  
+     bqsr      Base quality score recalibration.
+                   require  : --knownsite1, 2 &lt;path-to-vcf-file&gt; , 2 files 
+                            : --ivcf1, 2      &lt;value&gt; &nbsp;[ optional ]
+                            : --bam      &lt;path-to-bam-csv)
+                            : --report    [ optional ]
+                            : --mindepth [ optional ] 
+                            : --saveImg  [ optional ] 
+                   output   : .idx of knwons sites &lt;vcf&gt; 
+                            : .table
+                            : .bam
+                            : .bam
+
+  -- Variant Calling      
+     callvar       Detect SNPs from aligned reads.
+                   require  : --reference   &lt;path-to-ref&gt;
+                            : --tovarcall   &lt;path-to-bam-csv)
+                            : --caller deepvariant [ optional ]
+                            : --rsid &lt;path-to-vcf&gt; [ optional ]
+                            : --splitSample  [ optional ] ; only for cohort mode
+                   output   : .vcf
+                            : .table
+  -- Annotation   
+     annotate       Print out Annotation manual
+
+     vepcache       Download vep cache
+                   require  : --species   &lt;value&gt;
+                            : --cachetype &lt;value&gt; [ optional ]
+                            : --assembly  &lt;value&gt; [ optional ]
+                            : --cacheversion  &lt;value&gt; [ optional ] 
+                   output   : ./vep_cache directory 
+
+     vepannotate    Vep annotation
+                    require : --species    &lt;value&gt;
+                            : --reference  &lt;path-to-ref&gt;
+                            : --toannotate &lt;path-to-csv&gt; or &lt;path-to-vcf&gt;
+                            : --assembly   &lt;value&gt;
+                            : --cachetype  &lt;value&gt; [ optional ]
+                    output  : vcf.gz
+                            : .vcf.gz.tbi
+                            : .html
+   -- Reporting
+      reporting       Auto Generate PDF of vcf reports
+                   require  : --metaPatients    &lt;path-to-csv&gt;
+                            : --metaYaml    &lt;path-to-yaml&gt;
+                   output   : .png
+                            : .pdf
+   -- Filtering
+      filter          Filter vcfs to SNP and INDELS
+                   require  : --tofilter    &lt;path-to-csv&gt;
+                            : --QD              &lt;value&gt; [ optional ] ; Default = 2.0 
+                            : --QUAL            &lt;value&gt; [ optional ] ; Default = 30.0 
+                            : --SOR             &lt;value&gt; [ optional ] ; Default = 3.0
+                            : --FSSNP           &lt;value&gt; [ optional ] ; Default = 60.0
+                            : --MQ              &lt;value&gt; [ optional ] ; Default = 40.0
+                            : --MQRankSum       &lt;value&gt; [ optional ] ; Default = -12.5
+                            : --ReadPosRankSumSNP   &lt;value&gt; [ optional ] ; Default = -8.0   
+                            : --FSINDEL             &lt;value&gt; [ optional ] ; Default = 200.0
+                            : --ReadPosRankSumINDEL &lt;value&gt; [ optional ] ; Default = -20.0 
+                   output   : .vcf.gz
+                            : .tbi                          
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  To see Defauls params paths:  
+   &gt; nextflow main.nf --params
+</code></pre></div>
+<!-- 🔹 Step 1: Initialize the pipeline -->
+<h2 id="full-mode">full mode<a class="headerlink" href="#full-mode" title="Permanent link">¶</a></h2>
+<p>The <strong>DelMoro full mode</strong> follows a standard workflow, requiring an <code>--input</code> CSV file formatted like the example in the <a href="../6config/#rawqc-csv-template">Config Section</a> and a <code>--reference</code> path.  </p>
+<p>In this mode, the pipeline performs <strong>reference indexing</strong>, <strong>mapping</strong>, and <strong>variant calling</strong>, applying the same sub-options for each step:<br>
+- <strong>Reference</strong>: <code>igenome/reference</code><br>
+- <strong>Aligner</strong>: <code>bwa</code> or <code>bwamem2</code><br>
+- <strong>Mode</strong>: <code>cohort</code> or <code>null</code> ( By default, DelMoro generates a vcf file for each patient)  </p>
+<p>You can optionally enable <strong>Base Quality Score Recalibration (BQSR)</strong> by adding the <code>--bqsr</code> parameter, which requires either:<br>
+- Local known sites: <code>--knownsite1</code>, <code>--knownsite2</code><br>
+- retrieval from AWS: <code>--ivcf1</code>, <code>--ivcf2</code>  </p>
+<div id="fullmode-cmd" class="full-command">
+<pre><code>
+nextflow run main.nf \
+    --fullmode \
+    --input <input_csv> \
+    --reference <reference_path>  | [--igenome <str>]  \
+    [--aligner bwamem2] \
+    [--bqsr] \
+    [--knownsite1 <path>,--knownsite2 <path>|--ivcf1 <str>,--ivcf2 <str>] \ 
+    [ --caller deepvariant --modelType <wgs|wes|pacbio|ont_r104|hybrid_pacbio_illumina|masseq> ] \
+    [--mode cohort] 
+
+</wgs|wes|pacbio|ont_r104|hybrid_pacbio_illumina|masseq></str></str></path></path></str></reference_path></input_csv></code></pre>
+</div>
+
+<h2 id="step-mode">Step mode<a class="headerlink" href="#step-mode" title="Permanent link">¶</a></h2>
+<h3 id="step-1-initialize-the-pipeline">Step 1: Initialize the Pipeline<a class="headerlink" href="#step-1-initialize-the-pipeline" title="Permanent link">¶</a></h3>
+<div align="justify"> 
+This step sets up the required input data.  
+It prepares all necessary CSV files used in downstream analysis.  
+These files are automatically generated based on an initial CSV file provided by the user.
+<br><br>
+</div>
+
+<!-- 🔸 Step 1: CSV file template toggle -->
+<details class="note">
+<summary> 💡 <strong>Template of the CSVs/1_samplesheetForRawQC.csv</strong></summary>
+<p>Header : patient_id,R1,R2
+</p><div class="highlight"><pre><span></span><code>patient_id,R1,R2
+41,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz
+22,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz
+33,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz
+</code></pre></div><p></p>
+</details>
+<!-- 🔸 Step 1: Initialization command toggle -->
+
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-init', this)">
+  <strong>Run Initialization</strong>
+</label></p>
+<div id="cmd-init" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --generate CSV --basedon CSVs/1_samplesheetForRawQC.csv</code></pre>
+</div>
+
+<hr>
+<!-- 🔹 Step 2: Quality Control -->
+
+<h3 id="step-2-quality-control">Step 2: Quality Control<a class="headerlink" href="#step-2-quality-control" title="Permanent link">¶</a></h3>
+<div align="justify">  
+Perform quality checks on raw FASTQ files using tools like FastQC,  
+and summarize results with MultiQC.
+<br><br>
+</div>
+
+<!-- 🔸 Step 2: QC command toggle -->
+
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-qc', this)">
+  <strong>Run Quality Control</strong>
+</label></p>
+<div id="cmd-qc" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec rawqc --rawreads CSVs/1_samplesheetForRawQC.csv</code></pre>
+</div>
+
+<!-- 🔹 Step 3: Read Trimming -->
+
+<h3 id="step-3-read-trimming">Step 3: Read Trimming<a class="headerlink" href="#step-3-read-trimming" title="Permanent link">¶</a></h3>
+<div align="justify">  
+This step removes adapters and low-quality bases from reads  
+using your choice of trimming tools such as Trimmomatic, fastp, or BBDuk.  
+Input is provided via a generated CSV file.  
+You may also optionally provide a custom adapter file.
+<br><br>
+</div>
+
+<!-- Note about adapter option -->
+
+<details class="note" open="open">
+<summary> 💡About --adapters parameter</summary>
+<p>The <code>--adapters</code> parameter is <strong>optional</strong>.<br>
+If provided, it should point to a FASTA file containing adapter sequences for trimming.</p>
+</details>
+<!-- 🔸 Trimmomatic -->
+
+<h4 id="trimmomatic">Trimmomatic<a class="headerlink" href="#trimmomatic" title="Permanent link">¶</a></h4>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-trim-trimmomatic', this)">
+  <strong>Run Trimming with Trimmomatic</strong>
+</label></p>
+<div id="cmd-trim-trimmomatic" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --trimmomatic --adapters polyA_polyG.fa</code></pre>
+</div>
+
+<!-- 🔸 fastp -->
+
+<h4 id="fastp">fastp<a class="headerlink" href="#fastp" title="Permanent link">¶</a></h4>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-trim-fastp', this)">
+  <strong>Run Trimming with fastp</strong>
+</label></p>
+<div id="cmd-trim-fastp" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --fastp --adapters polyA_polyG.fa </code></pre>
+</div>
+
+<!-- 🔸 BBDuk -->
+
+<h4 id="bbduk">BBDuk<a class="headerlink" href="#bbduk" title="Permanent link">¶</a></h4>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-trim-bbduk', this)">
+  <strong>Run Trimming with BBDuk</strong>
+</label></p>
+<div id="cmd-trim-bbduk" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec trim --tobetrimmed CSVs/2_SamplesheetForTrimming.csv --bbduk --adapters polyA_polyG.fa</code></pre>
+</div>
+
+<!-- 🔹 Step 4: Reference Indexing -->
+
+<h3 id="step-4-index-the-reference-genome">Step 4: Index the Reference Genome<a class="headerlink" href="#step-4-index-the-reference-genome" title="Permanent link">¶</a></h3>
+<div align="justify">  
+This step prepares the reference genome by generating the necessary index files.  
+You can either use your own FASTA file placed in the `Reference_Genome/` directory,  
+or use the `--igenome` parameter to automatically download and index a standard reference genome.
+</div>
+
+<hr>
+<h4 id="local-reference">Local Reference<a class="headerlink" href="#local-reference" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary> 💡<strong>Option 1</strong>: Local FASTA</summary>
+<p>Use your own reference FASTA file.<br>
+Place it inside the <code>Reference_Genome/</code> directory and use the following command:</p>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-refidx-local', this)">
+  <strong>Run Reference Indexing (with local FASTA)</strong>
+</label></p>
+<div id="cmd-refidx-local" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec refidx --reference Reference_Genome/reference.fa</code></pre>
+</div>
+
+<hr>
+<h4 id="igenomes-reference">iGenomes Reference<a class="headerlink" href="#igenomes-reference" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary> 💡<strong>Option 2</strong>: Auto-download with iGenomes</summary>
+<p>Use the <code>--igenome</code> parameter to fetch and index a reference genome.<br>
+Example: <code>--igenome Ens.GRCh37</code></p>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-refidx-igenome', this)">
+  <strong>Run Reference Indexing (auto-download with iGenomes)</strong>
+</label></p>
+<div id="cmd-refidx-igenome" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec refidx --igenome Ens.GRCh37</code></pre>
+</div>
+
+<hr>
+<h4 id="aligner-option">Aligner Option<a class="headerlink" href="#aligner-option" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary> 💡 <strong>Aligner Customization</strong></summary>
+<p>The default aligner used is <code>bwa</code> for both the <strong>indexing</strong> and <strong>alignment</strong> steps.<br>
+To switch to <code>bwamem2</code>, simply add the <code>--aligner bwamem2</code> flag to the command.</p>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-refidx-aligner', this)">
+  <strong>Run Reference Indexing with BWA-MEM2</strong>
+</label></p>
+<div id="cmd-refidx-aligner" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec refidx --reference Reference_Genome/reference.fa --aligner bwamem2</code></pre>
+</div>
+
+<hr>
+<h3 id="step-5-alignment">Step 5: Alignment<a class="headerlink" href="#step-5-alignment" title="Permanent link">¶</a></h3>
+<div align="justify">  
+This step aligns your sequencing reads to the reference genome using the specified aligner (default is `bwa`).  
+You can choose to use `bwamem2` by specifying the `--aligner bwamem2` flag.
+<br><br>
+</div>
+
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-align', this)">
+  <strong>Run Alignment</strong>
+</label></p>
+<div id="cmd-align" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec align --reference Reference_Genome/reference.fa --tobealigned CSVs/3_samplesheetForAssembly.csv --aligner bwamem2 </code></pre>
+</div>
+
+<hr>
+<h3 id="step-6-base-quality-score-recalibration">Step 6: Base Quality Score Recalibration<a class="headerlink" href="#step-6-base-quality-score-recalibration" title="Permanent link">¶</a></h3>
+<div align="justify">
+This step applies GATK's Best Practices for Base Quality Score Recalibration (BQSR).  
+It adjusts the quality scores of sequencing reads using known variant sites to improve variant calling accuracy.  
+You can either use your own VCF files or download reference sets automatically using the `--ivcf` parameters.
+</div>
+
+<hr>
+<h4 id="local-known-sites-vcf-files">Local Known Sites (VCF files)<a class="headerlink" href="#local-known-sites-vcf-files" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary> 💡 <strong>Option 1</strong>:</summary>
+<p>Use locally downloaded VCF files for known sites.<br>
+You must specify their paths using <code>--knownsite1</code> and <code>--knownsite2</code>.</p>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-bqsr-local', this)">
+  <strong>Run BQSR (with local known sites)</strong>
+</label></p>
+<div id="cmd-bqsr-local" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec bqsr \
+  --reference Reference_Genome/reference.fa \
+  --bam CSVs/4_samplesheetForBamFiles.csv \
+  --knownsite1 knownsites/1000g_gold_standard.indels.filtered.vcf \
+  --knownsite2 knownsites/GCF.38.filtered.renamed.vcf</code></pre>
+</div>
+
+<hr>
+<h4 id="auto-download-known-sites">Auto-Download Known Sites<a class="headerlink" href="#auto-download-known-sites" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary> 💡 <strong>Option 2</strong>:</summary>
+<p>Use <code>--ivcf1</code> and <code>--ivcf2</code> to automatically download public known sites for BQSR.<br>
+Examples: <code>GRCh38.mills1000</code>, <code>GRCh38.dbsnp</code>.</p>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-bqsr-auto', this)">
+  <strong>Run BQSR (auto-download known sites)</strong>
+</label></p>
+<div id="cmd-bqsr-auto" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec bqsr \
+    --reference Reference_Genome/reference.fa \
+    --bam CSVs/4_samplesheetForBamFiles.csv \
+    --ivcf1 GRCh38.mills1000 \
+    --ivcf2 GRCh38.omni
+</code></pre>
+</div>
+
+<hr>
+<h3 id="step-7-variant-calling">Step 7: Variant Calling<a class="headerlink" href="#step-7-variant-calling" title="Permanent link">¶</a></h3>
+<div align="justify">
+This step performs variant calling using the final raw/recalibrated BAM files.  
+By default, it generates a VCF file for each patient, extracts a variant metrics.  
+You can modify the output behavior using the `--mode` flag:
+</div>
+
+<hr>
+<h4 id="default-mode">Default Mode<a class="headerlink" href="#default-mode" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary> 💡 <strong>Default Behavior</strong>:</summary>
+<ul>
+<li>Skips GVCF creation  </li>
+<li>Outputs only the main VCF file, variant for each input</li>
+</ul>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-varCall-Default', this)">
+  <strong>Run Variant Calling (default)</strong>
+</label></p>
+<div id="cmd-varCall-Default" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec callvar \
+  --reference Reference_Genome/reference.fa \
+  --tovarcall CSVs/5_samplesheetReclibFiles.csv</code></pre>
+</div>
+
+<hr>
+<h4 id="generate-cohort-vcf">Generate cohort VCF<a class="headerlink" href="#generate-cohort-vcf" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary> 💡 <strong>Option:</strong> <code>--mode cohort</code></summary>
+<ul>
+<li>Generates cohort VCF file for all input (patients)  </li>
+<li>Produces a single joint cohort .g.vcf file</li>
+<li>Useful for population-level variant analysis or joint genotyping </li>
+</ul>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-call-cohortvcf', this)">
+  <strong>Run cohort Variant Calling</strong>
+</label></p>
+<div id="cmd-call-cohortvcf" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec callvar \
+  --reference Reference_Genome/reference.fa \
+  --tovarcall CSVs/5_samplesheetReclibFiles.csv \
+  --mode cohort</code></pre>
+</div>
+
+<details class="note" open="open">
+<summary> 💡 <strong>Caller Option:</strong> <code>--caller deepvariant</code></summary>
+<ul>
+<li>To use Deepvariant Caller , specify <code>--caller</code> deepvariant and <code>--modelType</code> parameters   </li>
+<li>To check required option please refer to <a href="../5parameters/#filtering">parameters page</a> </li>
+<li><span style="color:red ;">Deepvariant caller only available with <code>-profile docker</code></span></li>
+</ul>
+</details>
+<details class="note" open="open">
+<summary> 💡 <strong>Add rs id Option:</strong> <code>--rsid parameter</code></summary>
+<ul>
+<li>To use add rs id , specify <code>--rsid</code> path/to/vcf   </li>
+<li>To check required option please refer to <a href="../5parameters/#variant-calling">parameters page</a> </li>
+<li><span style="color:red ;">Default variant id is set to chrName_position_REF_ALT</span></li>
+</ul>
+</details>
+<details class="note" open="open">
+<summary> 💡 <strong>Splitting cohort vcf to different samples:</strong> <code>--splitSample parameter</code></summary>
+<ul>
+<li>To use add rs id , specify <code>--splitSample</code>    </li>
+<li>To check required option please refer to <a href="../5parameters/#variant-calling">parameters page</a> </li>
+</ul>
+</details>
+<hr>
+<h4 id="targeted-chromosome-variant-calling">Targeted chromosome variant Calling<a class="headerlink" href="#targeted-chromosome-variant-calling" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary> 💡 <strong>Option:</strong> <code>Targeted regions</code></summary>
+<ul>
+<li>To target a chromosome or specific region <code>--region</code> option can be added<ul>
+<li>e.g. --region chr20  </li>
+<li>e.g. --region chr20:start-end</li>
+</ul>
+</li>
+<li>Use a bed file with <code>--bedtarget</code> option <ul>
+<li>e.g. --bedtarget my-bed-file.bed</li>
+</ul>
+</li>
+</ul>
+</details>
+<hr>
+<h3 id="step-8-filtering">Step 8: Filtering<a class="headerlink" href="#step-8-filtering" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 VEP Cache Notes</summary>
+<ul>
+<li>This step applies variant filtering using the specified CSV file.</li>
+<li>Filtering option may be modified , to check default filtering parameters please <a href="../5parameters/#filtering">click on me</a></li>
+</ul>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-filtering', this)">
+  <strong>Run Filtering</strong>
+</label></p>
+<div id="cmd-filtering" class="step-command">
+<pre><code>nextflow main.nf --stepmode --exec filter \
+  --tofilter CSVs/tofilter.csv [ --gatkFilter `--QUAL 50` ]
+</code></pre>
+</div>
+
+<hr>
+<h3 id="step-9-variant-annotation">Step 9: Variant Annotation<a class="headerlink" href="#step-9-variant-annotation" title="Permanent link">¶</a></h3>
+<p>This step adds functional information to your variants using <strong>Ensembl VEP (Variant Effect Predictor)</strong>.</p>
+<hr>
+<h4 id="vep-cache-downloading">VEP Cache Downloading<a class="headerlink" href="#vep-cache-downloading" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary>💡 VEP Cache Notes</summary>
+<ul>
+<li>VEP requires a local cache for annotation.</li>
+<li>The <strong>minimum required</strong> argument is <code>--species</code>.</li>
+<li>Optional arguments:<ul>
+<li><code>--cachetype</code> (e.g., <code>refseq</code> or <code>merged</code>)</li>
+<li><code>--assembly</code> (e.g., <code>GRCh37</code> or <code>GRCh38</code>)</li>
+<li><code>--cacheversion</code> (e.g., <code>113 or 114</code>) </li>
+</ul>
+</li>
+<li>The output cache will be saved in the <code>./.vepcachedir/</code> directory.</li>
+</ul>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-min-vep-cache', this)">
+  <strong>Download VEP Cache</strong> with minimum required argument
+</label></p>
+<div id="cmd-min-vep-cache" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec vepcache --species homo_sapiens</code></pre>
+</div>
+
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-full-vep-cache', this)">
+  <strong>Download VEP Cache</strong> with full arguments
+</label></p>
+<div id="cmd-full-vep-cache" class="step-command">
+<pre><code>nextflow run main.nf --stepmode --exec vepcache --species homo_sapiens --assembly GRCh37 --cachetype refseq --cacheversion 114 -profile docker</code></pre>
+</div>
+
+<hr>
+<h4 id="vep-annotation">VEP Annotation<a class="headerlink" href="#vep-annotation" title="Permanent link">¶</a></h4>
+<details class="note" open="open">
+<summary>💡 About VEP Annotation</summary>
+<ul>
+<li>This step uses <strong>VEP (Variant Effect Predictor)</strong> to annotate VCF files with predicted variant effects.  </li>
+<li>
+<p>You must specify :</p>
+<ul>
+<li><code>--toannotate</code> (vcf csv file)</li>
+<li><code>--species</code> (e.g., <code>homo_sapiens</code>)</li>
+<li><code>--assembly</code> (e.g., <code>GRCh37</code> or <code>GRCh38</code>)</li>
+</ul>
+</li>
+<li>
+<p>And optionally :</p>
+<ul>
+<li><code>--cachetype</code> (e.g., <code>refseq</code> or <code>merged</code> ...)</li>
+<li><code>--cachedir</code> path to the downloaded cache directory.</li>
+</ul>
+</li>
+</ul>
+</details>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-vep-annotate', this)">
+  <strong>Run VEP Annotation</strong>
+</label></p>
+<div id="cmd-vep-annotate" class="step-command">
+<pre><code>nextflow main.nf --stepmode --exec vepannotate \
+  --toannotate CSVs/6_samplesheetvcfFiles.csv \
+  --reference Reference_Genome/reference.fa \
+  --species homo_sapiens \
+  --assembly GRCh37 \
+  --cachedir .vepcachedir/</code></pre>
+</div>
+
+<h3 id="step-10-reporting">Step 10: Reporting<a class="headerlink" href="#step-10-reporting" title="Permanent link">¶</a></h3>
+<ul>
+<li>This step creates detailed reports from the vep annotated  VCF files. </li>
+</ul>
+<p><label>
+  <input type="checkbox" onchange="toggleCommand('cmd-repoting', this)">
+  <strong>Run Reporting</strong>
+</label></p>
+<div id="cmd-repoting" class="step-command">
+<pre><code>nextflow main.nf --stepmode --exec reporting \
+  --metaPatients CSVs/7_metaPatients.csv \ 
+  --metaYaml CSVs/7_metaPatients.yml 
+</code></pre>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../6config/" class="btn btn-neutral float-left" title="Config Files"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../8GUI/" class="btn btn-neutral float-right" title="GUI Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/othmanResearch/DelMoro.git" class="fa fa-code-fork" style="color: #fcfcfc"> othmanResearch/DelMoro</a>
+        </span>
+    
+    
+      <span><a href="../6config/" style="color: #fcfcfc">« Previous</a></span>
+    
+    
+      <span><a href="../8GUI/" style="color: #fcfcfc">Next »</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+      <script src="../assets/scripts.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+
+
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+</script></body></html>

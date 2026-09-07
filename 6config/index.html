@@ -1,0 +1,343 @@
+<!DOCTYPE html><html class="writer-html5" lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Firas Zemzem"><link rel="canonical" href="https://yourusername.github.io/DelMoro/6config/">
+      <link rel="shortcut icon" href="../img/favicon.ico">
+    <title>Config Files - DelMoro</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/theme_extra.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+        <link href="../css/custom.css" rel="stylesheet">
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Config Files";
+        var mkdocs_page_input_path = "6config.md";
+        var mkdocs_page_url = "/DelMoro/6config/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+        </style></head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> DelMoro
+        </a><div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here">
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../1quickstart/">Quickstart</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Pipeline Overview</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../2overview/">Workflow Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../3requirements/">Requirements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../4io/">Inputs &amp; Outputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../5parameters/">Parameters</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Config Files</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#using-a-paramsjson-file">Using a params.json File</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#paramsjson-template">params.json Template</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#csv-files-templates">Csv files Templates</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#rawqc-csv-template">RawQc csv Template</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#trimming-csv-template">Trimming csv Template</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#alignment-csv-template">Alignment csv Template</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bam-files-csv-template">Bam files csv Template</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#recalibrated-bam-files-csv-template">Recalibrated Bam files csv Template</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#vcf-files-csv-template">Vcf files csv Template</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#patients-metadata-csv-template">Patients Metadata csv Template</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#user-metadata-csv-template">User Metadata csv Template</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../7running/">Running the Pipeline</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Graphical User Interface</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../8GUI/">GUI Overview</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../9changelog/">Changelog</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../10about/">About</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">DelMoro</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">Config Files</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/othmanResearch/DelMoro.git/edit/master/docs/6config.md">Edit on othmanResearch/DelMoro</a>
+    </li>
+  </ul>
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="configuration-file">Configuration File<a class="headerlink" href="#configuration-file" title="Permanent link">¶</a></h1>
+<h2 id="using-a-paramsjson-file">Using a <code>params.json</code> File<a class="headerlink" href="#using-a-paramsjson-file" title="Permanent link">¶</a></h2>
+<div style="text-align: justify;">
+  <p>In this section, we'll show you how to configure your Nextflow pipeline using a <code>params.json</code> file. This file lets you define key parameters such as resource allocation, input files, and options for each step of the pipeline. It's a simple, flexible way to customize the pipeline based on your datasets and specific use cases.</p>
+
+  <p>To set up the pipeline, you’ll need to create a <code>params.json</code> file in the root directory of your project. Nextflow will automatically parse this file to set the values of various parameters throughout the pipeline. Below is a recommended template for the <code>params.json</code> file:</p>
+</div>
+
+<hr>
+<h3 id="paramsjson-template"><code>params.json</code> Template<a class="headerlink" href="#paramsjson-template" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"cpus"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"outdir"</span><span class="p">:</span><span class="w"> </span><span class="s2">"outdir"</span><span class="p">,</span>
+
+<span class="w">  </span><span class="nt">"basedon"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./CSVs/1_samplesheetForRawQC.csv"</span><span class="p">,</span><span class="w">  </span>
+
+<span class="w">  </span><span class="nt">"_comment"</span><span class="p">:</span><span class="w"> </span><span class="s2">"For reference indexing use either 'reference' or 'igenome'"</span><span class="p">,</span>
+
+<span class="w">  </span><span class="nt">"reference"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./Reference_Genome/genomeEns.GRCh37.fa"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"igenome"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Ens.GRCh37"</span><span class="p">,</span>
+
+<span class="w">  </span><span class="nt">"_comment"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Choose the aligner; options are 'null' or 'bwamem2'"</span><span class="p">,</span>
+
+<span class="w">  </span><span class="nt">"aligner"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bwamem2"</span><span class="p">,</span><span class="w">  </span>
+
+<span class="w">  </span><span class="nt">"rawreads"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./CSVs/1_samplesheetForRawQC.csv"</span><span class="p">,</span><span class="w">         </span>
+<span class="w">  </span><span class="nt">"tobetrimmed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./CSVs/2_SamplesheetForTrimming.csv"</span><span class="p">,</span><span class="w">         </span>
+<span class="w">  </span><span class="nt">"tobealigned"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./CSVs/3_samplesheetForAssembly.csv"</span><span class="p">,</span><span class="w">         </span>
+<span class="w">  </span><span class="nt">"bam"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./CSVs/4_samplesheetForBamFiles.csv"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"tovarcall"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./CSVs/5_samplesheetReclibFiles.csv"</span><span class="p">,</span><span class="w">    </span>
+<span class="w">  </span><span class="nt">"toannotate"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./CSVs/6_samplesheetvcfFiles.csv"</span><span class="p">,</span><span class="w">  </span>
+
+<span class="w">  </span><span class="nt">"_comment"</span><span class="p">:</span><span class="w"> </span><span class="s2">"For base recalibration, use either knownSite1 &amp; knownSite2 or ivcf1 &amp; ivcf2"</span><span class="p">,</span>
+
+<span class="w">  </span><span class="nt">"knownsite1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./knownsites/1000g_gold_standard.indels.filtered.vcf"</span><span class="p">,</span><span class="w">     </span>
+<span class="w">  </span><span class="nt">"knownsite2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./knownsites/GCF.38.filtered.renamed.vcf"</span><span class="p">,</span><span class="w">  </span>
+
+<span class="w">  </span><span class="nt">"ivcf1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GRCh38.mills1000"</span><span class="p">,</span><span class="w">     </span>
+<span class="w">  </span><span class="nt">"ivcf2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GRCh38.omni"</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr>
+<h2 id="csv-files-templates">Csv files Templates<a class="headerlink" href="#csv-files-templates" title="Permanent link">¶</a></h2>
+<div style="text-align: justify;">
+The following CSV structure templates are integral to the pipeline, defining standardized input and output formats across each processing stage — from raw read quality control to variant calling. Their consistent use ensures data integrity, reproducibility, and streamlined automation throughout the workflow.
+<br><br>
+</div>
+
+<p>To automatically generate all required CSV files as part of the setup, consult the 🔗 <a href="../7running/#step-1-initialize-the-pipeline">How to Initialize the Pipeline</a></p>
+<!-- 🔸 CSV Templates -->
+<h3 id="rawqc-csv-template">RawQc csv Template<a class="headerlink" href="#rawqc-csv-template" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 <strong>1_samplesheetForRawQC.csv</strong></summary>
+<p>Header: <code>patient_id,R1,R2</code>
+</p><div class="highlight"><pre><span></span><code>41TNS1,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz
+2TNS12,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz
+3TNS13,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz
+</code></pre></div><p></p>
+</details>
+<h3 id="trimming-csv-template">Trimming csv Template<a class="headerlink" href="#trimming-csv-template" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 <strong>2_SamplesheetForTrimming.csv</strong></summary>
+<p>Header: <code>patient_id,R1,R2,MINLEN,LEADING,TRAILING,SLIDINGWINDOW</code>
+</p><div class="highlight"><pre><span></span><code>41TNS1,./Data/father_1.fastq.gz,./Data/father_2.fastq.gz,36,30,30,4:20
+2TNS12,./Data/mother_1.fastq.gz,./Data/mother_2.fastq.gz,36,30,30,4:20
+3TNS13,./Data/son_1.fastq.gz,./Data/son_2.fastq.gz,36,30,30,4:20
+</code></pre></div><p></p>
+</details>
+<h3 id="alignment-csv-template">Alignment csv Template<a class="headerlink" href="#alignment-csv-template" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 <strong>3_samplesheetForAssembly.csv</strong></summary>
+<p>Header: <code>patient_id,R1,R2</code>
+</p><div class="highlight"><pre><span></span><code>41TNS1,./outdir/TrimmedREADS/41TNS1_1.trim.fastq.gz,./outdir/TrimmedREADS/41TNS1_2.trim.fastq.gz
+2TNS12,./outdir/TrimmedREADS/2TNS12_1.trim.fastq.gz,./outdir/TrimmedREADS/2TNS12_2.trim.fastq.gz
+3TNS13,./outdir/TrimmedREADS/3TNS13_1.trim.fastq.gz,./outdir/TrimmedREADS/3TNS13_2.trim.fastq.gz
+</code></pre></div><p></p>
+</details>
+<h3 id="bam-files-csv-template">Bam files csv Template<a class="headerlink" href="#bam-files-csv-template" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 <strong>4_samplesheetForBamFiles.csv</strong></summary>
+<p>Header: <code>patient_id,BamFile</code>
+</p><div class="highlight"><pre><span></span><code>41father,./outdir/Mapping/41father_delMoro.bam
+22mother,./outdir/Mapping/22mother_delMoro.bam
+33son,./outdir/Mapping/33son_delMoro.bam
+</code></pre></div><p></p>
+</details>
+<h3 id="recalibrated-bam-files-csv-template">Recalibrated Bam files csv Template<a class="headerlink" href="#recalibrated-bam-files-csv-template" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 <strong>5_samplesheetReclibFiles.csv</strong></summary>
+<p>Header: <code>patient_id,BamFile</code>
+</p><div class="highlight"><pre><span></span><code>41TNS1,./outdir/Mapping/41TNS1_delMoro.recal.bam
+2TNS12,./outdir/Mapping/2TNS12_delMoro.recal.bam
+3TNS13,./outdir/Mapping/3TNS13_delMoro.recal.bam
+</code></pre></div><p></p>
+</details>
+<h3 id="vcf-files-csv-template">Vcf files csv Template<a class="headerlink" href="#vcf-files-csv-template" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 <strong>6_samplesheetvcfFiles.csv</strong></summary>
+<p>Header: <code>patient_id,vcFile</code>
+</p><div class="highlight"><pre><span></span><code>41TNS1,./outdir/Mapping/Variants/gatk/41TNS1_delMoro.recal.full.HC.id.sorted.norm.AB.vcf.gz
+2TNS12,./outdir/Mapping/Variants/gatk/2TNS12_delMoro.recal.full.HC.id.sorted.norm.AB.vcf.gz
+3TNS13,./outdir/Mapping/Variants/gatk/3TNS13_delMoro.recal.full.HC.id.sorted.norm.AB.vcf.gz
+</code></pre></div><p></p>
+</details>
+<h3 id="patients-metadata-csv-template">Patients Metadata csv Template<a class="headerlink" href="#patients-metadata-csv-template" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 <strong>CSVs/7_metaPatients.csv</strong></summary>
+<p>Header: <code>csvIdentifier,SampleID,Gender,Dob,Ethnicity,Diagnosis,BamFile,vcFile</code>
+</p><div class="highlight"><pre><span></span><code>SRR13-FVXF,SRR13-FVXF,female,2025-06-01,African,WES,./outdir/Mapping/SRR13_DelMoro.bam,./outdir/annotation/SRR13_vep.vcf.gz
+</code></pre></div><p></p>
+</details>
+<h3 id="user-metadata-csv-template">User Metadata csv Template<a class="headerlink" href="#user-metadata-csv-template" title="Permanent link">¶</a></h3>
+<details class="note" open="open">
+<summary>💡 <strong>CSVs/7_metaPatients.yml</strong></summary>
+<div class="highlight"><pre><span></span><code># Clinical Data Record
+
+# The names, institutions, and contact information used in this document are entirely fictitious 
+# and are intended solely for illustrative purposes. 
+# Any resemblance to actual persons, living or dead, or actual organizations is purely coincidental. 
+#There is no intentional reference or misrepresentation of real individuals or entities.
+
+physician:
+  name: "Dr. Jane Doe"
+  specialty: "Clinical Genetics"
+  contact:
+    email: "jane.doe@geneticshospital.org"
+    phone: "+1-555-123-4567"
+  affiliation: "Genetics and Genomics Institute"
+
+institution:
+  name: "Genetics and Genomics Institute"
+  address:
+    street: "123 Medical Center Drive"
+    city: "Boston"
+    state: "MA"
+    zip: "02115"
+    country: "USA"
+  department: "Department of Medical Genetics"
+  accreditation: "CAP/CLIA Certified"
+
+hpo_terms:
+  - id: "HP:0001627"
+    term: "Abnormality of cardiac morphology"
+  - id: "HP:0001250"
+    term: "Seizure"
+  - id: "HP:0004322"
+    term: "Short stature"
+  - id: "HP:0001513"
+    term: "Obesity"
+</code></pre></div>
+</details>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../5parameters/" class="btn btn-neutral float-left" title="Parameters"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../7running/" class="btn btn-neutral float-right" title="Running the Pipeline">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/othmanResearch/DelMoro.git" class="fa fa-code-fork" style="color: #fcfcfc"> othmanResearch/DelMoro</a>
+        </span>
+    
+    
+      <span><a href="../5parameters/" style="color: #fcfcfc">« Previous</a></span>
+    
+    
+      <span><a href="../7running/" style="color: #fcfcfc">Next »</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+      <script src="../assets/scripts.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+
+
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+</script></body></html>
