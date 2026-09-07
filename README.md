@@ -4,11 +4,20 @@
 
 ---
 
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A426.x-23aa62.svg)](https://www.nextflow.io/)
-[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
-[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
-[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
-
+<p align="center">
+  <a href="https://www.nextflow.io/">
+    <img src="https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A4x26.x-23aa62.svg" alt="Nextflow">
+  </a>
+  <a href="https://docs.conda.io/en/latest/">
+    <img src="http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda" alt="Conda">
+  </a>
+  <a href="https://www.docker.com/">
+    <img src="https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker" alt="Docker">
+  </a>
+  <a href="https://sylabs.io/docs/">
+    <img src="https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000" alt="Singularity">
+  </a>
+</p>
 
 ## Introduction 
 
