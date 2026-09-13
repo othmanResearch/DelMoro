@@ -194,7 +194,7 @@ def draw_header_to_footer(c, width, height, metadata, delmorologo):
     # Page information (in black)
     c.setFillColor(colors.black)
     c.setFont("Helvetica", 8)
-    c.drawString(30, 40,  f"Delmoro | Email: zemzemfiras@gmail.com | Page {c.getPageNumber()}")
+    c.drawString(30, 40,  f"Page {c.getPageNumber()}")
     # Draw QR code at bottom right
     qr = qrcode.QRCode(version=1, box_size=6, border=2)
     qr.add_data("https://github.com/othmanResearch/DelMoro")
