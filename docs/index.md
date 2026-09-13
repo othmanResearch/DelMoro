@@ -1,14 +1,17 @@
 # Welcome to DelMoro Documentation
 
 <div style="text-align: justify;">
+    <p><strong>DelMoro</strong> is a comprehensive and user-friendly <strong>Nextflow</strong>-based workflow designed for end-to-end processing of next-generation sequencing (NGS) data — from raw read quality control to annotated variant calls.</p>
 
-<p><strong>DelMoro</strong> is a comprehensive and user-friendly <strong>Nextflow</strong>-based workflow designed for end-to-end processing of next-generation sequencing (NGS) data — from raw read quality control to annotated variant calls.</p>
+    <p><strong>DelMoro</strong> simplifies complex bioinformatics analyses into a streamlined and reproducible workflow that adapts easily to different environments and computing infrastructures.</p> 
 
-<p><strong>DelMoro</strong> simplifies complex bioinformatics analyses into a streamlined and reproducible workflow that adapts easily to different environments and computing infrastructures.</p> 
-
-  <p>While <strong>DelMoro</strong> can be used for research purposes, its primary objective is to provide users with a reliable bioinformatics pipeline for diagnostic applications, implementing best practices for upstream analysis of Illumina-based short-read sequencing data. </p>
-  </div>
+    <p>While <strong>DelMoro</strong> can be used for research purposes, its primary objective is to provide users with a reliable bioinformatics pipeline for diagnostic applications, implementing best practices for upstream analysis of Illumina-based short-read sequencing data. </p>
+</div>
  
+<div style="text-align: center;">
+    <img src="img/logo.svg" alt="Logo">
+</div>
+
 ---
 
 ##  DelMoro Capabilities

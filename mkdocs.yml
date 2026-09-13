@@ -28,7 +28,7 @@ nav:
       - GUI Overview: 8GUI.md
   - Development:
       - Changelog: 9changelog.md
-      - About: 10about.md
+      - Contact: 10contact.md
 
 repo_url: https://github.com/othmanResearch/DelMoro.git
 repo_name: othmanResearch/DelMoro
