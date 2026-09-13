@@ -33,7 +33,7 @@ The complete list of software used by DelMoro, together with the corresponding c
 > The pipeline is compatible with Nextflow v26.x or earlier.
 ---
 
-Detailed documentation, including installation instructions, pipeline configuration, input requirements, and execution examples, is available at: [documentation link]()
+Detailed documentation, including installation instructions, pipeline configuration, input requirements, and execution examples, is available at: [documentation link](https://othmanresearch.github.io/DelMoro/)
 
 ---
 
