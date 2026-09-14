@@ -14,10 +14,9 @@ This section provides a comprehensive overview of all configurable parameters av
 - `--outdir` = Directory where all outputs will be saved. <span title="Default: ./outdir">⊕</span>
 
 ???+ note "💡 Explanation"
-    - If the user only specifies `--pcpus`, then `mcpus` is set equal to `pcpus`.  
-      This means the pipeline will execute tasks **sequentially**, using the top available CPUs per process.  
+    - If the user only specifies `--pcpus`, this means the pipeline will execute tasks **sequentially**, using the given CPUs per process.  
 
-    - If `--mcpus` is greater than `2 x pcpus`, the `maxForks` will be set to 2, allowing **up to 2 tasks to run in parallel**.
+    - If `--mcpus` is set, the `maxForks` will be set to `(mcpus - 2)/ pcpus`, allowing **maximum tasks to run in parallel**.
 
 
 ## Initialize my pipeline 
