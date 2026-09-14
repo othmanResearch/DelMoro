@@ -70,9 +70,9 @@ This section provides a comprehensive overview of all configurable parameters av
 
 ## Variant Calling
 - `--reference` = Path to reference genome FASTA file. <span title="Default: path to fasta file">⊕</span>  
-- `--tovarcall` = CSV with recalibrated BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">⊕</span>  
+- `--tovarcall` = CSV with BAM files. <span title="Default: ./CSVs/5_samplesheetReclibFiles.csv">⊕</span>  
 - `--keepinter` =  Keep intermediate vcf files <span title="[Optional] - Default: false">⊕</span>
-- `--mode` = Output type: onlyvcf to generate a vcf for each input <span title="Default: null : generates a cohort gvcf ">⊕</span>  
+- `--mode` = Output vcf type: only specified for cohort vcf. <span title="Default: null : generates single-samples vcf">⊕</span>  
 - `--caller` = Specify deepvariant caller which also requires `--modelType` <span title="Default: null : only for deepvariant caller ">⊕</span>
 - `--rsid` = Add rs identifiant for vcf reference file. <span title="[Optional] - path to vcf">⊕</span>
 - `--splitSample` = Split cohort vcf to multi-samples files.<span title="[Optional] - Default: false">⊕</span>
