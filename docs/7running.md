@@ -496,7 +496,7 @@ You can modify the output behavior using the `--mode` flag:
     - <span style="color:red ;">Default variant id is set to chrName_position_REF_ALT</span>
 
 ???+ note " 💡 **Splitting cohort vcf to different samples:** `--splitSample parameter`"
-    - To use add rs id , specify `--splitSample`    
+    - To split samples from the cohort vcf, specify `--splitSample`    
     - To check required option please refer to [parameters page](5parameters.md/#variant-calling ) 
 
 ---
