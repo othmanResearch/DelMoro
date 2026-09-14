@@ -1767,12 +1767,8 @@ def create_genotype_representation_plot(df, sample_plot_dir, vcf_basename):
 
         gt = str(gt).replace('|', '/')
 
-        # Homozygous reference
-        if gt == '0/0':
-            return 'Homozygous Reference'
-
         # Heterozygous
-        elif gt in ['0/1', '1/0']:
+        if gt in ['0/1', '1/0']:
             return 'Heterozygous'
 
         # Homozygous alternate
@@ -1791,10 +1787,9 @@ def create_genotype_representation_plot(df, sample_plot_dir, vcf_basename):
         .value_counts()
         .reindex(
             [
-'Homozygous Reference',
-'Heterozygous',
-'Homozygous Alternate',
-'Other'
+                'Heterozygous',
+                'Homozygous Alternate',
+                'Other'
             ],
             fill_value=0
         )
@@ -1807,13 +1802,13 @@ def create_genotype_representation_plot(df, sample_plot_dir, vcf_basename):
         genotype_counts.index,
         genotype_counts.values,
         color=[
-            '#4C78A8',  # Homozygous Reference - blue
             '#F2CF5B',  # Heterozygous - yellow
             '#E45756',  # Homozygous Alternate - red
             '#72B7B2'   # Other - teal
         ],
         edgecolor='black'
     )
+
     # Add value labels above bars
     for bar, value in zip(bars, genotype_counts.values):
         plt.text(
